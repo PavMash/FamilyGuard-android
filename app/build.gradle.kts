@@ -36,7 +36,8 @@ android {
 }
 
 dependencies {
-
+    implementation(libs.retrofit) // dependency for sending messages
+    implementation(libs.converter.moshi) // dependency for converting objects into JSON and vice versa
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
