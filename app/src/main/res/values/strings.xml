@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">FamilyGuard App</string>
+    <string name="main_screen_instruction">Please, set enabled near ScreenScanner to start FamilyGuard</string>
+    <string name="permission_button_text">Give permission</string>
+    <string name="service_description_text">FamilyGuard is a service that monitors your child\'s screen activity helping you to control his/her phone usage.</string>
 </resources>
