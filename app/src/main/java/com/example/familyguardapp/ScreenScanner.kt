@@ -9,6 +9,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 class ScreenScanner : AccessibilityService() {
 
+    var capturedText = mutableListOf<String>()
+
     private val handler = Handler(Looper.getMainLooper())
     private val intervalMillis = 60_000L
 
@@ -28,10 +30,12 @@ class ScreenScanner : AccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
 
     override fun onInterrupt() {
+        Log.d("ScreenScanner", "Accessibility service interrupted")
         handler.removeCallbacks(periodicTask)
     }
 
     override fun onDestroy() {
+        Log.d("ScreenScanner", "Accessibility service destroyed")
         handler.removeCallbacks(periodicTask)
         super.onDestroy()
     }
@@ -39,9 +43,9 @@ class ScreenScanner : AccessibilityService() {
     private fun performUiCheck() {
         val root = rootInActiveWindow ?: return
 
-        val allText = mutableListOf<String>()
-        collectText(root, allText)
-        //Now allText stores text captured from the screen.
+        capturedText = mutableListOf<String>()
+        collectText(root, capturedText)
+        //Now capturedText stores text captured from the screen.
         //You should work with it.
     }
 
