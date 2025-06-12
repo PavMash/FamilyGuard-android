@@ -22,12 +22,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         findViewById<Button>(R.id.permission_button).setOnClickListener {
-            Log.d("MainActivity", "pushed")
-//            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-//            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//            startActivity(intent)
-            if(!checkAccessibilityPermission()) {
-                Toast.makeText(this, "Permission denied",
+            if(checkAccessibilityPermission()) {
+                Toast.makeText(this, R.string.already_have_permission,
                     Toast.LENGTH_LONG).show()
             }
         }
@@ -36,22 +32,18 @@ class MainActivity : AppCompatActivity() {
     fun checkAccessibilityPermission () : Boolean {
         var accessEnabled = 0
         try {
-            Log.d("MainActivity", "went to fun")
             accessEnabled = Settings.Secure.getInt(
                 this.contentResolver,
                 Settings.Secure.ACCESSIBILITY_ENABLED)
         } catch (e : Settings.SettingNotFoundException) {
             e.printStackTrace()
-            Log.d("MainActivity", "catched(((")
         }
         if (accessEnabled == 0) {
             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
-            Log.d("MainActivity", "Permission intent")
             return false
         } else {
-            Log.d("MainActivity", "true")
             return true
         }
     }

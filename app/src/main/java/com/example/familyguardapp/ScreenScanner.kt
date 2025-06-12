@@ -41,10 +41,8 @@ class ScreenScanner : AccessibilityService() {
 
         val allText = mutableListOf<String>()
         collectText(root, allText)
-
-        for (i in allText) {
-            Log.d("ScreenScanner", i)
-        }
+        //Now allText stores text captured from the screen.
+        //You should work with it.
     }
 
     private fun collectText(node : AccessibilityNodeInfo, allTexts : MutableList<String>) {
