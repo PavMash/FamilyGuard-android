@@ -9,7 +9,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 
 class ScreenScanner : AccessibilityService() {
 
-    var capturedText = mutableListOf<String>()
+    var capturedText = ""
 
     private val handler = Handler(Looper.getMainLooper())
     private val intervalMillis = 60_000L
@@ -43,8 +43,12 @@ class ScreenScanner : AccessibilityService() {
     private fun performUiCheck() {
         val root = rootInActiveWindow ?: return
 
-        capturedText = mutableListOf<String>()
-        collectText(root, capturedText)
+        capturedText = ""
+        val textList = mutableListOf<String>()
+        collectText(root, textList)
+        capturedText = textList.joinToString(" ")
+
+        Log.d("UnitedToString", capturedText)
         //Now capturedText stores text captured from the screen.
         //You should work with it.
     }
