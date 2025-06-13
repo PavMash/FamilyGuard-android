@@ -51,6 +51,9 @@ class ScreenScanner : AccessibilityService() {
         Log.d("UnitedToString", capturedText)
         //Now capturedText stores text captured from the screen.
         //You should work with it.
+
+        val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
+        prefs.edit().putString("captured_text", capturedText).apply()
     }
 
     private fun collectText(node : AccessibilityNodeInfo, allTexts : MutableList<String>) {

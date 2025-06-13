@@ -66,8 +66,13 @@ class ForegroundDispatchService : Service() {
         serviceJob = CoroutineScope(Dispatchers.IO).launch { // coroutine
             while (isActive) { // while coroutine is running
                 try {
-                    postText() // function for testing
-                    postImage() // function for testing
+                    val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
+                    val capturedText = prefs.getString("captured_text", "") // captured text
+                    Log.d("ForegroundService", "Captured text: $capturedText")
+                    if (capturedText != null && capturedText != "") {
+                        postText(capturedText) // function for testing
+                    }
+                    // postImage() // function for testing
                 }
                 catch (e : Exception) {
                     Log.d("MyLog", "${e.message}")
@@ -98,16 +103,16 @@ class ForegroundDispatchService : Service() {
     private fun createNotification() : Notification {
         return NotificationCompat
             .Builder(this, channelId)
-            .setContentTitle("POST service") // title
+            .setContentTitle("FamilyGuardApp Service") // title
             .setContentText("Your device can be monitored") // content
             .setSmallIcon(R.drawable.ic_launcher_foreground) // icon
             .setOngoing(true) // permanent notification
             .build()
     }
 
-    private suspend fun postText() {
+    private suspend fun postText(capturedText : String) {
         // example of text data
-        val request = ScreenData(messages = listOf(Message(role = "user", content = "FamilyGuardApp")))
+        val request = ScreenData(messages = listOf(Message(role = "user", content = capturedText)))
         // response from server
         val response = cloudDispatchService.sendData(
             authHeader = "Bearer $API_KEY",
