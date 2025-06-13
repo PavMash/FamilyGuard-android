@@ -8,23 +8,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.util.Base64
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.familyguardapp.data.ContentItem
-import com.example.familyguardapp.data.ImageData
-import com.example.familyguardapp.data.ImageMessage
-import com.example.familyguardapp.data.ImageSource
-import com.example.familyguardapp.data.Message
-import com.example.familyguardapp.data.ScreenData
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.io.File
+import androidx.core.content.edit
 
 // starts CloudDispatchService in the background with a notification
 class ForegroundDispatchService : Service() {
@@ -34,13 +34,11 @@ class ForegroundDispatchService : Service() {
     // coroutine
     private var serviceJob : Job? = null
 
-    private val API_KEY = BuildConfig.API_KEY
-
     // Retrofit instance
     private val retrofit by lazy {
         Retrofit
             .Builder()
-            .baseUrl("https://api.proxyapi.ru/anthropic/v1/") // base url without endpoint
+            .baseUrl("http://10.91.53.178:8000/") // base url without endpoint
             .addConverterFactory(MoshiConverterFactory.create()) // converter for JSON
             .build()
     }
@@ -68,8 +66,8 @@ class ForegroundDispatchService : Service() {
                 try {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
                     val capturedText = prefs.getString("captured_text", "") // captured text
-                    Log.d("ForegroundService", "Captured text: $capturedText")
                     if (capturedText != null && capturedText != "") {
+                        Log.d("ForegroundService", "Captured text: $capturedText")
                         postText(capturedText) // function for testing
                     }
                     // postImage() // function for testing
@@ -112,14 +110,16 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         // example of text data
-        val request = ScreenData(messages = listOf(Message(role = "user", content = capturedText)))
-        // response from server
-        val response = cloudDispatchService.sendData(
-            authHeader = "Bearer $API_KEY",
-            request = request)
+        val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
+        // response from the Cloud
+        val response = cloudDispatchService.sendData("228337", request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")
+            getSharedPreferences("scanner_data", MODE_PRIVATE)
+                .edit {
+                    remove("captured_text")
+                }
         }
         else {
             Log.d("MyLog", "${response.errorBody()?.string()}")
@@ -128,31 +128,10 @@ class ForegroundDispatchService : Service() {
     }
 
     private suspend fun postImage() {
-        val base64Image =
-            encodeDrawableToBase64(this, R.drawable.android)
         // example of image data
-        val request = ImageData(
-            messages = listOf(
-                ImageMessage(
-                    content = listOf(
-                        ContentItem(
-                            type = "text",
-                            text = "FamilyGuardApp"
-                        ),
-                        ContentItem(
-                            type = "image",
-                            source = ImageSource(
-                                data = base64Image
-                            )
-                        )
-                    )
-                )
-            )
-        )
+        val request = createImagePartFromDrawable(this, R.drawable.android)
         // response from server
-        val response = cloudDispatchService.sendImage(
-            authHeader = "Bearer $API_KEY",
-            request = request)
+        val response = cloudDispatchService.sendImage(request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(image)")
@@ -163,10 +142,18 @@ class ForegroundDispatchService : Service() {
         }
     }
 
-    // converts images into base64Image strings
-    fun encodeDrawableToBase64(context: Context, drawableId: Int): String {
-        val inputStream = context.resources.openRawResource(drawableId)
+    // converts drawable into Part
+    private fun createImagePartFromDrawable(context: Context, drawableId: Int): MultipartBody.Part {
+        val inputStream = context.resources.openRawResource(drawableId) // drawable file
         val bytes = inputStream.readBytes()
-        return Base64.encodeToString(bytes, Base64.NO_WRAP)
+        inputStream.close()
+
+        val file = File(context.cacheDir, "upload_image.png") // temporary file
+        file.writeBytes(bytes)
+
+        val mediaType = "image/png".toMediaType() // type
+        val requestBody = file.asRequestBody(mediaType)
+
+        return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
     }
 }

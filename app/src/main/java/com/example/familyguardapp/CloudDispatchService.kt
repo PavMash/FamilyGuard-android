@@ -1,25 +1,27 @@
 package com.example.familyguardapp
 
-import com.example.familyguardapp.data.ImageData
-import com.example.familyguardapp.data.ScreenData
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
 
 // This interface sends information to the Cloud
 interface CloudDispatchService {
-    @POST("messages") // defines the endpoint
+    @POST("upload-text") // defines the endpoint
+    @Headers("Content-Type: text/plain")
     suspend fun sendData(
-        @Header("Authorization") authHeader: String,
-        @Header("Anthropic-Version") version: String = "2023-06-01",
-        @Body request : ScreenData
+        @Query("id") id : String,
+        @Body request : RequestBody
     ) : Response<Unit> // sends text data to the Cloud
 
-    @POST("messages") // defines the endpoint
+    @Multipart
+    @POST("upload-screenshot") // defines the endpoint
     suspend fun sendImage(
-        @Header("Authorization") authHeader : String,
-        @Header("Anthropic-Version") version: String = "2023-06-01",
-        @Body request : ImageData
+        @Part request : MultipartBody.Part
     ) : Response<Unit> // sends image data to the Cloud
 }
