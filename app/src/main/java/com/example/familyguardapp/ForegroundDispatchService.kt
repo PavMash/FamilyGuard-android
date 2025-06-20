@@ -4,6 +4,8 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -62,11 +64,15 @@ class ForegroundDispatchService : Service() {
         val notification = createNotification() // notification to display
         startForeground(1, notification) // start service in the foreground
         serviceJob = CoroutineScope(Dispatchers.IO).launch { // coroutine
+            delay(30_000L)
+
             while (isActive) { // while coroutine is running
                 try {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
                     val capturedText = prefs.getString("captured_text", "") // captured text
-                    if (capturedText != null && capturedText != "") {
+                    val sourceApp = prefs.getString("source_app", "")
+                    if (capturedText != null && capturedText != "" && !sourceApp.isNullOrEmpty()
+                        && sourceApp != packageName) {
                         Log.d("ForegroundService", "Captured text: $capturedText")
                         postText(capturedText) // function for testing
                     }
@@ -91,7 +97,7 @@ class ForegroundDispatchService : Service() {
         // checks Android Version(Android O or higher versions require notification channel)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(channelId, "MyNotificationChannel",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_LOW)
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
@@ -110,15 +116,18 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         // example of text data
+        blockTheApp()
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
         val response = cloudDispatchService.sendData("228337", request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")
+            //blockTheApp()
             getSharedPreferences("scanner_data", MODE_PRIVATE)
                 .edit {
                     remove("captured_text")
+                    remove("source_app")
                 }
         }
         else {
@@ -155,5 +164,13 @@ class ForegroundDispatchService : Service() {
         val requestBody = file.asRequestBody(mediaType)
 
         return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
+    }
+
+    private fun blockTheApp() {
+        Log.d("Lox", "LoxLox")
+        val blockIntent = Intent(this, BlockingActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(blockIntent)
     }
 }

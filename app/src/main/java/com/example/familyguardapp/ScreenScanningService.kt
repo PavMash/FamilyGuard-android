@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 
-class ScreenScanner : AccessibilityService() {
+class ScreenScanningService : AccessibilityService() {
 
     var capturedText = ""
 
@@ -48,12 +48,13 @@ class ScreenScanner : AccessibilityService() {
         collectText(root, textList)
         capturedText = textList.joinToString(" ")
 
-        Log.d("UnitedToString", capturedText)
+        val currentPackageName = root.packageName?.toString()
         //Now capturedText stores text captured from the screen.
         //You should work with it.
 
         val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
         prefs.edit().putString("captured_text", capturedText).apply()
+        prefs.edit().putString("source_app", currentPackageName).apply()
     }
 
     private fun collectText(node : AccessibilityNodeInfo, allTexts : MutableList<String>) {

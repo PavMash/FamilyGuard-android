@@ -1,11 +1,16 @@
 package com.example.familyguardapp
 
 import android.Manifest
+import android.accessibilityservice.AccessibilityService
+import android.app.Activity
+import android.app.admin.DevicePolicyManager
+import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.text.TextUtils
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -33,12 +38,14 @@ class MainActivity : AppCompatActivity() {
         requestNotificationPermissionAndStartService()
 
         findViewById<Button>(R.id.permission_button).setOnClickListener {
-            if (checkAccessibilityPermission()) {
+            if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
                 Toast.makeText(
                     this,
                     R.string.already_have_permission,
                     Toast.LENGTH_LONG
                 ).show()
+            } else {
+                askForAccessibilityPermission()
             }
         }
     }
@@ -84,22 +91,29 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
-    fun checkAccessibilityPermission(): Boolean {
-        var accessEnabled = 0
-        try {
-            accessEnabled = Settings.Secure.getInt(
-                this.contentResolver,
-                Settings.Secure.ACCESSIBILITY_ENABLED)
-        } catch (e: Settings.SettingNotFoundException) {
-            e.printStackTrace()
+    private fun checkAccessibilityPermission(service : Class<out AccessibilityService>): Boolean {
+        val expectedComponentName = ComponentName(this, service)
+        val enabledServices = Settings.Secure.getString(
+            this.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+
+        val colonSplitter = TextUtils.SimpleStringSplitter(':')
+        colonSplitter.setString(enabledServices)
+
+        for (service in colonSplitter) {
+            val componentName = ComponentName.
+            unflattenFromString(service)
+            if (componentName == expectedComponentName) {
+                return true
+            }
         }
-        if (accessEnabled == 0) {
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            return false
-        } else {
-            return true
-        }
+
+        return false
+    }
+
+    private fun askForAccessibilityPermission() {
+        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 }

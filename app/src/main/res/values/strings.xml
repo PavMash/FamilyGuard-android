@@ -4,4 +4,6 @@
     <string name="permission_button_text">Give permission</string>
     <string name="service_description_text">FamilyGuard is a service that monitors your child\'s screen activity helping you to control his/her phone usage.</string>
     <string name="already_have_permission">FamilyGuard already has the permission</string>
+    <string name="block_screen_message">Seems like you\'ve been looking for something prohibited, little brat.\n\n Your parents will spank you hard for that.</string>
+    <string name="block_screen_exit_button_text">Close</string>
 </resources>
