@@ -7,13 +7,13 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 
+// Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {
-
-    var capturedText = ""
 
     private val handler = Handler(Looper.getMainLooper())
     private val intervalMillis = 60_000L
 
+    // object that encapsulates periodic UI check
     private val periodicTask = object : Runnable {
         override fun run() {
             performUiCheck()
@@ -21,42 +21,45 @@ class ScreenScanningService : AccessibilityService() {
         }
     }
 
+    // UI checks start as soon as service is connected (permission is given)
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.d("ScreenScanner", "Accessibility service connected")
         handler.postDelayed(periodicTask, intervalMillis)
     }
 
+    // just necessary callback, not needed
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
 
+    // interruption callback
     override fun onInterrupt() {
         Log.d("ScreenScanner", "Accessibility service interrupted")
         handler.removeCallbacks(periodicTask)
     }
 
+    // destruction callback
     override fun onDestroy() {
         Log.d("ScreenScanner", "Accessibility service destroyed")
         handler.removeCallbacks(periodicTask)
         super.onDestroy()
     }
 
+    // checks UI and wrap captured text and currently opened app package into SharedPreferences
     private fun performUiCheck() {
         val root = rootInActiveWindow ?: return
 
-        capturedText = ""
         val textList = mutableListOf<String>()
         collectText(root, textList)
-        capturedText = textList.joinToString(" ")
+        val capturedText = textList.joinToString(" ")
 
         val currentPackageName = root.packageName?.toString()
-        //Now capturedText stores text captured from the screen.
-        //You should work with it.
 
         val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
         prefs.edit().putString("captured_text", capturedText).apply()
         prefs.edit().putString("source_app", currentPackageName).apply()
     }
 
+    // collects text from root view and all children views
     private fun collectText(node : AccessibilityNodeInfo, allTexts : MutableList<String>) {
         node.text?.toString()?.let {
             if (it.isNotBlank()) allTexts.add(it)

@@ -8,10 +8,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 
+// Activity is started, when illegal content is detected
+// It blocks access to the app with such content
 class BlockingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,12 +23,8 @@ class BlockingActivity : AppCompatActivity() {
             insets
         }
 
-//        WindowCompat.setDecorFitsSystemWindows(window, false)
-//        val insetsController = WindowInsetsControllerCompat(window, window.decorView)
-//        insetsController.hide(WindowInsetsCompat.Type.systemBars())
-//        insetsController.systemBarsBehavior =
-//            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-
+        // Exit button sends an intent to start Home menu activity, when clicked
+        // (Same functionality as Home button)
         val exitButton = findViewById<Button>(R.id.exit_button)
         exitButton.setOnClickListener {
             val goHomeMenuIntent = Intent(Intent.ACTION_MAIN).apply {
@@ -39,6 +35,7 @@ class BlockingActivity : AppCompatActivity() {
             finish()
         }
 
+        // Overrides reaction on back button press for this activity
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Toast.makeText(

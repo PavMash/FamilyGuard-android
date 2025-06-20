@@ -91,6 +91,7 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
+    // checks if the user has already given permission for ScreenScanningService
     private fun checkAccessibilityPermission(service : Class<out AccessibilityService>): Boolean {
         val expectedComponentName = ComponentName(this, service)
         val enabledServices = Settings.Secure.getString(
@@ -111,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
+    // redirects user to the settings to give a permission for ScreenScanningService
     private fun askForAccessibilityPermission() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

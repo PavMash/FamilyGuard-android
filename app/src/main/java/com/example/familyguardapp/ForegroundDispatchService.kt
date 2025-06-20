@@ -116,14 +116,20 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         // example of text data
-        blockTheApp()
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
         val response = cloudDispatchService.sendData("228337", request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")
-            //blockTheApp()
+            val responseBody = response.body()
+            if (responseBody != null) {
+                val responseBlock = responseBody.block
+                // checks contents of "yes/no" block of response body
+                if (responseBlock == "Yes") {
+                    blockTheApp()
+                }
+            }
             getSharedPreferences("scanner_data", MODE_PRIVATE)
                 .edit {
                     remove("captured_text")
@@ -166,11 +172,14 @@ class ForegroundDispatchService : Service() {
         return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
     }
 
+    // starts BlockingActivity
     private fun blockTheApp() {
-        Log.d("Lox", "LoxLox")
-        val blockIntent = Intent(this, BlockingActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        Log.d("ForegroundService", "Blocking started")
+        val blockIntent = Intent(this, BlockingActivity::class.java)
+        blockIntent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+            Intent.FLAG_ACTIVITY_CLEAR_TOP
+        )
         startActivity(blockIntent)
     }
 }
