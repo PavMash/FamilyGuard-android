@@ -1,0 +1,604 @@
+From a29e9e42c2f70ae7bb3941b9270781520fdec990 Mon Sep 17 00:00:00 2001
+From: vova <vladimirsolovev53181@gmail.com>
+Date: Sat, 21 Jun 2025 21:47:10 +0400
+Subject: [PATCH] Auth page better
+
+---
+ .kotlin/errors/errors-1750493874929.log       |   4 +
+ app/build.gradle.kts                          |   5 +
+ app/src/main/AndroidManifest.xml              |   9 +-
+ .../com/example/familyguardapp/ApiService.kt  |  25 ++++
+ .../example/familyguardapp/LoginActivity.kt   |  88 +++++++++++++
+ .../example/familyguardapp/NetworkService.kt  | 116 ++++++++++++++++++
+ .../example/familyguardapp/SignUpActivity.kt  |  79 ++++++++++++
+ .../{activity_auth.xml => activity_login.xml} |  23 ++--
+ app/src/main/res/layout/activity_signup.xml   |  83 +++++++++++++
+ app/src/main/res/raw/server_cert.pem          |  26 ++++
+ 10 files changed, 445 insertions(+), 13 deletions(-)
+ create mode 100644 .kotlin/errors/errors-1750493874929.log
+ create mode 100644 app/src/main/java/com/example/familyguardapp/ApiService.kt
+ create mode 100644 app/src/main/java/com/example/familyguardapp/LoginActivity.kt
+ create mode 100644 app/src/main/java/com/example/familyguardapp/NetworkService.kt
+ create mode 100644 app/src/main/java/com/example/familyguardapp/SignUpActivity.kt
+ rename app/src/main/res/layout/{activity_auth.xml => activity_login.xml} (83%)
+ create mode 100644 app/src/main/res/layout/activity_signup.xml
+ create mode 100644 app/src/main/res/raw/server_cert.pem
+
+diff --git a/.kotlin/errors/errors-1750493874929.log b/.kotlin/errors/errors-1750493874929.log
+new file mode 100644
+index 0000000..1219b50
+--- /dev/null
++++ b/.kotlin/errors/errors-1750493874929.log
+@@ -0,0 +1,4 @@
++kotlin version: 2.0.21
++error message: The daemon has terminated unexpectedly on startup attempt #1 with error code: 0. The daemon process output:
++    1. Kotlin compile daemon is ready
++
+diff --git a/app/build.gradle.kts b/app/build.gradle.kts
+index 7affe34..9fabaf7 100644
+--- a/app/build.gradle.kts
++++ b/app/build.gradle.kts
+@@ -44,7 +44,12 @@ dependencies {
+     implementation(libs.material)
+     implementation(libs.androidx.activity)
+     implementation(libs.androidx.constraintlayout)
++    implementation("com.squareup.retrofit2:retrofit:2.9.0")
++    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
++    implementation("com.google.code.gson:gson:2.8.6")
+     testImplementation(libs.junit)
+     androidTestImplementation(libs.androidx.junit)
+     androidTestImplementation(libs.androidx.espresso.core)
++
++
+ }
+\ No newline at end of file
+diff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml
+index 1ca5114..01a661e 100644
+--- a/app/src/main/AndroidManifest.xml
++++ b/app/src/main/AndroidManifest.xml
+@@ -28,7 +28,7 @@
+             android:foregroundServiceType="dataSync"
+             tools:ignore="ForegroundServicePermission" />
+         <activity
+-            android:name=".MainActivity"
++            android:name=".LoginActivity"
+             android:exported="true">
+             <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+@@ -36,6 +36,13 @@
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+         </activity>
++        <activity
++            android:name=".SignUpActivity"
++            android:exported="false" />
++        <activity
++            android:name=".MainActivity"
++            android:exported="false" />
++
+ 
+         <service android:name="com.example.familyguardapp.ScreenScanner"
+             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+diff --git a/app/src/main/java/com/example/familyguardapp/ApiService.kt b/app/src/main/java/com/example/familyguardapp/ApiService.kt
+new file mode 100644
+index 0000000..7248010
+--- /dev/null
++++ b/app/src/main/java/com/example/familyguardapp/ApiService.kt
+@@ -0,0 +1,25 @@
++package com.example.familyguardapp
++import retrofit2.Response
++import retrofit2.http.Body
++import retrofit2.http.POST
++
++data class UserInfo (
++    val username : String,
++    val password : String
++)
++data class ApiResponse(
++    val status : String,
++    val detail : String
++
++)
++
++interface ApiService {
++    @POST("/login")
++    suspend fun login(@Body userInfo: UserInfo): Response<ApiResponse>
++
++    @POST("/signup")
++    suspend fun signup(@Body userInfo: UserInfo): Response<ApiResponse>
++
++    @POST("/create-child")
++    suspend fun createChild(@Body userInfo: UserInfo): Response<ApiResponse>
++}
+diff --git a/app/src/main/java/com/example/familyguardapp/LoginActivity.kt b/app/src/main/java/com/example/familyguardapp/LoginActivity.kt
+new file mode 100644
+index 0000000..b372111
+--- /dev/null
++++ b/app/src/main/java/com/example/familyguardapp/LoginActivity.kt
+@@ -0,0 +1,88 @@
++package com.example.familyguardapp
++
++import android.content.Intent
++import android.os.Bundle
++import android.widget.Button
++import android.widget.EditText
++import android.widget.Toast
++import androidx.appcompat.app.AppCompatActivity
++import androidx.lifecycle.lifecycleScope
++import kotlinx.coroutines.launch
++
++class LoginActivity : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_login)
++
++        val emailField = findViewById<EditText>(R.id.editTextTextEmailAddress)
++        val passwordField = findViewById<EditText>(R.id.editTextTextPassword)
++        val loginButton = findViewById<Button>(R.id.loginButton)
++        val signupButton = findViewById<Button>(R.id.signUpButtonFromLogin)
++
++        signupButton.setOnClickListener {
++            val intent = Intent(this, SignUpActivity::class.java)
++            startActivity(intent)
++            finish()
++        }
++
++        loginButton.setOnClickListener {
++            val email = emailField.text.toString()
++            val password = passwordField.text.toString()
++            val networkService = NetworkService(this)
++
++            val errorMessage = correctCredentials(email, password)
++            if (errorMessage != null) {
++                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
++                return@setOnClickListener
++            } else {
++                loginButton.isEnabled = false
++                lifecycleScope.launch {
++                    try {
++                        when(val result = networkService.login(email,password)){
++                            is NetworkResult.Success -> {
++                                Toast.makeText(this@LoginActivity, "Login successful",
++                                    Toast.LENGTH_SHORT).show()
++                                var childID: String? = null
++                                when (val resultChild = networkService.createChild(email,password)){
++                                    is NetworkResult.Success ->{
++                                        childID = resultChild.data
++                                    }
++                                    is NetworkResult.Error -> {
++                                        Toast.makeText(this@LoginActivity,
++                                            resultChild.message, Toast.LENGTH_SHORT).show()
++                                    }
++                                }
++                                val intent = Intent(this@LoginActivity,
++                                    MainActivity::class.java)
++                                startActivity(intent)
++                                finish()
++                            }
++                            is NetworkResult.Error -> {
++                                Toast.makeText(this@LoginActivity, result.message,
++                                    Toast.LENGTH_SHORT).show()
++                            }
++                        }
++                    }
++                    catch (e: Exception){
++                        Toast.makeText(this@LoginActivity,
++                            "Unexpected error: ${e.message}",Toast.LENGTH_LONG).show()
++                    }
++                    finally {
++                        loginButton.isEnabled = true
++                    }
++                }
++            }
++
++        }
++    }
++
++    private fun correctCredentials(email: String, password: String): String? {
++        return when {
++            email.isEmpty() || password.isEmpty() -> "Fill all fields"
++            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email"
++            password.length < 6 -> "Password length must be bigger than five"
++            else -> null
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/app/src/main/java/com/example/familyguardapp/NetworkService.kt b/app/src/main/java/com/example/familyguardapp/NetworkService.kt
+new file mode 100644
+index 0000000..e8634ee
+--- /dev/null
++++ b/app/src/main/java/com/example/familyguardapp/NetworkService.kt
+@@ -0,0 +1,116 @@
++package com.example.familyguardapp
++
++import android.content.Context
++import retrofit2.Retrofit
++import retrofit2.converter.gson.GsonConverterFactory
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.withContext
++import okhttp3.OkHttpClient
++import java.io.InputStream
++import java.security.KeyStore
++import java.security.cert.CertificateFactory
++import javax.net.ssl.SSLContext
++import javax.net.ssl.TrustManagerFactory
++import javax.net.ssl.X509TrustManager
++
++class NetworkService(private val context: Context) {
++    private fun createOkHttpClient(): OkHttpClient {
++
++        val certInputStream: InputStream = context.resources.openRawResource(R.raw.server_cert)
++        val certificateFactory = CertificateFactory.getInstance("X.509")
++        val certificate = certificateFactory.generateCertificate(certInputStream)
++        certInputStream.close()
++
++
++        val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
++        keyStore.load(null, null)
++        keyStore.setCertificateEntry("ca", certificate)
++
++
++        val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
++        trustManagerFactory.init(keyStore)
++
++
++        val sslContext = SSLContext.getInstance("TLS")
++        sslContext.init(null, trustManagerFactory.trustManagers, null)
++
++
++        return OkHttpClient.Builder()
++            .sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)
++            .hostnameVerifier { _, _ -> true }
++            .build()
++    }
++
++    private val retrofit = Retrofit.Builder()
++        .baseUrl("https://5.129.222.88")
++        .client(createOkHttpClient())
++        .addConverterFactory(GsonConverterFactory.create())
++        .build()
++
++    private val apiService = retrofit.create(ApiService::class.java)
++
++    suspend fun login(username: String, password: String): NetworkResult<String> {
++        return withContext(Dispatchers.IO) {
++            try {
++                val response = apiService.login(UserInfo(username, password))
++                if (response.isSuccessful) {
++                    val body = response.body()
++                    when (body?.status) {
++                        "OK" -> NetworkResult.Success(body.detail)
++                        "failed" -> NetworkResult.Error(body.detail)
++                        else -> NetworkResult.Error("Unknown response")
++                    }
++                } else {
++                    NetworkResult.Error("Network error: ${response.code()}")
++                }
++            } catch (e: Exception) {
++                NetworkResult.Error("Connection failed: ${e.message}")
++            }
++        }
++    }
++
++    suspend fun signup(username: String, password: String): NetworkResult<String> {
++        return withContext(Dispatchers.IO) {
++            try {
++                val response = apiService.signup(UserInfo(username, password))
++                if (response.isSuccessful) {
++                    val body = response.body()
++                    when (body?.status) {
++                        "OK" -> NetworkResult.Success(body.detail)
++                        "failed" -> NetworkResult.Error(body.detail)
++                        else -> NetworkResult.Error("Unknown response")
++                    }
++                } else {
++                    NetworkResult.Error("Network error: ${response.code()}")
++                }
++            } catch (e: Exception) {
++                NetworkResult.Error("Connection failed: ${e.message}")
++            }
++        }
++    }
++
++    suspend fun createChild(username: String, password: String): NetworkResult<String> {
++        return withContext(Dispatchers.IO) {
++            try {
++                val response = apiService.createChild(UserInfo(username, password))
++                if (response.isSuccessful) {
++                    val body = response.body()
++                    when (body?.status) {
++                        "created" -> NetworkResult.Success(body.detail)
++                        "failed" -> NetworkResult.Error(body.detail)
++                        else -> NetworkResult.Error("Unknown response")
++                    }
++                } else {
++                    NetworkResult.Error("Network error: ${response.code()}")
++                }
++            } catch (e: Exception) {
++                NetworkResult.Error("Connection failed: ${e.message}")
++            }
++        }
++    }
++}
++
++sealed class NetworkResult<T> {
++    data class Success<T>(val data: T) : NetworkResult<T>()
++    data class Error<T>(val message: String) : NetworkResult<T>()
++}
+\ No newline at end of file
+diff --git a/app/src/main/java/com/example/familyguardapp/SignUpActivity.kt b/app/src/main/java/com/example/familyguardapp/SignUpActivity.kt
+new file mode 100644
+index 0000000..fd0f5e1
+--- /dev/null
++++ b/app/src/main/java/com/example/familyguardapp/SignUpActivity.kt
+@@ -0,0 +1,79 @@
++package com.example.familyguardapp
++
++import android.content.Intent
++import android.os.Bundle
++import android.widget.Button
++import android.widget.EditText
++import android.widget.Toast
++import androidx.appcompat.app.AppCompatActivity
++import androidx.lifecycle.lifecycleScope
++import kotlinx.coroutines.launch
++
++class SignUpActivity : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_signup)
++
++        val emailField = findViewById<EditText>(R.id.editTextTextEmailAddress2)
++        val passwordField = findViewById<EditText>(R.id.editTextTextPassword2)
++        val signUpButton = findViewById<Button>(R.id.signUpButton)
++        val backButton = findViewById<Button>(R.id.backButton)
++        val networkService = NetworkService(this)
++
++        backButton.setOnClickListener {
++            val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
++            startActivity(intent)
++            finish()
++            backButton.isEnabled = false
++        }
++
++        signUpButton.setOnClickListener {
++            val email = emailField.text.toString()
++            val password = passwordField.text.toString()
++
++            val errorMessage = correctCredentials(email, password)
++            if (errorMessage != null) {
++                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
++                return@setOnClickListener
++            } else {
++                signUpButton.isEnabled = false
++                lifecycleScope.launch {
++                    try {
++                        when (val response = networkService.signup(email, password)){
++                            is NetworkResult.Success -> {
++                                Toast.makeText(this@SignUpActivity, "Signup successful",
++                                    Toast.LENGTH_SHORT).show()
++
++                                val intent = Intent(this@SignUpActivity, LoginActivity
++                                ::class.java)
++                                startActivity(intent)
++                                finish()
++                            }
++                            is NetworkResult.Error -> {
++                                Toast.makeText(this@SignUpActivity, response.message,
++                                    Toast.LENGTH_LONG).show()
++                            }
++                        }
++                    } catch (e: Exception) {
++                        Toast.makeText(this@SignUpActivity,"Unexpected error: " +
++                                "${e.message}", Toast.LENGTH_LONG).show()
++                    }
++                    finally {
++                        signUpButton.isEnabled = true
++                    }
++                }
++            }
++
++        }
++    }
++
++    private fun correctCredentials(email: String, password: String): String? {
++    return when {
++        email.isEmpty() || password.isEmpty() -> "Fill all fields"
++        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email"
++        password.length < 6 -> "Password length must be bigger than five"
++            else -> null
++    }
++    }
++
++}
+\ No newline at end of file
+diff --git a/app/src/main/res/layout/activity_auth.xml b/app/src/main/res/layout/activity_login.xml
+similarity index 83%
+rename from app/src/main/res/layout/activity_auth.xml
+rename to app/src/main/res/layout/activity_login.xml
+index ed23495..2e82361 100644
+--- a/app/src/main/res/layout/activity_auth.xml
++++ b/app/src/main/res/layout/activity_login.xml
+@@ -15,7 +15,7 @@
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintVertical_bias="0.176" />
++        app:layout_constraintVertical_bias="0.135" />
+ 
+     <TextView
+         android:id="@+id/header2"
+@@ -34,7 +34,7 @@
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:ems="10"
+-        android:hint="Enter emal"
++        android:hint="Enter email"
+         android:inputType="textEmailAddress"
+         app:layout_constraintBottom_toTopOf="@+id/editTextTextPassword"
+         app:layout_constraintEnd_toEndOf="parent"
+@@ -59,27 +59,26 @@
+         app:layout_constraintVertical_bias="0.0" />
+ 
+     <Button
+-        android:id="@+id/button"
++        android:id="@+id/loginButton"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:text="Log in"
+-        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintTop_toTopOf="@+id/signUpButtonFromLogin"
++        app:layout_constraintBottom_toBottomOf="@+id/signUpButtonFromLogin"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.687"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword"
+-        app:layout_constraintVertical_bias="0.204" />
++        android:layout_marginEnd="108dp" />
+ 
+     <Button
+-        android:id="@+id/button2"
++        android:id="@+id/signUpButtonFromLogin"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
++        android:layout_marginStart="88dp"
+         android:layout_marginTop="44dp"
+         android:text="Sign up"
+         app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toStartOf="@+id/button"
+-        app:layout_constraintHorizontal_bias="0.793"
++        app:layout_constraintEnd_toStartOf="@+id/loginButton"
++        app:layout_constraintHorizontal_bias="0.307"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword"
+-        app:layout_constraintVertical_bias="0.016" />
++        app:layout_constraintVertical_bias="0.004" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+diff --git a/app/src/main/res/layout/activity_signup.xml b/app/src/main/res/layout/activity_signup.xml
+new file mode 100644
+index 0000000..386b700
+--- /dev/null
++++ b/app/src/main/res/layout/activity_signup.xml
+@@ -0,0 +1,83 @@
++<?xml version="1.0" encoding="utf-8"?>
++<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++    <EditText
++        android:id="@+id/editTextTextEmailAddress2"
++        android:layout_width="211dp"
++        android:layout_height="62dp"
++        android:ems="10"
++        android:hint="Enter email"
++        android:inputType="textEmailAddress"
++        app:layout_constraintBottom_toTopOf="@+id/editTextTextPassword2"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/header6"
++        app:layout_constraintVertical_bias="0.877" />
++
++    <EditText
++        android:id="@+id/editTextTextPassword2"
++        android:layout_width="211dp"
++        android:layout_height="62dp"
++        android:ems="10"
++        android:hint="Enter password"
++        android:inputType="textPassword"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/header6"
++        app:layout_constraintVertical_bias="0.365" />
++
++    <TextView
++        android:id="@+id/header6"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Secure Your Child"
++        android:textSize="16sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/header7"
++        app:layout_constraintVertical_bias="0.0" />
++
++    <TextView
++        android:id="@+id/header7"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="FamilyGuard"
++        android:textSize="34sp"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.139" />
++
++    <Button
++        android:id="@+id/backButton"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Back"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.037"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toTopOf="parent"
++        app:layout_constraintVertical_bias="0.043" />
++
++    <Button
++        android:id="@+id/signUpButton"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:text="Sign up"
++        app:layout_constraintBottom_toBottomOf="parent"
++        app:layout_constraintEnd_toEndOf="parent"
++        app:layout_constraintHorizontal_bias="0.498"
++        app:layout_constraintStart_toStartOf="parent"
++        app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword2"
++        app:layout_constraintVertical_bias="0.037" />
++
++
++</androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+diff --git a/app/src/main/res/raw/server_cert.pem b/app/src/main/res/raw/server_cert.pem
+new file mode 100644
+index 0000000..3315b5f
+--- /dev/null
++++ b/app/src/main/res/raw/server_cert.pem
+@@ -0,0 +1,26 @@
++-----BEGIN CERTIFICATE-----
++MIIEWzCCA0OgAwIBAgIUU96SBJijKWdMOyOACLTmGL8JhKEwDQYJKoZIhvcNAQEL
++BQAwgbwxCzAJBgNVBAYTAlJVMRswGQYDVQQIDBJUYXRhcnN0YW4tUmVwdWJsaWMx
++DjAMBgNVBAcMBUthemFuMR0wGwYDVQQKDBRVbHRyYSBCaWcgQ29ja3MgQ29ycDEf
++MB0GA1UECwwWQmlnIE11c2N1bGFyIEJhbGxzIExhYjEQMA4GA1UEAwwHRHIuIERS
++RTEuMCwGCSqGSIb3DQEJARYfcy5uYWR1dGtpbkBpbm5vcG9saXMudW5pdmVyc2l0
++eTAeFw0yNTA2MTYxOTQ5MzFaFw0yNjA2MTYxOTQ5MzFaMIG8MQswCQYDVQQGEwJS
++VTEbMBkGA1UECAwSVGF0YXJzdGFuLVJlcHVibGljMQ4wDAYDVQQHDAVLYXphbjEd
++MBsGA1UECgwUVWx0cmEgQmlnIENvY2tzIENvcnAxHzAdBgNVBAsMFkJpZyBNdXNj
++dWxhciBCYWxscyBMYWIxEDAOBgNVBAMMB0RyLiBEUkUxLjAsBgkqhkiG9w0BCQEW
++H3MubmFkdXRraW5AaW5ub3BvbGlzLnVuaXZlcnNpdHkwggEiMA0GCSqGSIb3DQEB
++AQUAA4IBDwAwggEKAoIBAQCsfWw673MEqnWHwMefw6cWoBFbX0vZ7686VVeXaY2I
++tfAOM/uSlpUdWONEzW+OkoBQImjz7XgzRLSf6DK0VTYrOY4J3vFunJ6yW3KZyHEd
++dlT2C03C5uajNpMkNSYbMFDwzH3B6I++TWZnLNEuEEjsNfYazTPD0zDC+oEdW6DI
++4QGTcOdOFOU3Z9yz8FSTSPr0JkMw3hHaTZlMyifrlyO8CXj4W2HpzPktTWpcf3Sn
++VXfZ1Le3ULAAgey2JOeAOeyGrelupWyDe9B1IaTQ+k//clCjNTtBJx9QEuYlYdJx
++qQeuEuidZI/gHkpxBdBL/oi7h1o95HWIQ8flvKDt5JP1AgMBAAGjUzBRMB0GA1Ud
++DgQWBBR/mDsLD4vyjBIasd61ujDHPpCPaDAfBgNVHSMEGDAWgBR/mDsLD4vyjBIa
++sd61ujDHPpCPaDAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQA/
++Z0u1ykbo169kzbcASNlUSp9IG4bW0skUpmOyZhPs6BdFKOlIi6xPqx5FBaWUflQI
++neaWNwELJbSF3RnTw+/C/Ryhfrs3gqVTzZ+eIM9oKYEZyy6x6jAFN8sRrBb4yW5j
++7TslMxwVDBRhXlXS6qhyymYztIJ1Gz/qpBm88KNBhnuDQT9lMAr4vSJuLoLv4hOi
++pSQWW84UVH0SiNN4/4knq+Kn6LQtyuv0+cHLgGpo5FeuSX2mrI87gzJLLbNdJpjf
++0BRTt4ex0F2OO9tt1zeO9lhxASBJPiq300AuS+TaskQMEFwnTAepz0LhKTql6gwT
++CWkchk+2NbFRutBenzZH
++-----END CERTIFICATE-----
+-- 
+2.49.0
+
