@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -36,6 +38,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.messaging) // FCM
+    implementation(platform(libs.firebase.bom)) // Firebase BoM
+    implementation(libs.firebase.analytics) // Firebase analytics
     implementation(libs.okhttp) // dependency for HTTP
     implementation(libs.retrofit) // dependency for sending messages
     implementation(libs.converter.moshi) // dependency for converting objects into JSON and vice versa

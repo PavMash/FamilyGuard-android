@@ -4,9 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.app.admin.DevicePolicyManager
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
@@ -116,10 +113,9 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         // example of text data
-        //blockTheApp()
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
-        val response = cloudDispatchService.sendData("228337", request)
+        val response = cloudDispatchService.sendData("FamGuard", request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")
@@ -143,35 +139,35 @@ class ForegroundDispatchService : Service() {
         }
     }
 
-    private suspend fun postImage() {
-        // example of image data
-        val request = createImagePartFromDrawable(this, R.drawable.android)
-        // response from server
-        val response = cloudDispatchService.sendImage(request)
-        // checks success of response
-        if (response.isSuccessful) {
-            Log.d("MyLog", "Success(image)")
-        }
-        else {
-            Log.d("MyLog", "${response.errorBody()?.string()}")
-            Log.d("MyLog", "Fail(image)")
-        }
-    }
-
-    // converts drawable into Part
-    private fun createImagePartFromDrawable(context: Context, drawableId: Int): MultipartBody.Part {
-        val inputStream = context.resources.openRawResource(drawableId) // drawable file
-        val bytes = inputStream.readBytes()
-        inputStream.close()
-
-        val file = File(context.cacheDir, "upload_image.png") // temporary file
-        file.writeBytes(bytes)
-
-        val mediaType = "image/png".toMediaType() // type
-        val requestBody = file.asRequestBody(mediaType)
-
-        return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
-    }
+//    private suspend fun postImage() {
+//        // example of image data
+//        val request = createImagePartFromDrawable(this, R.drawable.android)
+//        // response from server
+//        val response = cloudDispatchService.sendImage(request)
+//        // checks success of response
+//        if (response.isSuccessful) {
+//            Log.d("MyLog", "Success(image)")
+//        }
+//        else {
+//            Log.d("MyLog", "${response.errorBody()?.string()}")
+//            Log.d("MyLog", "Fail(image)")
+//        }
+//    }
+//
+//    // converts drawable into Part
+//    private fun createImagePartFromDrawable(context: Context, drawableId: Int): MultipartBody.Part {
+//        val inputStream = context.resources.openRawResource(drawableId) // drawable file
+//        val bytes = inputStream.readBytes()
+//        inputStream.close()
+//
+//        val file = File(context.cacheDir, "upload_image.png") // temporary file
+//        file.writeBytes(bytes)
+//
+//        val mediaType = "image/png".toMediaType() // type
+//        val requestBody = file.asRequestBody(mediaType)
+//
+//        return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
+//    }
 
     // starts BlockingActivity
     private fun blockTheApp() {
@@ -179,7 +175,7 @@ class ForegroundDispatchService : Service() {
         val blockIntent = Intent(this, BlockingActivity::class.java)
         blockIntent.addFlags(
             Intent.FLAG_ACTIVITY_NEW_TASK or
-            Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    Intent.FLAG_ACTIVITY_CLEAR_TOP
         )
         startActivity(blockIntent)
     }

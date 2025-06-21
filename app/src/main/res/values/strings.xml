@@ -7,4 +7,5 @@
     <string name="block_screen_message">We detected illegal content on your screen.\n\n Do not seek for such content anymore.</string>
     <string name="block_screen_exit_button_text">Close</string>
     <string name="back_button_disabled">Back button is disabled here</string>
+    <string name="default_notification_channel_id">default_channel</string>
 </resources>
