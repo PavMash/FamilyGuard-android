@@ -39,7 +39,7 @@ class BlockingActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Toast.makeText(
-                    this@BlockingActivity, "Back button is disabled here",
+                    this@BlockingActivity, R.string.back_button_disabled,
                     Toast.LENGTH_LONG
                 ).show()
             }
