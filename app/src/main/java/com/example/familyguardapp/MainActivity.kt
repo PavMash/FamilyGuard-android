@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -14,6 +15,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,17 +32,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        requestNotificationPermissionAndStartService()
-
-        findViewById<Button>(R.id.permission_button).setOnClickListener {
-            if (checkAccessibilityPermission()) {
-                Toast.makeText(
-                    this,
-                    R.string.already_have_permission,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
+//        requestNotificationPermissionAndStartService()
+//
+//        findViewById<Button>(R.id.permission_button).setOnClickListener {
+//            if (checkAccessibilityPermission()) {
+//                Toast.makeText(
+//                    this,
+//                    R.string.already_have_permission,
+//                    Toast.LENGTH_LONG
+//                ).show()
+//            }
+//        }
     }
 
     private fun requestNotificationPermissionAndStartService() {

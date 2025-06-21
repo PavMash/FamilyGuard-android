@@ -4,4 +4,5 @@
     <string name="permission_button_text">Give permission</string>
     <string name="service_description_text">FamilyGuard is a service that monitors your child\'s screen activity helping you to control his/her phone usage.</string>
     <string name="already_have_permission">FamilyGuard already has the permission</string>
+    <string name="default_notification_channel_id">default_channel</string>
 </resources>
