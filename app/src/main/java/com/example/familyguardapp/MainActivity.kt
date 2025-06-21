@@ -2,8 +2,6 @@ package com.example.familyguardapp
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
-import android.app.Activity
-import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -98,6 +96,9 @@ class MainActivity : AppCompatActivity() {
             this.contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
 
+        if (enabledServices == null) {
+            return false
+        }
         val colonSplitter = TextUtils.SimpleStringSplitter(':')
         colonSplitter.setString(enabledServices)
 

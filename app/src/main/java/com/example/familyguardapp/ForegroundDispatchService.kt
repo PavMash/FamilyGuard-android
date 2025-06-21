@@ -40,7 +40,7 @@ class ForegroundDispatchService : Service() {
     private val retrofit by lazy {
         Retrofit
             .Builder()
-            .baseUrl("http://10.91.53.178:8000/") // base url without endpoint
+            .baseUrl("https://5.129.222.88/") // base url without endpoint
             .addConverterFactory(MoshiConverterFactory.create()) // converter for JSON
             .build()
     }
@@ -116,6 +116,7 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         // example of text data
+        //blockTheApp()
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
         val response = cloudDispatchService.sendData("228337", request)
