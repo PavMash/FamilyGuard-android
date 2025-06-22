@@ -3,6 +3,8 @@
 
 
 ## Getting started
+##ATTENTION
+Here you cannot find the certificate, without which this app will not work
 
 To make it easy for you to get started with GitLab, here's a list of recommended next steps.
 
