@@ -1,23 +1,74 @@
 package com.example.familyguardapp
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+
+var childID: String? = null
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val emailField = findViewById<EditText>(R.id.editTextTextEmailAddress)
-        val passwordField = findViewById<EditText>(R.id.editTextTextPassword)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val signupButton = findViewById<Button>(R.id.signUpButtonFromLogin)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // switches to night theme
+
+        val emailField = findViewById<EditText>(R.id.edEmail)
+        val passwordField = findViewById<EditText>(R.id.edPassword)
+        val loginButton = findViewById<Button>(R.id.btnLogIn)
+        val signupButton = findViewById<Button>(R.id.btnSignUp)
+        val imShield = findViewById<ImageView>(R.id.imShield)
+
+        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+
+        val text = getString(R.string.app_title)
+
+        val spannable = SpannableString(text) // assigns different colors to different parts of text
+
+        // green part
+        spannable.setSpan(
+            ForegroundColorSpan(Color.GREEN),
+            0, 6,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // blue part
+        spannable.setSpan(
+            ForegroundColorSpan(Color.BLUE),
+            6, 11,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        // red part
+        spannable.setSpan(
+            ForegroundColorSpan(Color.RED),
+            11, 14,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        tvTitle.text = spannable
+
+        // makes "wake up" animation
+        wakeUpView(tvTitle)
+        wakeUpView(imShield)
+        wakeUpView(loginButton)
+        wakeUpView(signupButton)
+        wakeUpView(emailField)
+        wakeUpView(passwordField)
 
         signupButton.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
@@ -40,12 +91,12 @@ class LoginActivity : AppCompatActivity() {
                     try {
                         when(val result = networkService.login(email,password)){
                             is NetworkResult.Success -> {
-                                Toast.makeText(this@LoginActivity, "Login successful",
+                                Toast.makeText(this@LoginActivity, getString(R.string.login_successful),
                                     Toast.LENGTH_SHORT).show()
-                                var childID: String? = null
                                 when (val resultChild = networkService.createChild(email,password)){
                                     is NetworkResult.Success ->{
                                         childID = resultChild.data
+                                        Log.d("LoginChild", "$childID")
                                     }
                                     is NetworkResult.Error -> {
                                         Toast.makeText(this@LoginActivity,
@@ -64,8 +115,9 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                     catch (e: Exception){
+                        val errorText = getString(R.string.unexpected_error)
                         Toast.makeText(this@LoginActivity,
-                            "Unexpected error: ${e.message}",Toast.LENGTH_LONG).show()
+                            "$errorText: ${e.message}",Toast.LENGTH_LONG).show()
                     }
                     finally {
                         loginButton.isEnabled = true
@@ -78,11 +130,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun correctCredentials(email: String, password: String): String? {
         return when {
-            email.isEmpty() || password.isEmpty() -> "Fill all fields"
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email"
-            password.length < 6 -> "Password length must be bigger than five"
+            email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
+            password.length < 6 -> getString(R.string.invalid_password)
             else -> null
         }
     }
 
+    // performs "wake up" animation with duration of 3 seconds
+    private fun wakeUpView(view : View) {
+        view.alpha = 0f // transparency
+        view.animate().alpha(1f).setDuration(3000L).start()
+    }
 }

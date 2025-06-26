@@ -69,8 +69,8 @@ class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     private fun createNotification() : Notification {
         return NotificationCompat
             .Builder(this, channelId)
-            .setContentTitle("Firebase Service") // title
-            .setContentText("Autostart request") // content
+            .setContentTitle(getString(R.string.firebase_notification_title)) // title
+            .setContentText(getString(R.string.firebase_notification_text)) // content
             .setSmallIcon(R.drawable.ic_launcher_background) // icon
             .setVibrate(longArrayOf(0)) // no vibration
             .setSound(null) // no sound

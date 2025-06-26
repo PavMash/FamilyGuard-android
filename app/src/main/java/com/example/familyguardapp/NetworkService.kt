@@ -1,6 +1,7 @@
 package com.example.familyguardapp
 
 import android.content.Context
+import android.util.Log
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
 class NetworkService(private val context: Context) {
-    private fun createOkHttpClient(): OkHttpClient {
+    fun createOkHttpClient(): OkHttpClient {
 
         val certInputStream: InputStream = context.resources.openRawResource(R.raw.server_cert)
         val certificateFactory = CertificateFactory.getInstance("X.509")
@@ -42,7 +43,7 @@ class NetworkService(private val context: Context) {
     }
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl("https://5.129.222.88")
+        .baseUrl("https://5.129.222.88/")
         .client(createOkHttpClient())
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -95,6 +96,7 @@ class NetworkService(private val context: Context) {
                 val response = apiService.createChild(UserInfo(username, password))
                 if (response.isSuccessful) {
                     val body = response.body()
+                    Log.d("Body", "$body")
                     when (body?.status) {
                         "created" -> NetworkResult.Success(body.detail)
                         "failed" -> NetworkResult.Error(body.detail)

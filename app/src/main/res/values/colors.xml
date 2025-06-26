@@ -3,4 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="green">#64DD17</color>
+    <color name="log_in_button">#4CAF50</color>
+    <color name="sign_up_button">#D90C25</color>
+    <color name="sign_sign_up_button">#64E8F8</color>
 </resources>
