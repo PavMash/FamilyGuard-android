@@ -41,22 +41,15 @@ class LoginActivity : AppCompatActivity() {
 
         // green part
         spannable.setSpan(
-            ForegroundColorSpan(Color.GREEN),
+            ForegroundColorSpan(Color.WHITE),
             0, 6,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
         // blue part
         spannable.setSpan(
-            ForegroundColorSpan(Color.BLUE),
+            ForegroundColorSpan(Color.GREEN),
             6, 11,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        // red part
-        spannable.setSpan(
-            ForegroundColorSpan(Color.RED),
-            11, 14,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
