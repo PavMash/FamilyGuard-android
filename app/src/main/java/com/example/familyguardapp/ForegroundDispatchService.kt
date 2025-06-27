@@ -115,7 +115,7 @@ class ForegroundDispatchService : Service() {
             .Builder(this, channelId)
             .setContentTitle(getString(R.string.dispatch_notification_title)) // title
             .setContentText(getString(R.string.dispatch_notification_text)) // content
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // icon
+            .setSmallIcon(R.drawable.shield) // icon
             .setOngoing(true) // permanent notification
             .build()
     }

@@ -56,7 +56,7 @@
         app:layout_constraintBottom_toTopOf="@+id/edSignEmail"
         app:layout_constraintEnd_toEndOf="@+id/edSignEmail"
         app:layout_constraintStart_toStartOf="@+id/edSignEmail"
-        app:srcCompat="@drawable/sing_up_image" />
+        app:srcCompat="@drawable/sign_up_image" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/backButton"

@@ -23,10 +23,11 @@ class SignUpActivity : AppCompatActivity() {
         val backButton = findViewById<FloatingActionButton>(R.id.backButton)
         val networkService = NetworkService(this)
 
-        backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes backButton black
+        backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes arrow black
 
         backButton.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
             finish()
             backButton.isEnabled = false

@@ -6,6 +6,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -23,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +44,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         requestNotificationPermissionAndStartService()
+
+        val backButton = findViewById<FloatingActionButton>(R.id.backButtonMain)
+
+        backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes arrow black
+
+        backButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+            backButton.isEnabled = false
+        }
 
         findViewById<Button>(R.id.permission_button).setOnClickListener {
             if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
