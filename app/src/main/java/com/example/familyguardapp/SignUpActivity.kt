@@ -1,12 +1,15 @@
 package com.example.familyguardapp
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
@@ -14,14 +17,17 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        val emailField = findViewById<EditText>(R.id.editTextTextEmailAddress2)
-        val passwordField = findViewById<EditText>(R.id.editTextTextPassword2)
-        val signUpButton = findViewById<Button>(R.id.signUpButton)
-        val backButton = findViewById<Button>(R.id.backButton)
+        val emailField = findViewById<EditText>(R.id.edSignEmail)
+        val passwordField = findViewById<EditText>(R.id.edSignPassword)
+        val signUpButton = findViewById<Button>(R.id.btnSignSignUp)
+        val backButton = findViewById<FloatingActionButton>(R.id.backButton)
         val networkService = NetworkService(this)
+
+        backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes arrow black
 
         backButton.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
             startActivity(intent)
             finish()
             backButton.isEnabled = false
@@ -41,7 +47,7 @@ class SignUpActivity : AppCompatActivity() {
                     try {
                         when (val response = networkService.signup(email, password)){
                             is NetworkResult.Success -> {
-                                Toast.makeText(this@SignUpActivity, "Signup successful",
+                                Toast.makeText(this@SignUpActivity, getString(R.string.signup_successful),
                                     Toast.LENGTH_SHORT).show()
 
                                 val intent = Intent(this@SignUpActivity, LoginActivity
@@ -55,7 +61,8 @@ class SignUpActivity : AppCompatActivity() {
                             }
                         }
                     } catch (e: Exception) {
-                        Toast.makeText(this@SignUpActivity,"Unexpected error: " +
+                        val errorText = getString(R.string.unexpected_error)
+                        Toast.makeText(this@SignUpActivity,"$errorText: " +
                                 "${e.message}", Toast.LENGTH_LONG).show()
                     }
                     finally {
@@ -69,9 +76,9 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun correctCredentials(email: String, password: String): String? {
     return when {
-        email.isEmpty() || password.isEmpty() -> "Fill all fields"
-        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email"
-        password.length < 6 -> "Password length must be bigger than five"
+        email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
+        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
+        password.length < 6 -> getString(R.string.invalid_password)
             else -> null
     }
     }

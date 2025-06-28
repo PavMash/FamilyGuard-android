@@ -4,15 +4,21 @@ import android.Manifest
 import android.accessibilityservice.AccessibilityService
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import android.text.TextUtils
+import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Button
+import android.widget.Spinner
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -20,8 +26,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Locale
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.net.toUri
@@ -52,6 +61,19 @@ class MainActivity : AppCompatActivity() {
         devicePolicyManager = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
         adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
 
+        val backButton = findViewById<FloatingActionButton>(R.id.backButtonMain)
+
+        backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes arrow black
+
+        backButton.setOnClickListener {
+            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+            backButton.isEnabled = false
+        }
+
+        findViewById<Button>(R.id.permission_button).setOnClickListener {
         passwordField = findViewById(R.id.password_field)
         disableAdminButton = findViewById(R.id.disable_admin_button)
 
@@ -74,6 +96,49 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val spinner = findViewById<Spinner>(R.id.spinner)
+
+        val languages : MutableMap<String, Int> = mutableMapOf() // map for languages
+        languages["en"] = 0
+        languages["ru"] = 1
+
+        val selectedLanguageCode = getSavedLanguage(this)
+        val position = languages[selectedLanguageCode] ?: 0
+        spinner.setSelection(position) // sets new language
+
+        var isFirstSelection = true // to avoid repeated screen updates
+
+        // listener
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                if (isFirstSelection) {
+                    isFirstSelection = false
+                    return
+                }
+                val selectedLanguage = parent?.getItemAtPosition(position).toString() // gets selected item
+                val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+                val currentLanguage = getSavedLanguage(this@MainActivity) // previous(current) language
+
+                val newLanguage = when(selectedLanguage) {
+                    "Russian" -> "ru"
+                    "Английский" -> "en"
+                    else -> currentLanguage
+                }
+
+                if (currentLanguage != newLanguage) {
+                    prefs.edit { putString("app_language", newLanguage) }
+                    updateScreen()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Log.d("Nothing", "none")
+        
         findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
             if (checkOverlayPermission()) {
                 Toast.makeText(
@@ -273,6 +338,31 @@ class MainActivity : AppCompatActivity() {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
+
+    // changes context for activity, in this example we change locale
+    override fun attachBaseContext(newBase: Context?) {
+        val contextWithLocale = updateLocale(newBase!!, getSavedLanguage(newBase))
+        super.attachBaseContext(contextWithLocale)
+    }
+
+    // returns languageCode of last chosen language
+    private fun getSavedLanguage(context : Context) : String {
+        val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        return prefs.getString("app_language", "en") ?: "en"
+    }
+
+    // updates locale, returns new context for activity
+    private fun updateLocale(context : Context, languageCode : String) : Context {
+        val locale = Locale(languageCode) // creates new locale
+        Locale.setDefault(locale) // sets new locale for app
+        val config = context.resources.configuration // takes current configuration
+        config.setLocale(locale) // applies new configuration(locale)
+        return context.createConfigurationContext(config) // returns new context
+    }
+
+    // updates activity
+    private fun updateScreen() {
+        recreate()
 
     private fun checkOverlayPermission() : Boolean {
         return Settings.canDrawOverlays(this)

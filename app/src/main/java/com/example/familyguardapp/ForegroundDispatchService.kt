@@ -24,6 +24,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
 import androidx.core.content.edit
+import okhttp3.OkHttpClient
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 // starts CloudDispatchService in the background with a hidden notification
@@ -34,11 +35,16 @@ class ForegroundDispatchService : Service() {
     // coroutine
     private var serviceJob : Job? = null
 
+    private lateinit var networkService : NetworkService
+
+    private lateinit var okHttpClient : OkHttpClient
+
     // Retrofit instance
     private val retrofit by lazy {
         Retrofit
             .Builder()
             .baseUrl("https://5.129.222.88/") // base url without endpoint
+            .client(okHttpClient) // to bypass Android protection
             .addConverterFactory(MoshiConverterFactory.create()) // converter for JSON
             .build()
     }
@@ -52,6 +58,9 @@ class ForegroundDispatchService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+
+        networkService = NetworkService(this)
+        okHttpClient = networkService.createOkHttpClient()
     }
 
     // service does not need to interact with activity
@@ -115,23 +124,20 @@ class ForegroundDispatchService : Service() {
     private fun createNotification(): Notification {
         return NotificationCompat
             .Builder(this, channelId)
-            .setContentTitle("") // empty title
-            .setContentText("") // empty text
-            .setSmallIcon(android.R.drawable.ic_menu_gallery) // системная иконка
-            .setPriority(NotificationCompat.PRIORITY_MIN) // минимальный приоритет
-            .setCategory(NotificationCompat.CATEGORY_SERVICE) // категория сервиса
-            .setShowWhen(false) // не показывать время
-            .setOngoing(true) // постоянное уведомление (не смахивается)
-            .setSilent(true) // без звука и вибрации
+            .setContentTitle(getString(R.string.dispatch_notification_title)) // title
+            .setContentText(getString(R.string.dispatch_notification_text)) // content
+            .setSmallIcon(R.drawable.shield) // icon
+            .setOngoing(true) // permanent notification
             .build()
     }
 
     private suspend fun postText(capturedText : String) {
+        Log.d("ChildID", "$childID")
         //blockTheApp()
         // example of text data
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
-        val response = cloudDispatchService.sendData("FamGuard", request)
+        val response = cloudDispatchService.sendData(childID!!, request)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")

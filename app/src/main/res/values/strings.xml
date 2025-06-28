@@ -9,5 +9,26 @@
     <string name="block_screen_exit_button_text">Close</string>
     <string name="back_button_disabled">Back button is disabled here</string>
     <string name="default_notification_channel_id">default_channel</string>
+    <string name="firebase_notification_title">Firebase Service</string>
+    <string name="firebase_notification_text">Autostart request</string>
+    <string name="dispatch_notification_title">FamilyGuardApp Service</string>
+    <string name="dispatch_notification_text">Your device can be monitored</string>
+    <string name="login_successful">Login successful</string>
+    <string name="unexpected_error">Unexpected error</string>
+    <string name="fill_all_fields">Fill all fields</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="invalid_password">Password length must be bigger than five</string>
+    <string name="signup_successful">Signup successful</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="log_in">Log in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="app_title">FamilyGuard</string>
+    <string name="language">Language</string>
+
+    <string-array name="languages">
+        <item>English</item>
+        <item>Russian</item>
+    </string-array>
     <string name="blocking_service_description">FamilyGuard Blocker is a service that blocks inappropriate content when it appears on your child\'s screen</string>
 </resources>

@@ -18,9 +18,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/shield"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/shield"
         android:supportsRtl="true"
         android:theme="@style/Theme.FamilyGuardApp"
         tools:targetApi="31">
@@ -34,7 +34,9 @@
             android:theme="@style/Base.Theme.FamilyGuardApp"
             android:exported="false"
             android:excludeFromRecents="true"
-            android:taskAffinity=""/>
+            android:taskAffinity=""
+            android:screenOrientation="portrait"/>
+
         <receiver
             android:name=".MyDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
@@ -64,7 +66,8 @@
 
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -74,11 +77,13 @@
 
         <activity
             android:name=".SignUpActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"/>
 
         <service android:name="com.example.familyguardapp.ScreenScanningService"
             android:description="@string/scanning_service_description"
