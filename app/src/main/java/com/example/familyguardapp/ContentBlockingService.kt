@@ -12,12 +12,10 @@ import android.view.LayoutInflater
 import android.view.accessibility.AccessibilityEvent
 import android.view.View
 import android.view.WindowManager
-import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.widget.Button
-import androidx.annotation.RequiresApi
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class ContentBlockingService : AccessibilityService() {

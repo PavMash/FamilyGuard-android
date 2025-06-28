@@ -73,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             backButton.isEnabled = false
         }
 
-        findViewById<Button>(R.id.permission_button).setOnClickListener {
         passwordField = findViewById(R.id.password_field)
         disableAdminButton = findViewById(R.id.disable_admin_button)
 
@@ -138,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.d("Nothing", "none")
-        
+            }
+        }
         findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
             if (checkOverlayPermission()) {
                 Toast.makeText(
@@ -148,7 +148,8 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             } else {
                 askForOverlayPermission()
-
+            }
+        }
         disableAdminButton.setOnClickListener {
             val enteredPassword = passwordField.text.toString()
             if (verifyPassword(enteredPassword)) {
@@ -363,7 +364,7 @@ class MainActivity : AppCompatActivity() {
     // updates activity
     private fun updateScreen() {
         recreate()
-
+    }
     private fun checkOverlayPermission() : Boolean {
         return Settings.canDrawOverlays(this)
     }

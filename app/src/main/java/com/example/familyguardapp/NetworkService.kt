@@ -56,6 +56,7 @@ class NetworkService(private val context: Context) {
                 val response = apiService.login(UserInfo(username, password))
                 if (response.isSuccessful) {
                     val body = response.body()
+                    NetworkResult.Success(body)
                     when (body?.status) {
                         "OK" -> NetworkResult.Success(body.detail)
                         "failed" -> NetworkResult.Error(body.detail)

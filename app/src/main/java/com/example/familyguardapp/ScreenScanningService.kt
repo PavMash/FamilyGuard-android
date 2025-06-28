@@ -7,7 +7,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 // Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {
@@ -39,9 +39,11 @@ class ScreenScanningService : AccessibilityService() {
             // checking for openin admin device settings page
             if (packageName == "com.android.settings" &&
                 (className?.contains("DeviceAdmin") == true || className?.contains("Admin") == true)) {
-                val intent = Intent(this, BlockingActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
+                LocalBroadcastManager.getInstance(this).sendBroadcast(
+                    blockingIntent)
+                blockingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(blockingIntent)
             }
         }
     }

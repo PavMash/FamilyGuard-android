@@ -86,6 +86,7 @@ class LoginActivity : AppCompatActivity() {
                             is NetworkResult.Success -> {
                                 Toast.makeText(this@LoginActivity, getString(R.string.login_successful),
                                     Toast.LENGTH_SHORT).show()
+                                Log.d("Result", "$result")
                                 when (val resultChild = networkService.createChild(email,password)){
                                     is NetworkResult.Success ->{
                                         childID = resultChild.data

@@ -10,7 +10,6 @@ data class UserInfo (
 data class ApiResponse(
     val status : String,
     val detail : String
-
 )
 
 interface ApiService {
