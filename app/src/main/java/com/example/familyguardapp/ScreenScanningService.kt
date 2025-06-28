@@ -6,6 +6,7 @@ import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.edit
 
 // Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {

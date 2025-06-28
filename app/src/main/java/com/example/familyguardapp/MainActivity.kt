@@ -5,6 +5,7 @@ import android.accessibilityservice.AccessibilityService
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -19,6 +20,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.messaging.FirebaseMessaging
+import androidx.core.net.toUri
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
         requestNotificationPermissionAndStartService()
 
-        findViewById<Button>(R.id.permission_button).setOnClickListener {
+        findViewById<Button>(R.id.accessibility_permission_button).setOnClickListener {
             if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
                 Toast.makeText(
                     this,
@@ -46,6 +48,18 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             } else {
                 askForAccessibilityPermission()
+            }
+        }
+
+        findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
+            if (checkOverlayPermission()) {
+                Toast.makeText(
+                    this,
+                    R.string.already_have_permission,
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                askForOverlayPermission()
             }
         }
     }
@@ -120,5 +134,16 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    private fun checkOverlayPermission() : Boolean {
+        return Settings.canDrawOverlays(this)
+    }
+
+    private fun askForOverlayPermission() {
+        val permissionIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            "package:$packageName".toUri())
+        permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(permissionIntent)
     }
 }

@@ -24,6 +24,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
 import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 // starts CloudDispatchService in the background with a notification
 class ForegroundDispatchService : Service() {
@@ -112,6 +113,7 @@ class ForegroundDispatchService : Service() {
     }
 
     private suspend fun postText(capturedText : String) {
+        //blockTheApp()
         // example of text data
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
@@ -172,11 +174,8 @@ class ForegroundDispatchService : Service() {
     // starts BlockingActivity
     private fun blockTheApp() {
         Log.d("ForegroundService", "Blocking started")
-        val blockIntent = Intent(this, BlockingActivity::class.java)
-        blockIntent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-        )
-        startActivity(blockIntent)
+        val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+            blockingIntent)
     }
 }
