@@ -9,6 +9,7 @@
     <uses-permission
         android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.BIND_DEVICE_ADMIN" />
 
     <application
@@ -80,6 +81,8 @@
             android:exported="false" />
 
         <service android:name="com.example.familyguardapp.ScreenScanningService"
+            android:description="@string/scanning_service_description"
+            android:label="FamilyGuard Scanner"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -88,7 +91,21 @@
             </intent-filter>
             <meta-data
                 android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_config"/>
+                android:resource="@xml/scanning_service_config"/>
+        </service>
+
+        <service android:name="com.example.familyguardapp.ContentBlockingService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:description="@string/blocking_service_description"
+            android:label="FamilyGuard Blocker"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/blocking_service_config"/>
         </service>
     </application>
 
