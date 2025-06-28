@@ -1,6 +1,7 @@
 package com.example.familyguardapp
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -30,7 +31,20 @@ class ScreenScanningService : AccessibilityService() {
     }
 
     // just necessary callback, not needed
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            val packageName = event.packageName?.toString()
+            val className = event.className?.toString()
+
+            // checking for openin admin device settings page
+            if (packageName == "com.android.settings" &&
+                (className?.contains("DeviceAdmin") == true || className?.contains("Admin") == true)) {
+                val intent = Intent(this, BlockingActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+    }
 
     // interruption callback
     override fun onInterrupt() {
