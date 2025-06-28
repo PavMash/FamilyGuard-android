@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">FamilyGuard App</string>
-    <string name="main_screen_instruction">Please, enable FamilyGuard in settings to start working</string>
-    <string name="permission_button_text">Give permission</string>
-    <string name="service_description_text">FamilyGuard is a service that monitors your child\'s screen activity helping you to control his/her phone usage.</string>
+    <string name="main_screen_instruction">Please, give FamilyGuard needed permissions to let it protect your child from harmful content.</string>
+    <string name="accessibility_permission_button_text">Permit scanning and blocking</string>
+    <string name="overlay_permission_button_text">Permit drawing over other apps</string>
+    <string name="scanning_service_description">FamilyGuard Scanner is a service that monitors your child\'s screen activity helping you to control his/her phone usage.</string>
     <string name="already_have_permission">FamilyGuard already has the permission</string>
-    <string name="block_screen_message">We detected illegal content on your screen.\n\n Do not seek for such content anymore.</string>
+    <string name="block_screen_message">We detected illegal content on your screen.\n\n Do not seek for such content anymore. \n\n You won\'t be able to open this app in 2 minutes.</string>
     <string name="block_screen_exit_button_text">Close</string>
     <string name="back_button_disabled">Back button is disabled here</string>
     <string name="default_notification_channel_id">default_channel</string>
@@ -29,4 +30,5 @@
         <item>English</item>
         <item>Russian</item>
     </string-array>
+    <string name="blocking_service_description">FamilyGuard Blocker is a service that blocks inappropriate content when it appears on your child\'s screen</string>
 </resources>

@@ -1,11 +1,13 @@
 package com.example.familyguardapp
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.edit
 
 // Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {
@@ -29,7 +31,20 @@ class ScreenScanningService : AccessibilityService() {
     }
 
     // just necessary callback, not needed
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            val packageName = event.packageName?.toString()
+            val className = event.className?.toString()
+
+            // checking for openin admin device settings page
+            if (packageName == "com.android.settings" &&
+                (className?.contains("DeviceAdmin") == true || className?.contains("Admin") == true)) {
+                val intent = Intent(this, BlockingActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
+        }
+    }
 
     // interruption callback
     override fun onInterrupt() {

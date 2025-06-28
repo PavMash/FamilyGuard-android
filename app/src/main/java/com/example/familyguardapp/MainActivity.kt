@@ -2,12 +2,14 @@ package com.example.familyguardapp
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
+import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -17,8 +19,10 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.Spinner
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -27,11 +31,22 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.messaging.FirebaseMessaging
+import androidx.core.net.toUri
+import kotlinx.coroutines.launch
+import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {
 
-    private val REQUEST_NOTIFICATION_PERMISSION = 100 // permission code(can be any other number)
-    private var permissionHandled = false // flag to check whether permission was given or not
+    private val REQUEST_NOTIFICATION_PERMISSION = 100
+    private val REQUEST_DEVICE_ADMIN = 101
+    private var permissionHandled = false
+
+    private lateinit var devicePolicyManager: DevicePolicyManager
+    private lateinit var adminComponent: ComponentName
+    private lateinit var passwordField: EditText
+    private lateinit var disableAdminButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +58,8 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        requestNotificationPermissionAndStartService()
+        devicePolicyManager = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
 
         val backButton = findViewById<FloatingActionButton>(R.id.backButtonMain)
 
@@ -58,6 +74,17 @@ class MainActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.permission_button).setOnClickListener {
+        passwordField = findViewById(R.id.password_field)
+        disableAdminButton = findViewById(R.id.disable_admin_button)
+
+        requestNotificationPermissionAndStartService()
+        requestDeviceAdminPermission()
+
+        if (!isPasswordSet()) {
+            showSetPasswordDialog()
+        }
+
+        findViewById<Button>(R.id.accessibility_permission_button).setOnClickListener {
             if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
                 Toast.makeText(
                     this,
@@ -111,17 +138,148 @@ class MainActivity : AppCompatActivity() {
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 Log.d("Nothing", "none")
+        
+        findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
+            if (checkOverlayPermission()) {
+                Toast.makeText(
+                    this,
+                    R.string.already_have_permission,
+                    Toast.LENGTH_LONG
+                ).show()
+            } else {
+                askForOverlayPermission()
+
+        disableAdminButton.setOnClickListener {
+            val enteredPassword = passwordField.text.toString()
+            if (verifyPassword(enteredPassword)) {
+                disableDeviceAdmin()
+            } else {
+                Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show()
+                passwordField.text.clear()
+            }
+        }
+    }
+
+    private fun showSetPasswordDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_set_password, null)
+        val passwordInput = dialogView.findViewById<EditText>(R.id.password_input)
+        val passwordConfirm = dialogView.findViewById<EditText>(R.id.password_confirm)
+        val cancelButton = dialogView.findViewById<Button>(R.id.cancel_button)
+        val confirmButton = dialogView.findViewById<Button>(R.id.confirm_button)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+            finish()
+        }
+
+        confirmButton.setOnClickListener {
+            val password = passwordInput.text.toString()
+            val confirmPassword = passwordConfirm.text.toString()
+
+            when {
+                password.isEmpty() -> {
+                    Toast.makeText(this, "Enter the password for device admin", Toast.LENGTH_SHORT).show()
+                }
+                password.length < 6 -> {
+                    Toast.makeText(this, "Password must be at least 6 characters long", Toast.LENGTH_SHORT).show()
+                }
+                password != confirmPassword -> {
+                    Toast.makeText(this, "The passwords do not match", Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    savePassword(password)
+                    dialog.dismiss()
+                    Toast.makeText(this, "Password set", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun savePassword(password: String) {
+        val passwordHash = hashPassword(password)
+        val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
+        prefs.edit()
+            .putString("password_hash", passwordHash)
+            .putBoolean("password_set", true)
+            .apply()
+    }
+
+    private fun isPasswordSet(): Boolean {
+        val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
+        return prefs.getBoolean("password_set", false)
+    }
+
+    private fun verifyPassword(password: String): Boolean {
+        if (password.isEmpty()) return false
+
+        val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
+        val savedHash = prefs.getString("password_hash", "")
+        val enteredHash = hashPassword(password)
+
+        return savedHash == enteredHash
+    }
+
+    private fun hashPassword(password: String): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hashBytes = digest.digest(password.toByteArray())
+        return hashBytes.joinToString("") { "%02x".format(it) }
+    }
+
+    private fun disableDeviceAdmin() {
+        if (devicePolicyManager.isAdminActive(adminComponent)) {
+            try {
+                val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
+                prefs.edit().putBoolean("allow_admin_disable", true).apply()
+
+                devicePolicyManager.removeActiveAdmin(adminComponent)
+                Toast.makeText(this, "Device Admin disabled", Toast.LENGTH_SHORT).show()
+                passwordField.text.clear()
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error disabling Device Admin", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "Error disabling device admin", e)
+            }
+        } else {
+            Toast.makeText(this, "Device Admin is already disabled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun requestDeviceAdminPermission() {
+        if (!devicePolicyManager.isAdminActive(adminComponent)) {
+            val intent = Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
+            intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, adminComponent)
+            intent.putExtra(
+                DevicePolicyManager.EXTRA_ADD_EXPLANATION,
+                "Required for parental control app protection"
+            )
+            startActivityForResult(intent, REQUEST_DEVICE_ADMIN)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            REQUEST_DEVICE_ADMIN -> {
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Administrator rights have been obtained", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Administrator rights not granted", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
     private fun requestNotificationPermissionAndStartService() {
-        // checks Android Version(Android 13+)
-        // checks whether a permission is already granted
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
             != PackageManager.PERMISSION_GRANTED) {
-            // requests permission
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
@@ -129,13 +287,11 @@ class MainActivity : AppCompatActivity() {
             )
         }
         else {
-            // the permission is already granted or Android Version is lower than 13(permission is not needed)
             startPostService()
             permissionHandled = true
         }
     }
 
-    // actions after user's answer
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -143,20 +299,17 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        // checks the request and runs the service
         if (requestCode == REQUEST_NOTIFICATION_PERMISSION && !permissionHandled) {
             startPostService()
             permissionHandled = true
         }
     }
 
-    // starts service in the foreground
     private fun startPostService() {
         val serviceIntent = Intent(this, ForegroundDispatchService::class.java)
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
-    // checks if the user has already given permission for ScreenScanningService
     private fun checkAccessibilityPermission(service : Class<out AccessibilityService>): Boolean {
         val expectedComponentName = ComponentName(this, service)
         val enabledServices = Settings.Secure.getString(
@@ -180,7 +333,6 @@ class MainActivity : AppCompatActivity() {
         return false
     }
 
-    // redirects user to the settings to give a permission for ScreenScanningService
     private fun askForAccessibilityPermission() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -211,5 +363,15 @@ class MainActivity : AppCompatActivity() {
     // updates activity
     private fun updateScreen() {
         recreate()
+
+    private fun checkOverlayPermission() : Boolean {
+        return Settings.canDrawOverlays(this)
+    }
+
+    private fun askForOverlayPermission() {
+        val permissionIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            "package:$packageName".toUri())
+        permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(permissionIntent)
     }
 }

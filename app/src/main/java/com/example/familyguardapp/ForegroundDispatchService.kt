@@ -25,11 +25,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.File
 import androidx.core.content.edit
 import okhttp3.OkHttpClient
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
-// starts CloudDispatchService in the background with a notification
+// starts CloudDispatchService in the background with a hidden notification
 class ForegroundDispatchService : Service() {
-    // channel id
-    private val channelId = "ForegroundDispatchService"
+    // channel id for hidden notification
+    private val channelId = "HiddenChannel"
 
     // coroutine
     private var serviceJob : Job? = null
@@ -67,7 +68,7 @@ class ForegroundDispatchService : Service() {
 
     // service actions
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = createNotification() // notification to display
+        val notification = createNotification() // notification to display (hidden)
         startForeground(1, notification) // start service in the foreground
         serviceJob = CoroutineScope(Dispatchers.IO).launch { // coroutine
             delay(30_000L)
@@ -98,19 +99,29 @@ class ForegroundDispatchService : Service() {
         serviceJob?.cancel() // stops coroutine to avoid memory leaks
     }
 
-    // creates notification channel
     private fun createNotificationChannel() {
         // checks Android Version(Android O or higher versions require notification channel)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "MyNotificationChannel",
-                NotificationManager.IMPORTANCE_LOW)
+            val channel = NotificationChannel(
+                channelId,
+                "Background Service",
+                NotificationManager.IMPORTANCE_MIN
+            ).apply {
+                description = "Service channel"
+                enableLights(false)
+                enableVibration(false)
+                setSound(null, null)
+                setShowBadge(false)
+                lockscreenVisibility = Notification.VISIBILITY_SECRET
+            }
+
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
         }
     }
 
-    // creates notification
-    private fun createNotification() : Notification {
+// creates a hidden notification
+    private fun createNotification(): Notification {
         return NotificationCompat
             .Builder(this, channelId)
             .setContentTitle(getString(R.string.dispatch_notification_title)) // title
@@ -122,6 +133,7 @@ class ForegroundDispatchService : Service() {
 
     private suspend fun postText(capturedText : String) {
         Log.d("ChildID", "$childID")
+        //blockTheApp()
         // example of text data
         val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
         // response from the Cloud
@@ -182,11 +194,8 @@ class ForegroundDispatchService : Service() {
     // starts BlockingActivity
     private fun blockTheApp() {
         Log.d("ForegroundService", "Blocking started")
-        val blockIntent = Intent(this, BlockingActivity::class.java)
-        blockIntent.addFlags(
-            Intent.FLAG_ACTIVITY_NEW_TASK or
-                    Intent.FLAG_ACTIVITY_CLEAR_TOP
-        )
-        startActivity(blockIntent)
+        val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
+        LocalBroadcastManager.getInstance(this).sendBroadcast(
+            blockingIntent)
     }
 }
