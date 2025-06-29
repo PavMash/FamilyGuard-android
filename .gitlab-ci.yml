@@ -1,4 +1,4 @@
-image: gcr.io/android-ci/android-sdk:30
+image: circleci/android:api-30
 
 variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
