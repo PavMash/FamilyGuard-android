@@ -12,7 +12,7 @@ cache:
     - .gradle/
     - app/build/
 unit_tests:
-  image: openjdk:17-jdk
+  image: eclipse-temurin:17-jdk
   stage: test
   script:
     - ./gradlew clean testDebugUnitTest --stacktrace
