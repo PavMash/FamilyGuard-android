@@ -1,4 +1,5 @@
 [versions]
+espressoIntents = "3.6.1"
 mockito = "4.11.0"
 mockito_kotlin = "4.0.0"
 firebaseBom = "33.15.0"
@@ -17,8 +18,13 @@ activity = "1.8.0"
 constraintlayout = "2.2.1"
 firebaseMessagingKtx = "24.1.1"
 junitJupiter = "5.8.1"
+rules = "1.6.1"
+runner = "1.6.2"
 
 [libraries]
+androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoIntents" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
+androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito_kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito_kotlin" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
