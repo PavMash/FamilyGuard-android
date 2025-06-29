@@ -13,7 +13,7 @@ cache:
     - app/build/
 
 unit_tests:
-  image: openjdk:11-jdk
+  image: openjdk:17-jdk
   stage: test
   script:
     - ./gradlew clean testDebugUnitTest --stacktrace
