@@ -1,19 +1,10 @@
-image: budtmo/docker-android:api-30
+stages:
+  - test
 
 variables:
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  ANDROID_COMPILE_SDK: "33"
+  ANDROID_BUILD_TOOLS: "33.0.2"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-  ANDROID_HOME: /opt/android-sdk
-  ANDROID_SDK_ROOT: /opt/android-sdk
-  PATH: "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
-
-before_script:
-  - export GRADLE_USER_HOME=$(pwd)/.gradle
-  - chmod +x ./gradlew
-
-stages:
-  - build
-  - test
 
 cache:
   key: "$CI_COMMIT_REF_SLUG"
@@ -21,22 +12,18 @@ cache:
     - .gradle/
     - app/build/
 
-build:
-  stage: build
-  script:
-    - ./gradlew clean assembleDebug --stacktrace --no-daemon
-  artifacts:
-    paths:
-      - app/build/outputs/apk/debug/
-    expire_in: 1 hour
-
 unit_tests:
+  image: openjdk:11-jdk
   stage: test
   script:
-    - ./gradlew testDebugUnitTest --stacktrace --no-daemon
+    - ./gradlew clean testDebugUnitTest --stacktrace
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/
+      - app/build/
   artifacts:
     when: always
     paths:
-      - app/build/reports/tests
-      - app/build/test-results/
-    expire_in: 1 hour
+      - app/build/reports/tests/testDebugUnitTest/
+    expire_in: 1 week
