@@ -1,0 +1,29 @@
+stages:
+  - test
+
+variables:
+  ANDROID_COMPILE_SDK: "33"
+  ANDROID_BUILD_TOOLS: "33.0.2"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/
+    - app/build/
+
+unit_tests:
+  image: openjdk:17-jdk
+  stage: test
+  script:
+    - ./gradlew clean testDebugUnitTest --stacktrace
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/
+      - app/build/
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/tests/testDebugUnitTest/
+    expire_in: 1 week
