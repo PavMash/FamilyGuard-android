@@ -13,7 +13,7 @@ class MyDeviceAdminReceiver : DeviceAdminReceiver() {
         Toast.makeText(context, "Device administrator activated", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onDisableRequested(context: Context, intent: Intent): CharSequence {
+    override fun onDisableRequested(context: Context, intent: Intent): CharSequence? {
         val prefs = context.getSharedPreferences("admin_settings", Context.MODE_PRIVATE)
         val allowDisable = prefs.getBoolean("allow_admin_disable", false)
 
@@ -21,11 +21,9 @@ class MyDeviceAdminReceiver : DeviceAdminReceiver() {
             prefs.edit().putBoolean("allow_admin_disable", false).apply()
             "Disabling device administrator..."
         } else {
-            val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
-            LocalBroadcastManager.getInstance(context).sendBroadcast(
-                blockingIntent)
-            blockingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(blockingIntent)
+            val blockIntent = Intent(context, BlockingActivity::class.java)
+            blockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(blockIntent)
 
             "To disable the administrator, use the password in the application"
         }

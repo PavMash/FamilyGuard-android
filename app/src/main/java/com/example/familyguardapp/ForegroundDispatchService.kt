@@ -85,7 +85,7 @@ class ForegroundDispatchService : Service() {
                 catch (e : Exception) {
                     Log.d("MyLog", "${e.message}")
                 }
-                delay(10000) // 10 seconds delay
+                delay(60000) // 10 seconds delay
             }
         }
         return START_STICKY // app will try to restart service if it is stopped

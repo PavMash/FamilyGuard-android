@@ -25,8 +25,7 @@ class ContentBlockingService : AccessibilityService() {
     private var overlayLayout : View? = null
     private var currentPackage : String? = null
     private val unblockable = listOf("com.example.familyguardapp",
-        "com.google.android.apps.nexuslauncher",
-        "com.android.settings")
+        "com.google.android.apps.nexuslauncher")
     private val blockList = mutableSetOf<String>()
 
     //Variables for app removing from the blocklist after timer has expired

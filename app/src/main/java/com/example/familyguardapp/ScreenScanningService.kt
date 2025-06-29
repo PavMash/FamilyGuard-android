@@ -39,14 +39,13 @@ class ScreenScanningService : AccessibilityService() {
             // checking for openin admin device settings page
             if (packageName == "com.android.settings" &&
                 (className?.contains("DeviceAdmin") == true || className?.contains("Admin") == true)) {
-                val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
-                LocalBroadcastManager.getInstance(this).sendBroadcast(
-                    blockingIntent)
-                blockingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(blockingIntent)
+                val intent = Intent(this, BlockingActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
         }
     }
+
 
     // interruption callback
     override fun onInterrupt() {

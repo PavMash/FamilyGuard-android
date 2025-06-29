@@ -29,6 +29,14 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
+        <activity
+            android:name=".BlockingActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Base.Theme.FamilyGuardApp"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""/>
+
         <receiver
             android:name=".MyDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
