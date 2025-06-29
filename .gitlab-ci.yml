@@ -11,7 +11,6 @@ cache:
   paths:
     - .gradle/
     - app/build/
-
 unit_tests:
   image: openjdk:17-jdk
   stage: test
