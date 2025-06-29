@@ -1,18 +1,15 @@
-image: openjdk:11-jdk
+image: budtmo/docker-android:api-30
 
 variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
-  ANDROID_HOME: "/usr/local/android-sdk"
-  PATH: "$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+  ANDROID_HOME: /opt/android-sdk
+  ANDROID_SDK_ROOT: /opt/android-sdk
+  PATH: "${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${PATH}"
 
 before_script:
-  - apt-get --quiet update --yes
-  - apt-get --quiet install --yes wget tar unzip lib32stdc++6 lib32z1
-  - wget --quiet --output-document=android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip
-  - unzip -q android-sdk.zip -d $ANDROID_HOME/cmdline-tools
-  - mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
-  - echo y | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-30" "build-tools;30.0.3" "platform-tools" "ndk-bundle"
-  - export PATH=$PATH:$ANDROID_HOME/platform-tools
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew
 
 stages:
   - build
@@ -27,7 +24,7 @@ cache:
 build:
   stage: build
   script:
-    - ./gradlew clean assembleDebug --stacktrace
+    - ./gradlew clean assembleDebug --stacktrace --no-daemon
   artifacts:
     paths:
       - app/build/outputs/apk/debug/
@@ -36,7 +33,7 @@ build:
 unit_tests:
   stage: test
   script:
-    - ./gradlew testDebugUnitTest --stacktrace
+    - ./gradlew testDebugUnitTest --stacktrace --no-daemon
   artifacts:
     when: always
     paths:
