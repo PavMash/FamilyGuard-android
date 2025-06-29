@@ -55,8 +55,12 @@ dependencies {
     implementation ("androidx.core:core:1.6.0")
     implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+	testImplementation(libs.junit.jupiter)
+	androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-
+    testImplementation(libs.mockito)
+    testImplementation(libs.mockito.kotlin)
+    androidTestImplementation(libs.androidx.rules)
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.espresso.intents)
 }
