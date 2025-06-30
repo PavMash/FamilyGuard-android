@@ -10,6 +10,7 @@ cache:
   key: "$CI_COMMIT_REF_SLUG"
   paths:
     - .gradle/
+
 unit_tests:
   image: ghcr.io/cirruslabs/android-sdk:35
   stage: test
