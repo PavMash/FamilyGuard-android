@@ -14,3 +14,4 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/src/main/res/server_cert_base64.txt
