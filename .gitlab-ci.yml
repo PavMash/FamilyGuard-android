@@ -17,6 +17,7 @@ unit_tests:
   stage: test
   before_script:
     - chmod +x ./gradlew
+    - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - ./gradlew --version
   script:
     - ./gradlew clean testDebugUnitTest --stacktrace
