@@ -14,6 +14,8 @@ unit_tests:
   image: ghcr.io/cirruslabs/android-sdk:35
   stage: test
   before_script:
+    - mkdir -p app/src/main/res/raw
+    - cp "$SERVER_CERT_BASE64" app/src/main/res/raw/server_cert.pem
     - chmod +x ./gradlew
     - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - cat local.properties
