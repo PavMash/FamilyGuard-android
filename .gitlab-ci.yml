@@ -14,6 +14,9 @@ unit_tests:
   image: ghcr.io/cirruslabs/android-sdk:35
   stage: test
   before_script:
+    - echo "Cert path:"
+    - echo "$SERVER_CERT_BASE64"
+    - ls -l "$SERVER_CERT_BASE64" || echo "Cert file not found"
     - mkdir -p app/src/main/res/raw
     - cp "$SERVER_CERT_BASE64" app/src/main/res/raw/server_cert.pem
     - chmod +x ./gradlew
