@@ -2,8 +2,8 @@ stages:
   - test
 
 variables:
-  ANDROID_HOME: "/opt/android-sdk"
-  ANDROID_SDK_ROOT: "/opt/android-sdk"
+  ANDROID_HOME: "/opt/android-sdk-linux"
+  ANDROID_SDK_ROOT: "/opt/android-sdk-linux"
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 cache:
