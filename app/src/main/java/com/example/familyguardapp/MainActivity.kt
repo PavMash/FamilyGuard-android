@@ -9,7 +9,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
 import android.graphics.Color
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -31,10 +30,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Locale
-import androidx.lifecycle.lifecycleScope
-import com.google.firebase.messaging.FirebaseMessaging
 import androidx.core.net.toUri
-import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
 class MainActivity : AppCompatActivity() {

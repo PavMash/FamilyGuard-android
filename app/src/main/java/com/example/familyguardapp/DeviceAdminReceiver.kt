@@ -4,7 +4,6 @@ import android.app.admin.DeviceAdminReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class MyDeviceAdminReceiver : DeviceAdminReceiver() {
 

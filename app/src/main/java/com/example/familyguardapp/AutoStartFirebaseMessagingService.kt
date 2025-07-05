@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
+var fcm_token : String? = null
+
 class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     private val channelId by lazy { getString(R.string.default_notification_channel_id) } // channel ID
 
@@ -19,6 +21,7 @@ class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     // refreshes the token
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        fcm_token = token
     }
 
     override fun onCreate() {

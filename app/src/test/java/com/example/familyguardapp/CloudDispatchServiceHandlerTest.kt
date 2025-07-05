@@ -2,9 +2,6 @@ package com.example.familyguardapp
 
 import com.example.familyguardapp.test_classes.CloudDispatchServiceHandler
 import kotlinx.coroutines.runBlocking
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import okio.Buffer
 import org.junit.Before
@@ -32,9 +29,9 @@ class CloudDispatchServiceHandlerTest {
 		val childID = "123"
 		val format = "text/plain"
 		val expected = ServiceResponse("accepted", 100, "yes")
-		whenever(cloudDispatchService.sendData(eq(childID), argThat { requestBody ->
+		whenever(cloudDispatchService.sendData(eq(childID), argThat { multipart ->
 			val buffer = Buffer()
-			requestBody.writeTo(buffer)
+			multipart.body.writeTo(buffer)
 			buffer.readUtf8() == capturedText
 		})).thenReturn(Response.success(expected))
 		val result = cloudDispatchServiceHandler.sendDataHandler(childID, capturedText, format)
@@ -48,9 +45,9 @@ class CloudDispatchServiceHandlerTest {
 		val format = "text/plain"
 		val errorMessage = "Child id is empty"
 		val errorResponse : Response<ServiceResponse> = Response.error(401, errorMessage.toResponseBody())
-		whenever(cloudDispatchService.sendData(eq(childID), argThat { requestBody ->
+		whenever(cloudDispatchService.sendData(eq(childID), argThat { multipart ->
 			val buffer = Buffer()
-			requestBody.writeTo(buffer)
+			multipart.body.writeTo(buffer)
 			buffer.readUtf8() == capturedText
 		})).thenReturn(errorResponse)
 		val result = cloudDispatchServiceHandler.sendDataHandler(childID, capturedText, format)
