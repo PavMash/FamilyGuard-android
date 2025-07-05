@@ -2,7 +2,9 @@ package com.example.familyguardapp
 
 import android.accessibilityservice.AccessibilityService
 import android.app.ActivityManager
+import android.app.admin.DevicePolicyManager
 import android.content.BroadcastReceiver
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -15,7 +17,10 @@ import android.view.WindowManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.view.accessibility.AccessibilityNodeInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import android.widget.Button
+import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class ContentBlockingService : AccessibilityService() {
@@ -151,9 +156,68 @@ class ContentBlockingService : AccessibilityService() {
     //Triggers showing overlay when app from the blocklist comes to the foreground
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         currentPackage = event?.packageName.toString()
+        val className = event?.className.toString()
+        Log.d(TAG, "package: $currentPackage, class: $className")
         if (blockList.contains(currentPackage)) {
             showOverlay()
         }
+
+        if( checkDeviceAdminDisableAttempt(event)) {
+            startBlockingActivity()
+        }
+    }
+
+    private fun checkDeviceAdminDisableAttempt(event : AccessibilityEvent?) : Boolean {
+        val packageName = event?.packageName.toString()
+        val className = event?.className.toString()
+        val rightPackageAndClass = packageName == "com.android.settings" &&
+                (className.contains("DeviceAdminAdd") || checkAlertScreen(event))
+
+        if (rightPackageAndClass) {
+            return checkDeviceAdminStatus()
+        }
+        return false
+    }
+
+    private fun checkDeviceAdminStatus() : Boolean {
+        val devicePolicyManager = this.getSystemService(Context.DEVICE_POLICY_SERVICE)
+                as DevicePolicyManager
+        val adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
+        return devicePolicyManager.isAdminActive(adminComponent)
+    }
+
+    private fun checkAlertScreen(event : AccessibilityEvent?) : Boolean {
+        if (event?.className.toString().contains("AlertDialog")) {
+            val rootNode = rootInActiveWindow ?: return false
+            Log.d(TAG, "")
+            return checkText(rootNode)
+        }
+
+        return false
+    }
+
+    private fun checkText(node : AccessibilityNodeInfo) : Boolean {
+        val text = node.text
+        if (text != null && text.contains("FamilyGuard App")) {
+            Log.d(TAG + " text", "Found device text")
+            return true
+        }
+
+        var found = false
+        for (i in 0..<node.childCount) {
+            if (checkText(node.getChild(i))) {
+                found = true
+                break
+            }
+        }
+
+        return found
+    }
+
+    private fun startBlockingActivity() {
+        val intent = Intent(this, BlockingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     override fun onInterrupt() {}
