@@ -4,7 +4,6 @@ import android.app.admin.DeviceAdminReceiver
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class MyDeviceAdminReceiver : DeviceAdminReceiver() {
 
@@ -21,10 +20,6 @@ class MyDeviceAdminReceiver : DeviceAdminReceiver() {
             prefs.edit().putBoolean("allow_admin_disable", false).apply()
             "Disabling device administrator..."
         } else {
-            val blockIntent = Intent(context, BlockingActivity::class.java)
-            blockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(blockIntent)
-
             "To disable the administrator, use the password in the application"
         }
     }
