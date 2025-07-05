@@ -1,7 +1,6 @@
 package com.example.familyguardapp
 
 import android.content.Context
-import android.util.Log
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlinx.coroutines.Dispatchers
@@ -93,13 +92,16 @@ class NetworkService(private val context: Context) {
     suspend fun createChild(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                val response = apiService.createChild(UserInfo(username, password))
+                val generatedFCMToken = "user"
+                    .plus((1..1_000_000).random())
+                    .plus((1..1_000_000).random())
+                    .plus(System.currentTimeMillis())
+                val response = apiService.createChild(NewChildInfo(username, password, "Magomed", generatedFCMToken))
                 if (response.isSuccessful) {
                     val body = response.body()
-                    Log.d("Body", "$body")
                     when (body?.status) {
-                        "created" -> NetworkResult.Success(body.detail)
-                        "failed" -> NetworkResult.Error(body.detail)
+                        "created" -> NetworkResult.Success(body.id)
+                        "failed" -> NetworkResult.Error(body.id)
                         else -> NetworkResult.Error("Unknown response")
                     }
                 } else {

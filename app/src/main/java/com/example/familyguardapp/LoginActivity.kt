@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 
 var childID: String? = null
@@ -24,6 +25,17 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        // gets the device FCM token
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("FCM_TOKEN", "Fetching FCM registration token failed", task.exception)
+                    return@addOnCompleteListener
+                }
+                fcm_token = task.result
+                Log.d("FCM_TOKEN", "Your token: $fcm_token")
+            }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // switches to night theme
 
@@ -86,11 +98,10 @@ class LoginActivity : AppCompatActivity() {
                             is NetworkResult.Success -> {
                                 Toast.makeText(this@LoginActivity, getString(R.string.login_successful),
                                     Toast.LENGTH_SHORT).show()
-                                Log.d("Result", "$result")
                                 when (val resultChild = networkService.createChild(email,password)){
                                     is NetworkResult.Success ->{
                                         childID = resultChild.data
-                                        Log.d("LoginChild", "$childID")
+                                        Log.d("ChildID", "$childID")
                                     }
                                     is NetworkResult.Error -> {
                                         Toast.makeText(this@LoginActivity,
