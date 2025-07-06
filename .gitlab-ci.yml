@@ -61,7 +61,7 @@ integration_tests:
     - echo "$SERVER_CERT_BASE64"
     - ls -l "$SERVER_CERT_BASE64" || echo "Cert file not found"
     - mkdir -p app/src/main/res/raw
-    - echo "$SERVER_CERT_BASE64" | base64 -d > app/src/main/res/raw/server_cert.pem
+    - base64 -d < "$SERVER_CERT_BASE64" > app/src/main/res/raw/server_cert.pem
     - ./gradlew assembleDebug assembleAndroidTest
   script:
     - export PATH="$HOME/google-cloud-sdk/bin:$PATH"
