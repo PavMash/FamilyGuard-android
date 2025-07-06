@@ -58,4 +58,13 @@ class ApiServiceHandlerTest {
 		val result = apiServiceHandler.loginHandler("invalid", "invalid")
 		assertEquals(result, ApiResponse("error", ""))
 	}
+
+	@Test
+	fun emptyFieldsErrorChecker() = runBlocking {
+		val userInfo = UserInfo("", "")
+		val errorResponse : Response<ApiResponse> = Response.error(400, "Bad Request".toResponseBody())
+		whenever(apiService.login(userInfo)).thenReturn(errorResponse)
+		val result = apiServiceHandler.loginHandler("", "")
+		assertEquals(result, ApiResponse("error", ""))
+	}
 }

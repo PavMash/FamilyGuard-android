@@ -50,7 +50,5 @@ class BlockingActivity : AppCompatActivity() {
                 ).show()
             }
         })
-
-
     }
 }

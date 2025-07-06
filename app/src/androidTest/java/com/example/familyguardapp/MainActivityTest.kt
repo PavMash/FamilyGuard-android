@@ -19,6 +19,7 @@ class MainActivityTest {
 		onView(withId(R.id.backButtonMain)).perform(click())
 
 		Thread.sleep(3000)
+
 		onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
 	}
 }

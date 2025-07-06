@@ -13,7 +13,7 @@ import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
-class NetworkService(private val context: Context) {
+class NetworkService(private val context: Context) : NetworkServiceInterface {
     fun createOkHttpClient(): OkHttpClient {
 
         val certInputStream: InputStream = context.resources.openRawResource(R.raw.server_cert)
@@ -49,7 +49,7 @@ class NetworkService(private val context: Context) {
 
     private val apiService = retrofit.create(ApiService::class.java)
 
-    suspend fun login(username: String, password: String): NetworkResult<String> {
+    override suspend fun login(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.login(UserInfo(username, password))
@@ -69,7 +69,7 @@ class NetworkService(private val context: Context) {
         }
     }
 
-    suspend fun signup(username: String, password: String): NetworkResult<String> {
+    override suspend fun signup(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
                 val response = apiService.signup(UserInfo(username, password))
@@ -89,7 +89,7 @@ class NetworkService(private val context: Context) {
         }
     }
 
-    suspend fun createChild(username: String, password: String): NetworkResult<String> {
+    override suspend fun createChild(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
                 val generatedFCMToken = "user"
