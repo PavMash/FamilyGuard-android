@@ -22,13 +22,12 @@ Issue type: `Task`
 
 ---
 
-### Task Checklist
+### Merge Request Checklist
+- [ ] Code is properly documented
+- [ ] Tests are added/updated
+- [ ] Issue link is included (e.g. Closes #123)
+- [ ] Code passes CI/CD pipeline
 
-- [ ] The related issue is correctly linked using `Closes #`
-- [ ] All subtasks (if defined in the issue) are marked complete
-- [ ] Code follows formatting and style guidelines
-- [ ] Unit/Integration tests (if required) are added
-- [ ] MR reviewed by at least one peer
 
 ---
 
