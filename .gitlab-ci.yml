@@ -49,17 +49,19 @@ unit_tests:
 integration_tests:
   image: budtmo/docker-android:latest
   stage: integration_tests
+  variables:
+    DEVICE: "Samsung Galaxy S6"
+    EMULATOR: "true"
+    AUTOSTART: "true"
+    WEB_VNC: "false"
   before_script:
-    - export PATH=$PATH:$ANDROID_HOME/emulator
-    - export PATH=$PATH:$ANDROID_HOME/tools
-    - export PATH=$PATH:$ANDROID_HOME/tools/bin
     - export PATH=$PATH:$ANDROID_HOME/platform-tools
     - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - ./gradlew clean assembleDebug
-    - sdkmanager "system-images;android-30;google_apis;x86_64"
-    - echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
-    - emulator -avd test -no-snapshot -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
+    - adb devices
     - adb wait-for-device
+    - timeout 300s adb wait-for-device || { echo "Emulator not found"; exit 1; }
+    - adb root || true
     - |
       until adb shell getprop sys.boot_completed | grep -m 1 '1'; do
         echo "Waiting for emulator to finish booting..."
