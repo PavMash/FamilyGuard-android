@@ -47,36 +47,24 @@ unit_tests:
     expire_in: 1 week
 
 integration_tests:
-  image: budtmo/docker-android:latest
+  image: google/cloud-sdk:latest
   stage: integration_tests
   variables:
-    DEVICE: "Samsung Galaxy S6"
-    EMULATOR: "true"
-    AUTOSTART: "true"
-    WEB_VNC: "false"
+    ANDROID_HOME: "/sdk"
+    ANDROID_SDK_ROOT: "/sdk"
+    PATH: "$PATH:$ANDROID_HOME/platform-tools"
   before_script:
-    - export PATH=$PATH:$ANDROID_HOME/platform-tools
-    - echo "sdk.dir=$ANDROID_HOME" > local.properties
-    - ./gradlew clean assembleDebug
-    - adb devices
-    - adb wait-for-device
-    - timeout 300s adb wait-for-device || { echo "Emulator not found"; exit 1; }
-    - adb root || true
-    - |
-      until adb shell getprop sys.boot_completed | grep -m 1 '1'; do
-        echo "Waiting for emulator to finish booting..."
-        sleep 5
-      done
-    - adb shell input keyevent 82 &
+    - echo "$GOOGLE_SERVICE_ACCOUNT_JSON" > gcp-key.json
+    - gcloud auth activate-service-account --key-file=gcp-key.json
+    - gcloud config set project familyguard-9a355
+    - ./gradlew clean assembleDebug assembleDebugAndroidTest
   script:
-    - ./gradlew connectedDebugAndroidTest --stacktrace
-  cache:
-    key: "$CI_COMMIT_REF_SLUG"
-    paths:
-      - .gradle/
-      - app/build/
+    - gcloud firebase test android run \
+      --type instrumentation \
+      --app app/build/outputs/apk/debug/app-debug.apk \
+      --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+      --device model=Pixel2,version=31,locale=en,orientation=portrait \
+      --timeout 5m
   artifacts:
     when: always
-    paths:
-      - app/build/reports/androidTests/connected/
     expire_in: 1 week
