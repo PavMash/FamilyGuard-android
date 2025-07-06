@@ -1,9 +1,27 @@
 # FamilyGuard
 
-
-
 ##ATTENTION
 Here you cannot find the certificate, without which this app will not work
+
+## Usage
+
+**How to install**:
+- Download Android Studio
+- Copy this project to your local machine
+- Open the copy in Android Studio
+- Build an apk file
+- Share the apk file with your phone
+- Install the app on your phone
+- Run the app and use
+
+**How to use**:
+- Run the app on your child's phone
+- Create an account
+- Log in
+- Enable needed permissions for blocking, overlaying, scanning
+- Enable Device Admin with password to protect the app from uninstalling
+- Enable notifications, if you want to notify your child about monitoring his phone
+- Close the app and be calm, your child is now protected from harmful content
 
 # 🧩 Issues & Templates
 
