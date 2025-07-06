@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="Tests in 'com.example.familyguardapp'">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-06T16:23:42.453609Z">
+        <DropdownSelection timestamp="2025-07-06T16:58:27.463212700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\user\.android\avd\Medium_Phone_API_35.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\user\.android\avd\Nexus_7_2012_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
