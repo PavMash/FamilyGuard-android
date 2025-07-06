@@ -1,5 +1,7 @@
 stages:
-  - test
+  - lint
+  - unit_tests
+  - integration_tests
 
 variables:
   ANDROID_HOME: "/opt/android-sdk-linux"
@@ -12,14 +14,14 @@ cache:
     - .gradle/
 
 lint:
-  stage: test
+  stage: lint
   image: ghcr.io/cirruslabs/android-sdk:35
   script:
     - ./gradlew ktlintCheck
 
 unit_tests:
   image: ghcr.io/cirruslabs/android-sdk:35
-  stage: test
+  stage: unit_tests
   before_script:
     - echo "Cert path:"
     - echo "$SERVER_CERT_BASE64"
@@ -42,4 +44,32 @@ unit_tests:
     when: always
     paths:
       - app/build/reports/tests/testDebugUnitTest/
+    expire_in: 1 week
+
+integration_tests:
+  image: reactivecircus/android-emulator-30
+  stage: integration_tests
+  before_script:
+    - echo "sdk.dir=$ANDROID_HOME" > local.properties
+    - ./gradlew --version
+    - emulator -avd test -no-window -no-audio -no-boot-anim -gpu off &
+    - adb wait-for-device
+    - |
+      until adb shell getprop sys.boot_completed | grep -m 1 '1'; do
+        echo "Waiting for emulator to finish booting..."
+        sleep 5
+      done
+    - adb shell input keyevent 82 &
+    - ./gradlew clean assembleDebug
+  script:
+    - ./gradlew connectedDebugAndroidTest --stacktrace
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    paths:
+      - .gradle/
+      - app/build/
+  artifacts:
+    when: always
+    paths:
+      - app/build/reports/androidTests/connected/
     expire_in: 1 week
