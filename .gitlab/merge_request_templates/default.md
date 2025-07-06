@@ -1,35 +1,37 @@
-### Related Issue
+### Task Overview
 
-> REQUIRED: Please link the issue this merge request resolves.
+> REQUIRED: Link the task issue this MR addresses.
 
-Closes #
+Closes #<issue_number>  
+Issue type: `Task`
 
 ---
 
-### Summary of Changes
+### What This MR Does
 
-- [ ] Describe what this MR introduces or fixes
-- [ ] Mention affected modules/files/components
+- [ ] Briefly describe the specific implementation or fix.
+- [ ] List the sub-tasks completed (if applicable).
+- [ ] Mention any backend/API/database/front-end changes.
 
 ---
 
 ### How to Test
 
-- [ ] Steps to reproduce and test the new behavior
-- [ ] Mention any required test data or permissions
+- [ ] Describe how to manually verify the feature or task.
+- [ ] Include test commands, expected outcomes, or endpoints.
 
 ---
 
-### Checklist
+### Task Checklist
 
-- [ ] I have linked the relevant issue
-- [ ] I have added tests (if applicable)
-- [ ] I have updated documentation (if applicable)
-- [ ] I have verified the code works locally
-- [ ] I have reviewed my code for formatting and best practices
+- [ ] The related issue is correctly linked using `Closes #`
+- [ ] All subtasks (if defined in the issue) are marked complete
+- [ ] Code follows formatting and style guidelines
+- [ ] Unit/Integration tests (if required) are added
+- [ ] MR reviewed by at least one peer
 
 ---
 
-### Additional Notes (Optional)
+### Additional Context
 
-<!-- Add anything else reviewers or team members should know -->
+<!-- Optional: Add architecture notes, decisions, performance concerns, or database m
