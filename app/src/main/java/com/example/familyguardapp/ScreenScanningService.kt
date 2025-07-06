@@ -31,7 +31,6 @@ class ScreenScanningService : AccessibilityService() {
     // just necessary callback, not needed
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
 
-
     // interruption callback
     override fun onInterrupt() {
         Log.d("ScreenScanner", "Accessibility service interrupted")
@@ -61,12 +60,12 @@ class ScreenScanningService : AccessibilityService() {
     }
 
     // collects text from root view and all children views
-    private fun collectText(node : AccessibilityNodeInfo, allTexts : MutableList<String>) {
+    private fun collectText(node: AccessibilityNodeInfo, allTexts: MutableList<String>) {
         node.text?.toString()?.let {
             if (it.isNotBlank()) allTexts.add(it)
         }
 
-        for (i in 0..<node.childCount) {
+        for (i in 0 until node.childCount) {
             node.getChild(i)?.let {
                 collectText(it, allTexts)
             }

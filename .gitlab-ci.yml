@@ -11,6 +11,12 @@ cache:
   paths:
     - .gradle/
 
+lint:
+  stage: test
+  image: ghcr.io/cirruslabs/android-sdk:35
+  script:
+    - ./gradlew ktlintCheck
+
 unit_tests:
   image: ghcr.io/cirruslabs/android-sdk:35
   stage: test

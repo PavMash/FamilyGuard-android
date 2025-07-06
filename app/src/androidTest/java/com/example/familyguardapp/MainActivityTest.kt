@@ -12,14 +12,14 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
-	@Test
-	fun checkBackButton() {
-		ActivityScenario.launch(MainActivity::class.java)
+    @Test
+    fun checkBackButton() {
+        ActivityScenario.launch(MainActivity::class.java)
 
-		onView(withId(R.id.backButtonMain)).perform(click())
+        onView(withId(R.id.backButtonMain)).perform(click())
 
-		Thread.sleep(3000)
+        Thread.sleep(3000)
 
-		onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
-	}
+        onView(withId(R.id.tvTitle)).check(matches(isDisplayed()))
+    }
 }

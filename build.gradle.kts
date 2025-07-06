@@ -4,4 +4,5 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
 
     id("com.google.gms.google-services") version "4.4.2" apply false
+    id("org.jlleitschuh.gradle.ktlint") version "11.6.1" apply false
 }

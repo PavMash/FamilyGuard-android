@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 
     id("com.google.gms.google-services")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -52,11 +53,11 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("com.google.code.gson:gson:2.8.6")
-    implementation ("androidx.core:core:1.6.0")
+    implementation("androidx.core:core:1.6.0")
     implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
-	testImplementation(libs.junit.jupiter)
-	androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.junit.jupiter)
+    androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)

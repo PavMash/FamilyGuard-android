@@ -11,14 +11,14 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class BlockingActivityTest {
-	@Test
-	fun checkExitButton() {
-		val scenario = ActivityScenario.launch(BlockingActivity::class.java)
+    @Test
+    fun checkExitButton() {
+        val scenario = ActivityScenario.launch(BlockingActivity::class.java)
 
-		onView(withId(R.id.close_button)).perform(click())
+        onView(withId(R.id.close_button)).perform(click())
 
-		Thread.sleep(3000)
+        Thread.sleep(3000)
 
         scenario.state.isAtLeast(Lifecycle.State.DESTROYED)
-	}
+    }
 }

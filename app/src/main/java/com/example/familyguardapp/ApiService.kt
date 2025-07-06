@@ -4,29 +4,29 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 // request body for /signup and /login
-data class UserInfo (
-    val username : String,
-    val password : String
+data class UserInfo(
+    val username: String,
+    val password: String
 )
 
 // response body for /signup and /login
 data class ApiResponse(
-    val status : String,
-    val detail : String
+    val status: String,
+    val detail: String
 )
 
 // request body for /createChild
 data class NewChildInfo(
-    val username : String,
-    val password : String,
-    val child_name : String,
-    val fcm_token : String    // device FCM token from Firebase
+    val username: String,
+    val password: String,
+    val child_name: String,
+    val fcm_token: String // device FCM token from Firebase
 )
 
 // response body for /create-child
 data class ChildResponse(
-    val status : String,
-    val id : String    // child ID
+    val status: String,
+    val id: String // child ID
 )
 
 // interface for login, signup, and createChild

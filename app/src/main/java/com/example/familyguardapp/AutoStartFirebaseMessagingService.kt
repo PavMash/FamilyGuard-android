@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
-var fcm_token : String? = null
+var fcm_token: String? = null
 
 class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     private val channelId by lazy { getString(R.string.default_notification_channel_id) } // channel ID
@@ -59,8 +59,11 @@ class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     private fun createNotificationChannel() {
         // checks Android Version(Android O or higher versions require notification channel)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "MyNotificationChannel",
-                NotificationManager.IMPORTANCE_NONE) // IMPORTANCE_NONE is needed to hide the notification
+            val channel = NotificationChannel(
+                channelId,
+                "MyNotificationChannel",
+                NotificationManager.IMPORTANCE_NONE
+            ) // IMPORTANCE_NONE is needed to hide the notification
             channel.enableVibration(false) // no vibration when the notification comes
             channel.setSound(null, null) // no sound as well
             val manager = getSystemService(NotificationManager::class.java)
@@ -69,7 +72,7 @@ class AutoStartFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     // creates notification
-    private fun createNotification() : Notification {
+    private fun createNotification(): Notification {
         return NotificationCompat
             .Builder(this, channelId)
             .setContentTitle(getString(R.string.firebase_notification_title)) // title

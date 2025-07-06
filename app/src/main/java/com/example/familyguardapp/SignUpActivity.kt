@@ -45,42 +45,48 @@ class SignUpActivity : AppCompatActivity() {
                 signUpButton.isEnabled = false
                 lifecycleScope.launch {
                     try {
-                        when (val response = networkService.signup(email, password)){
+                        when (val response = networkService.signup(email, password)) {
                             is NetworkResult.Success -> {
-                                Toast.makeText(this@SignUpActivity, getString(R.string.signup_successful),
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@SignUpActivity,
+                                    getString(R.string.signup_successful),
+                                    Toast.LENGTH_SHORT
+                                ).show()
 
-                                val intent = Intent(this@SignUpActivity, LoginActivity
-                                ::class.java)
+                                val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                                 startActivity(intent)
                                 finish()
                             }
                             is NetworkResult.Error -> {
-                                Toast.makeText(this@SignUpActivity, response.message,
-                                    Toast.LENGTH_LONG).show()
+                                Toast.makeText(
+                                    this@SignUpActivity,
+                                    response.message,
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     } catch (e: Exception) {
                         val errorText = getString(R.string.unexpected_error)
-                        Toast.makeText(this@SignUpActivity,"$errorText: " +
-                                "${e.message}", Toast.LENGTH_LONG).show()
-                    }
-                    finally {
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            "$errorText: " +
+                                "${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } finally {
                         signUpButton.isEnabled = true
                     }
                 }
             }
-
         }
     }
 
     private fun correctCredentials(email: String, password: String): String? {
-    return when {
-        email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
-        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
-        password.length < 6 -> getString(R.string.invalid_password)
+        return when {
+            email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
+            password.length < 6 -> getString(R.string.invalid_password)
             else -> null
+        }
     }
-    }
-
 }

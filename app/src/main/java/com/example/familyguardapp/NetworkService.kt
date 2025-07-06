@@ -1,11 +1,11 @@
 package com.example.familyguardapp
 
 import android.content.Context
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.CertificateFactory
@@ -15,25 +15,20 @@ import javax.net.ssl.X509TrustManager
 
 class NetworkService(private val context: Context) : NetworkServiceInterface {
     fun createOkHttpClient(): OkHttpClient {
-
         val certInputStream: InputStream = context.resources.openRawResource(R.raw.server_cert)
         val certificateFactory = CertificateFactory.getInstance("X.509")
         val certificate = certificateFactory.generateCertificate(certInputStream)
         certInputStream.close()
 
-
         val keyStore = KeyStore.getInstance(KeyStore.getDefaultType())
         keyStore.load(null, null)
         keyStore.setCertificateEntry("ca", certificate)
 
-
         val trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
         trustManagerFactory.init(keyStore)
 
-
         val sslContext = SSLContext.getInstance("TLS")
         sslContext.init(null, trustManagerFactory.trustManagers, null)
-
 
         return OkHttpClient.Builder()
             .sslSocketFactory(sslContext.socketFactory, trustManagerFactory.trustManagers[0] as X509TrustManager)

@@ -15,67 +15,67 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LoginActivityTest {
-	@Test
-	fun checkValidLogin() {
-		ActivityScenario.launch(SignUpActivity::class.java)
+    @Test
+    fun checkValidLogin() {
+        ActivityScenario.launch(SignUpActivity::class.java)
 
-		val randomEmail = "user"
-			.plus((1..1_000_000).random())
-			.plus((1..1_000_000).random())
-			.plus(System.currentTimeMillis())
-			.plus("@gmail.com")
+        val randomEmail = "user"
+            .plus((1..1_000_000).random())
+            .plus((1..1_000_000).random())
+            .plus(System.currentTimeMillis())
+            .plus("@gmail.com")
 
-		onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
-		onView(withId(R.id.edSignPassword)).perform(typeText("123456"), closeSoftKeyboard())
+        onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
-		onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-		Thread.sleep(3000)
+        Thread.sleep(3000)
 
-		onView(withId(R.id.edEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
-		onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
+        onView(withId(R.id.edEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
+        onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
-		onView(withId(R.id.btnLogIn)).perform(click())
+        onView(withId(R.id.btnLogIn)).perform(click())
 
-		Thread.sleep(10000)
-		onView(withId(R.id.permission_instruction)).check(matches(isDisplayed()))
-	}
+        Thread.sleep(10000)
+        onView(withId(R.id.permission_instruction)).check(matches(isDisplayed()))
+    }
 
-	@Test
-	fun checkInvalidLogin() {
-		ActivityScenario.launch(SignUpActivity::class.java)
+    @Test
+    fun checkInvalidLogin() {
+        ActivityScenario.launch(SignUpActivity::class.java)
 
-		onView(withId(R.id.edSignEmail)).perform(typeText("user@gmail.com"), closeSoftKeyboard())
-		onView(withId(R.id.edSignPassword)).perform(typeText("qwerty"), closeSoftKeyboard())
+        onView(withId(R.id.edSignEmail)).perform(typeText("user@gmail.com"), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("qwerty"), closeSoftKeyboard())
 
-		onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-		ActivityScenario.launch(LoginActivity::class.java)
+        ActivityScenario.launch(LoginActivity::class.java)
 
-		onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
-		onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
 
-		onView(withId(R.id.btnLogIn)).perform(click())
+        onView(withId(R.id.btnLogIn)).perform(click())
 
-		onView(withId(R.id.permission_instruction)).check(doesNotExist())
-	}
+        onView(withId(R.id.permission_instruction)).check(doesNotExist())
+    }
 
-	@Test
-	fun checkEmptyCredentialsLogin() {
-		ActivityScenario.launch(SignUpActivity::class.java)
+    @Test
+    fun checkEmptyCredentialsLogin() {
+        ActivityScenario.launch(SignUpActivity::class.java)
 
-		onView(withId(R.id.edSignEmail)).perform(typeText(""), closeSoftKeyboard())
-		onView(withId(R.id.edSignPassword)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edSignEmail)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText(""), closeSoftKeyboard())
 
-		onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-		ActivityScenario.launch(LoginActivity::class.java)
+        ActivityScenario.launch(LoginActivity::class.java)
 
-		onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
-		onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
 
-		onView(withId(R.id.btnLogIn)).perform(click())
+        onView(withId(R.id.btnLogIn)).perform(click())
 
-		onView(withId(R.id.permission_instruction)).check(doesNotExist())
-	}
+        onView(withId(R.id.permission_instruction)).check(doesNotExist())
+    }
 }
