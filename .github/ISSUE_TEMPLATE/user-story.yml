@@ -2,7 +2,6 @@ name: "User Story"
 description: "File a user story for a new feature or improvement."
 title: "[User Story]: "
 labels: ["User Story", "Meta: Unknown Priority"]
-projects: ["FamilyGuard/2025/month/day"]
 type: "issue"
 body:
   - type: textarea
