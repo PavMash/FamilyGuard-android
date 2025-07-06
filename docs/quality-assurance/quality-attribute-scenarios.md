@@ -1,6 +1,14 @@
 # Quality Attribute Scenarios
 
+This document outlines the selected quality attributes for the FamilyGuard system, along with scenarios and test plans as specified in ISO 25010.
+
+---
+
 ## Availability
+
+### Why it's important
+
+Availability is crucial for ensuring that user data is not lost when the device is offline. This ensures resilience and trustworthiness in unpredictable network conditions, especially for child devices that may lack stable connections.
 
 ### 📶 Internet Loss Scenario
 
@@ -17,16 +25,20 @@
 
 - **Type**: Integration & Unit Test
 - **Tools**: Python (Pytest), Kotlin (JUnit)
-- **Test Steps**:
-  1. Disable network on client application.
-  2. Attempt to send text via the application.
-  3. Re-enable network after 1h.
-  4. Verify that the text is uploaded to the server.
-- **Expected Result**: Message is successfully saved and synced when connection is restored.
+- **Steps**:
+  1. Simulate internet loss on the child app.
+  2. Attempt to log or send activity.
+  3. Wait 1 hour and restore network.
+  4. Check server if data was synced.
+- **Expected Result**: Data is persisted locally and successfully synced after network is restored.
 
 ---
 
 ## Performance Efficiency: Resource Utilization
+
+### Why it's important
+
+Efficient use of disk and memory resources ensures the app performs well over time, even on low-end devices. This is particularly important when logs accumulate quickly on child phones.
 
 ### 🗃️ Storage Overflow Scenario
 
@@ -42,18 +54,22 @@
 #### 🔬 Test Plan
 
 - **Type**: Unit Test
-- **Tools**: Python (Pytest with SQLite mocks)
-- **Test Steps**:
-  1. Simulate log entries until disk space exceeds a threshold.
-  2. Trigger log-writing logic.
-  3. Check if oldest logs are deleted.
-- **Expected Result**: Only logs from the past year remain, disk usage stays under the limit.
+- **Tools**: Python (Pytest + SQL mocking)
+- **Steps**:
+  1. Fill database with synthetic data simulating 13+ months of logs.
+  2. Add one more log.
+  3. Verify oldest entry is deleted.
+- **Expected Result**: Only the most recent 12 months of logs are kept.
 
 ---
 
 ## Security: Authenticity
 
-### 🔐 Brute Force Attack Scenario
+### Why it's important
+
+Unauthorized access or brute force attacks on the child-parent platform could expose sensitive data or allow misuse. Strong authentication mechanisms must exist to prevent abuse.
+
+### 🔐 Brute Force Login Scenario
 
 | Element             | Description                                                                 |
 |---------------------|-----------------------------------------------------------------------------|
@@ -66,13 +82,13 @@
 
 #### 🔬 Test Plan
 
-- **Type**: Integration & Manual Test
-- **Tools**: Python (requests), Kotlin (mock login UI)
-- **Test Steps**:
-  1. Simulate 5 incorrect login attempts in a row.
-  2. Attempt login with correct credentials within the block window.
-- **Expected Result**: Login is denied and user is blocked for 1 hour.
+- **Type**: Integration Test
+- **Tools**: Python (requests), Kotlin
+- **Steps**:
+  1. Attempt 5 incorrect logins using test credentials.
+  2. Attempt a correct login immediately after.
+  3. Wait an hour and try again.
+- **Expected Result**: Account is blocked after 5 invalid attempts and automatically unblocked after 1 hour.
 
 ---
 
-Let me know if you'd like this in a downloadable `.md` file as well.
