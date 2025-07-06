@@ -47,20 +47,17 @@ unit_tests:
     expire_in: 1 week
 
 integration_tests:
-  image: reactivecircus/android-emulator-30
+  image: budtmo/docker-android:latest
   stage: integration_tests
   before_script:
     - export PATH=$PATH:$ANDROID_HOME/emulator
     - export PATH=$PATH:$ANDROID_HOME/tools
     - export PATH=$PATH:$ANDROID_HOME/tools/bin
     - export PATH=$PATH:$ANDROID_HOME/platform-tools
-    - echo "Checking emulator binary..."
-    - which emulator || (echo "Emulator not found!" && exit 1)
-    - emulator -version || echo "Emulator exists, but failed to print version"
-    - echo "Available AVDs:"
-    - avdmanager list avd || echo "No AVDs found"
     - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - ./gradlew clean assembleDebug
+    - sdkmanager "system-images;android-30;google_apis;x86_64"
+    - echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --force
     - emulator -avd test -no-snapshot -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect &
     - adb wait-for-device
     - |
