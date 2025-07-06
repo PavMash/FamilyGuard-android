@@ -19,6 +19,8 @@
     - Website parent panel is opened immediately, no need to log in
 
 ## Website theme changing test
+The test is based on the first acceptance test from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/issues/94)
+
 - **GIVEN:**
     - Website is opened
     - User is signed up
@@ -44,27 +46,29 @@
     - App's main screen appears with buttons for giving necessary permissions and disabling Device admin mode
     - App is ready for receiving further permissions
 
-##Android app deletion test
+## Android app deletion test
+The test is based on the first acceptance test from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/issues/33).
+
 1. Test on deletion with Device admin mode enabled:
 - **GIVEN:**
     - App is installed
     - Device admin mode is enabled
     - Device admin password is set
     - User gave permission for blocking service
-- **WHEN:**/n
-    *1st option:*
+- **WHEN:**
+    - *1st option:*
     - User tries to uninstall the app dragging it to the top of the screen
     - User clicks "Ok" in the pop-up uninstall window
     - User opens notification and clicks "Manage device admin apps"
     - User clicks on FamilyGuard icon
-	*2nd option:*
+	- *2nd option:*
     - User opens app info and clicks "uninstall"
-    *3rd option:*
+    - *3rd option:*
     - User opens settings and opens "Device admin" menu
     - User opens list of apps with Device admin mode enabled
     - User clicks on FamilyGuard icon
 - **THEN:**
-	*holds for each option:* 
+	- *holds for each option:* 
     - Device admin mode managing menu is opened
     - Blocking screen appears immediately, preventing user from disabling Device admin mode
 
@@ -91,6 +95,8 @@
     - One child with default name (Magomed) appears on the website dashboard
 
 ## Malicious content blocking
+The tests are based on the acceptance tests from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/issues/92)
+
 - **GIVEN:**
     - User is logged in the website
     - User is logged in the Android app
