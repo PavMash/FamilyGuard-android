@@ -1,0 +1,33 @@
+name: "Technical Task"
+description: "Describe a backend or technical infrastructure task."
+title: "[Tech Task]: "
+labels: ["Technical", "Meta: Engineering"]
+type: "issue"
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: "Task Description"
+      description: Explain the technical task, its purpose, and scope.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Subtasks Checklist"
+      description: Add subtasks to break down the technical work.
+      options:
+        - label: Set up environment
+        - label: Implement logic
+        - label: Write tests
+        - label: Update documentation
+        - label: Peer review
+
+  - type: textarea
+    id: related
+    attributes:
+      label: "Related Issues"
+      description: Link to any related issues or epics.
+    validations:
+      required: false
