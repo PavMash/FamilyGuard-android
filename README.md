@@ -91,6 +91,77 @@ Milestones reflect major phases or goals in the project. They are not equivalent
 
 **Secrets Management**: Secret information is stored in "env" files or in CI/CD variables. Files with secret information are added to .gitignore
 
+## Quality assurance
+
+We follow the ISO/IEC 25010 standard for software quality characteristics and documented scenarios based on team and customer discussions.
+
+### Quality attribute scenarios
+
+Detailed descriptions are available in [docs/quality-assurance/quality-attribute-scenarios.md](docs/quality-assurance/quality-attribute-scenarios.md).
+
+### Chosen quality sub-characteristics
+
+#### Availability
+
+Why it matters: Users may experience a loss of internet connection. Ensuring offline support improves reliability and user trust.
+
+Scenario:
+- Source: Application
+- Stimulus: User has no internet
+- Artifact: Text sending service
+- Environment: Production environment without Internet connection
+- Response: The system saves captured data locally and sends it to the server when internet is available
+- Response Measure: Data is stored locally for up to 5 hours without loss
+
+#### Performance Efficiency: Resource Utilization
+
+Why it matters: Server resources such as disk space must be used efficiently to ensure scalability and performance.
+
+Scenario:
+- Source: Server application
+- Stimulus: Too much user data stored
+- Artifact: Server database
+- Environment: Production
+- Response: Delete oldest data to store new data
+- Response Measure: Logs are stored for one year
+
+#### Security: Authenticity
+
+Why it matters: User accounts must be protected from brute-force attacks to prevent unauthorized access.
+
+Scenario:
+- Source: Server application
+- Stimulus: Username and password may be brute-forced
+- Artifact: Server database
+- Environment: Production
+- Response: Block the user for an hour
+- Response Measure: After 5 failed (sequential) login attempts, user is banned
+
+### How exactly we plan to test:
+
+- Unit tests and integration tests using Python (FastAPI backend)
+- Instrumentation and logic tests using Kotlin (Android app)
+- Manual testing for edge cases and offline scenarios
+- SQL queries tested via seed/test data for DB reliability
+
+### Automated tests
+
+- Tools used:
+    - Python: pytest, unittest
+    - Kotlin: Android JUnit, Espresso
+    - SQL: manual seed/test scripts
+
+- Types of tests implemented:
+    - Unit tests
+    - Integration tests
+    - Offline/connection fallback behavior
+
+- Where to find tests in repository:
+    - backend/tests/ – Python backend unit & integration tests
+    - app/src/test/ – Kotlin unit tests
+    - app/src/androidTest/ – Kotlin UI and instrumentation tests
+    - init.sql and test seeds – For DB test verification
+
 # Build and Deployment
 
 ### Continuous Integration(CI)
