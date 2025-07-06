@@ -10,6 +10,7 @@ class NetworkServiceHandler(private val networkServiceInterface: NetworkServiceI
             is NetworkResult.Success -> {
                 return "Success"
             }
+
             is NetworkResult.Error -> {
                 return "Error"
             }
