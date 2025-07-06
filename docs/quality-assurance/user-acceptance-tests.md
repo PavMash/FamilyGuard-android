@@ -1,4 +1,6 @@
 ## Website authorization and cookies test
+The tests are based on acceptance criterias from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/work_items/81)
+
 1. Authorization test:
 - **GIVEN:**
     - Website is opened
@@ -32,6 +34,8 @@ The test is based on the first acceptance test from [here](https://gitlab.pg.inn
     - The website is changing its theme from dark to light
 
 ## Android app authentication and setting test
+The test is based on acceptance criteria from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/work_items/80)
+
 - **GIVEN:**
     - App is installed
 - **WHEN:**
@@ -86,6 +90,8 @@ The test is based on the first acceptance test from [here](https://gitlab.pg.inn
     - The app is uninstalled
 
 ## Automatical child adding, when logging in  the app
+The test is based on acceptance criteria from [here](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/work_items/57)
+
 - **GIVEN:**
     - User is signed up in the website
 - **WHEN:**
