@@ -47,24 +47,24 @@ unit_tests:
     expire_in: 1 week
 
 integration_tests:
-  image: google/cloud-sdk:latest
+  image: ghcr.io/cirruslabs/android-sdk:35
   stage: integration_tests
-  variables:
-    ANDROID_HOME: "/sdk"
-    ANDROID_SDK_ROOT: "/sdk"
-    PATH: "$PATH:$ANDROID_HOME/platform-tools"
   before_script:
+    - apt-get update && apt-get install -y curl python3 python3-pip unzip
+    - curl https://sdk.cloud.google.com | bash
+    - export PATH="$HOME/google-cloud-sdk/bin:$PATH"
     - echo "$GOOGLE_SERVICE_ACCOUNT_JSON" > gcp-key.json
+    - gcloud --quiet components update
     - gcloud auth activate-service-account --key-file=gcp-key.json
     - gcloud config set project familyguard-9a355
-    - ./gradlew clean assembleDebug assembleDebugAndroidTest
+    - ./gradlew assembleDebug assembleAndroidTest
   script:
+    - export PATH="$HOME/google-cloud-sdk/bin:$PATH"
     - gcloud firebase test android run \
       --type instrumentation \
       --app app/build/outputs/apk/debug/app-debug.apk \
       --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
-      --device model=Pixel2,version=31,locale=en,orientation=portrait \
-      --timeout 5m
+      --device model=Pixel2,version=30,locale=en,orientation=portrait
   artifacts:
     when: always
     expire_in: 1 week
