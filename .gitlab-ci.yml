@@ -27,7 +27,7 @@ unit_tests:
     - echo "$SERVER_CERT_BASE64"
     - ls -l "$SERVER_CERT_BASE64" || echo "Cert file not found"
     - mkdir -p app/src/main/res/raw
-    - echo "$SERVER_CERT_BASE64" | base64 -d > app/src/main/res/raw/server_cert.pem
+    - cp "$SERVER_CERT_BASE64" app/src/main/res/raw/server_cert.pem
     - chmod +x ./gradlew
     - echo "sdk.dir=$ANDROID_HOME" > local.properties
     - cat local.properties
