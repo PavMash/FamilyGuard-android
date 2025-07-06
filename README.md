@@ -117,44 +117,6 @@ We follow the ISO/IEC 25010 standard for software quality characteristics and do
 
 Detailed descriptions are available in [docs/quality-assurance/quality-attribute-scenarios.md](docs/quality-assurance/quality-attribute-scenarios.md).
 
-### Chosen quality sub-characteristics
-
-#### Availability
-
-Why it matters: Users may experience a loss of internet connection. Ensuring offline support improves reliability and user trust.
-
-Scenario:
-- Source: Application
-- Stimulus: User has no internet
-- Artifact: Text sending service
-- Environment: Production environment without Internet connection
-- Response: The system saves captured data locally and sends it to the server when internet is available
-- Response Measure: Data is stored locally for up to 5 hours without loss
-
-#### Performance Efficiency: Resource Utilization
-
-Why it matters: Server resources such as disk space must be used efficiently to ensure scalability and performance.
-
-Scenario:
-- Source: Server application
-- Stimulus: Too much user data stored
-- Artifact: Server database
-- Environment: Production
-- Response: Delete oldest data to store new data
-- Response Measure: Logs are stored for one year
-
-#### Security: Authenticity
-
-Why it matters: User accounts must be protected from brute-force attacks to prevent unauthorized access.
-
-Scenario:
-- Source: Server application
-- Stimulus: Username and password may be brute-forced
-- Artifact: Server database
-- Environment: Production
-- Response: Block the user for an hour
-- Response Measure: After 5 failed (sequential) login attempts, user is banned
-
 ### How exactly we plan to test:
 
 - Unit tests and integration tests using Python (FastAPI backend)
