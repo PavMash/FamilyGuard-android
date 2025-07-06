@@ -57,6 +57,11 @@ integration_tests:
     - gcloud --quiet components update
     - gcloud auth activate-service-account --key-file=gcp-key.json
     - gcloud config set project familyguard-9a355
+    - echo "Cert path:"
+    - echo "$SERVER_CERT_BASE64"
+    - ls -l "$SERVER_CERT_BASE64" || echo "Cert file not found"
+    - mkdir -p app/src/main/res/raw
+    - cp "$SERVER_CERT_BASE64" app/src/main/res/raw/server_cert.pem
     - ./gradlew assembleDebug assembleAndroidTest
   script:
     - export PATH="$HOME/google-cloud-sdk/bin:$PATH"
