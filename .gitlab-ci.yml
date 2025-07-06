@@ -65,10 +65,10 @@ integration_tests:
     - ./gradlew assembleDebug assembleAndroidTest
   script:
     - export PATH="$HOME/google-cloud-sdk/bin:$PATH"
-    - gcloud firebase test android run \
-      --type instrumentation \
-      --app app/build/outputs/apk/debug/app-debug.apk \
-      --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk \
+    - gcloud firebase test android run
+      --type instrumentation
+      --app app/build/outputs/apk/debug/app-debug.apk
+      --test app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
       --device model=Pixel2,version=30,locale=en,orientation=portrait
   artifacts:
     when: always
