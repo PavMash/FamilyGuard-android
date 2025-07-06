@@ -76,8 +76,7 @@ class ForegroundDispatchService : Service() {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
                     val capturedText = prefs.getString("captured_text", "") // captured text
                     val sourceApp = prefs.getString("source_app", "")
-                    if (capturedText != null && capturedText != "" && !sourceApp.isNullOrEmpty()
-                        && sourceApp != packageName) {
+                    if (capturedText != null && capturedText != "") {
                         Log.d("ForegroundService", "Captured text: $capturedText")
                         postText(capturedText) // function for testing
                     }
@@ -151,7 +150,6 @@ class ForegroundDispatchService : Service() {
             getSharedPreferences("scanner_data", MODE_PRIVATE)
                 .edit {
                     remove("captured_text")
-                    remove("source_app")
                 }
         }
         else {
