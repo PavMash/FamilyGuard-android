@@ -98,7 +98,7 @@ If you have run out of energy or time for your project, put a note at the top of
 
 ### Continuous Integration(CI)
 
-**CI workflow link**: https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/deb2a403cefc0ef81483aded12616c619325dbe9/.gitlab-ci.yml
+**CI workflow link**: [CI Workflow](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/deb2a403cefc0ef81483aded12616c619325dbe9/.gitlab-ci.yml)
 
 **Static analysis tools**: ktlint
 
@@ -110,4 +110,4 @@ If you have run out of energy or time for your project, put a note at the top of
 
 **Mockito**: This tool was used in Unit tests to to simulate the behavior of API services
 
-**All CI workflow runs**: https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/pipelines
+**All CI workflow runs**: [All CI Workflow Runs](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/pipelines)
