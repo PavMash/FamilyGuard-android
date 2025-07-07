@@ -74,6 +74,14 @@ These design decisions improve maintainability, as each module can be tested, de
 
 **Kanban Board**: [Kanban Board](https://miro.com/app/board/uXjVIgjOSh4=/?share_link_id=200233752828)
 
+Kanban board columns and entry criteria:
+*  To Do - The isssue must be well-defined using the As/I want/So template and its acceptance criteria have to be specified.
+*  In Progress - some team member must be assigned to the issue.
+*  In Review - the implementation must be complete and the solution can be tested by team members.
+*  Ready to Deploy - the code must have passed all tests and must be ready to be merged into the "main" brach.
+*  User Testing - the feature is deployed and being tested by the customer.
+*  Done - issue has been verified by customer feedback.
+
 ### Git workflow
 
 **Base Workflow**: GitHub flow adapted to GitLab
