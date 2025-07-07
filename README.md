@@ -3,6 +3,27 @@
 ##ATTENTION
 Here you cannot find the certificate, without which this app will not work
 
+## Header
+
+**Name**: FamilyGuard App
+**Logo**: [Logo](app/src/main/res/drawable/shield.png)
+**Link to the product**: [Product](app)
+**Link to the Demo Video**: [Demo Video](https://drive.google.com/file/d/1kt15AYeClRTht8oJ7UdaMU0IaKRjjjqA/view?usp=drivesdk)
+
+## Body
+
+**Project Goal and Description**: The main goal of this project is to create an application, which will protect children from harmful content
+
+Description: The project consists of three main parts: application, server, and website. Application scans the child's screen and sends the data to the server. Server redirects this data to AI, which analyzes received information. Then, AI creates categories and decides, which of them can be harmful. Then, the categories are sent to the website and if they are harmful, the application receives a request to block the content of these categories
+
+**Project Context Diagram**: TODO
+
+**Feature Roadmap**: TODO
+
+**Usage instructions/Short user guide**: See below
+
+**Installation/Deployment instructions**: See below
+
 ## Usage
 
 **How to install**:
