@@ -23,9 +23,9 @@ Here you cannot find the certificate, without which this app will not work
 - Enable notifications, if you want to notify your child about monitoring his phone
 - Close the app and be calm, your child is now protected from harmful content
 
-# 🧩 Issues & Templates
+## 🧩 Issues & Templates
 
-## 📌 Issue Types
+### 📌 Issue Types
 We categorize our issues by type to maintain structure and clarity:
 
 - Epic – Large feature sets or initiativess
@@ -34,18 +34,18 @@ We categorize our issues by type to maintain structure and clarity:
 Each type includes the following templates:
 
 
-### 📋 Backlog Issue Templates
+#### 📋 Backlog Issue Templates
 - [User Story](.gitlab/issue_templates/user_story.md)
 - [Bug Report](.gitlab/issue_templates/bug_report.md)
 
-### 🛠 Task Templates
+#### 🛠 Task Templates
 - [Task](.gitlab/issue_templates/technical_task.md)
 
-## 🛠 Labels
+### 🛠 Labels
 
 To track progress and prioritize work, the following labels are used:
 
-### ✅ Status Labels
+#### ✅ Status Labels
 - To do
 - In progress
 - In review
@@ -53,17 +53,17 @@ To track progress and prioritize work, the following labels are used:
 - User testing
 - Done
 
-### ⚠️ Priority Labels
+#### ⚠️ Priority Labels
 - Priority::Critical
 - Priority::High
 - Priority::Medium
 - Priority::Low
 
-## 🔀 Merge & Pull Requests
+### 🔀 Merge & Pull Requests
 
 Each merge request must be tied to a specific Task issue.
 
-### 🧾 Pull Request Templates
+#### 🧾 Pull Request Templates
 - [Task-related PR](.gitlab/merge_request_templates/default.md)
 
 
@@ -71,7 +71,7 @@ Each pull request must include:
 - A link to the Task issue it addresses.
 - A checklist to confirm readiness for merge.
 
-## 🏁 Milestones
+### 🏁 Milestones
 
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
 
@@ -117,6 +117,10 @@ We follow the ISO/IEC 25010 standard for software quality characteristics and do
 
 Detailed descriptions are available in [docs/quality-assurance/quality-attribute-scenarios.md](docs/quality-assurance/quality-attribute-scenarios.md).
 
+### User acceptance tests
+
+Detailed descriptions of user acceptance tests are available in [docs/quality-assurance/user-acceptance-tests.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/53e497e2f4dc59282af80a99d887886774c3ec8a/docs/quality-assurance/user-acceptance-tests.md).
+
 ### How exactly we plan to test:
 
 - Unit tests and integration tests using Python (FastAPI backend)
@@ -142,7 +146,7 @@ Detailed descriptions are available in [docs/quality-assurance/quality-attribute
     - app/src/androidTest/ – Kotlin UI and instrumentation tests
     - init.sql and test seeds – For DB test verification
 
-# Build and Deployment
+## Build and Deployment
 
 ### Continuous Integration(CI)
 
