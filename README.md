@@ -44,9 +44,9 @@ Description: The project consists of three main parts: application, server, and 
 - Enable notifications, if you want to notify your child about monitoring his phone
 - Close the app and be calm, your child is now protected from harmful content
 
-# 🧩 Issues & Templates
+## 🧩 Issues & Templates
 
-## 📌 Issue Types
+### 📌 Issue Types
 We categorize our issues by type to maintain structure and clarity:
 
 - Epic – Large feature sets or initiativess
@@ -55,18 +55,18 @@ We categorize our issues by type to maintain structure and clarity:
 Each type includes the following templates:
 
 
-### 📋 Backlog Issue Templates
+#### 📋 Backlog Issue Templates
 - [User Story](.gitlab/issue_templates/user_story.md)
 - [Bug Report](.gitlab/issue_templates/bug_report.md)
 
-### 🛠 Task Templates
+#### 🛠 Task Templates
 - [Task](.gitlab/issue_templates/technical_task.md)
 
-## 🛠 Labels
+### 🛠 Labels
 
 To track progress and prioritize work, the following labels are used:
 
-### ✅ Status Labels
+#### ✅ Status Labels
 - To do
 - In progress
 - In review
@@ -74,17 +74,17 @@ To track progress and prioritize work, the following labels are used:
 - User testing
 - Done
 
-### ⚠️ Priority Labels
+#### ⚠️ Priority Labels
 - Priority::Critical
 - Priority::High
 - Priority::Medium
 - Priority::Low
 
-## 🔀 Merge & Pull Requests
+### 🔀 Merge & Pull Requests
 
 Each merge request must be tied to a specific Task issue.
 
-### 🧾 Pull Request Templates
+#### 🧾 Pull Request Templates
 - [Task-related PR](.gitlab/merge_request_templates/default.md)
 
 
@@ -92,7 +92,7 @@ Each pull request must include:
 - A link to the Task issue it addresses.
 - A checklist to confirm readiness for merge.
 
-## 🏁 Milestones
+### 🏁 Milestones
 
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
 
@@ -138,43 +138,9 @@ We follow the ISO/IEC 25010 standard for software quality characteristics and do
 
 Detailed descriptions are available in [docs/quality-assurance/quality-attribute-scenarios.md](docs/quality-assurance/quality-attribute-scenarios.md).
 
-### Chosen quality sub-characteristics
+### User acceptance tests
 
-#### Availability
-
-Why it matters: Users may experience a loss of internet connection. Ensuring offline support improves reliability and user trust.
-
-Scenario:
-- Source: Application
-- Stimulus: User has no internet
-- Artifact: Text sending service
-- Environment: Production environment without Internet connection
-- Response: The system saves captured data locally and sends it to the server when internet is available
-- Response Measure: Data is stored locally for up to 5 hours without loss
-
-#### Performance Efficiency: Resource Utilization
-
-Why it matters: Server resources such as disk space must be used efficiently to ensure scalability and performance.
-
-Scenario:
-- Source: Server application
-- Stimulus: Too much user data stored
-- Artifact: Server database
-- Environment: Production
-- Response: Delete oldest data to store new data
-- Response Measure: Logs are stored for one year
-
-#### Security: Authenticity
-
-Why it matters: User accounts must be protected from brute-force attacks to prevent unauthorized access.
-
-Scenario:
-- Source: Server application
-- Stimulus: Username and password may be brute-forced
-- Artifact: Server database
-- Environment: Production
-- Response: Block the user for an hour
-- Response Measure: After 5 failed (sequential) login attempts, user is banned
+Detailed descriptions of user acceptance tests are available in [docs/quality-assurance/user-acceptance-tests.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/53e497e2f4dc59282af80a99d887886774c3ec8a/docs/quality-assurance/user-acceptance-tests.md).
 
 ### How exactly we plan to test:
 
@@ -201,7 +167,7 @@ Scenario:
     - app/src/androidTest/ – Kotlin UI and instrumentation tests
     - init.sql and test seeds – For DB test verification
 
-# Build and Deployment
+## Build and Deployment
 
 ### Continuous Integration(CI)
 
