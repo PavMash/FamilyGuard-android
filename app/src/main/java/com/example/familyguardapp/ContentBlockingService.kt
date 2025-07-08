@@ -9,42 +9,42 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.PixelFormat
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.accessibility.AccessibilityEvent
-import android.view.View
-import android.view.WindowManager
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.WindowManager
+import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.view.accessibility.AccessibilityWindowInfo
 import android.widget.Button
-import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class ContentBlockingService : AccessibilityService() {
 
-    //Variables for blocking
-    private lateinit var windowManager : WindowManager
-    private var overlayLayout : View? = null
-    private var currentPackage : String? = null
-    private val unblockable = listOf("com.example.familyguardapp",
-        "com.google.android.apps.nexuslauncher")
+    // Variables for blocking
+    private lateinit var windowManager: WindowManager
+    private var overlayLayout: View? = null
+    private var currentPackage: String? = null
+    private val unblockable = listOf(
+        "com.example.familyguardapp",
+        "com.google.android.apps.nexuslauncher"
+    )
     private val blockList = mutableSetOf<String>()
 
-    //Variables for app removing from the blocklist after timer has expired
+    // Variables for app removing from the blocklist after timer has expired
     private val appPollingThread = HandlerThread("AppPollingThread")
-    .apply {start()}
+        .apply { start() }
     private val appPollHandler = Handler(appPollingThread.looper)
     private val uiHandler = Handler(Looper.getMainLooper())
-    private val removalRunnables = mutableMapOf<String,  Runnable>()
+    private val removalRunnables = mutableMapOf<String, Runnable>()
     private val pollInterval = 10_000L
     private val removeInterval = 120_000L
-    private val removeIntervalInMinutes = (removeInterval/ 60_000L).toInt()
+    private val removeIntervalInMinutes = (removeInterval / 60_000L).toInt()
 
-    //Broadcast receiver that triggers showing overlay
-    //when receiving signal from ForegroundDispatchService
+    // Broadcast receiver that triggers showing overlay
+    // when receiving signal from ForegroundDispatchService
     private val overlayTriggerReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent?.action == OVERLAY_TRIGGER_ACTION) {
@@ -55,7 +55,7 @@ class ContentBlockingService : AccessibilityService() {
         }
     }
 
-    //Runnable that checks currently running apps every 10 seconds
+    // Runnable that checks currently running apps every 10 seconds
     val appPollRunnable = object : Runnable {
         override fun run() {
             checkRunningApps()
@@ -63,23 +63,24 @@ class ContentBlockingService : AccessibilityService() {
         }
     }
 
-    //Checks currently running apps. If any app from blocklist stopped running
-    //and no timer is assigned to it, timer for this app starts
+    // Checks currently running apps. If any app from blocklist stopped running
+    // and no timer is assigned to it, timer for this app starts
     private fun checkRunningApps() {
         val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
         val runningApps = activityManager.runningAppProcesses
-            ?.map {it.processName} ?: emptyList()
+            ?.map { it.processName } ?: emptyList()
 
         blockList.forEach { packageName ->
             if (packageName !in runningApps &&
-                !removalRunnables.containsKey(packageName)) {
+                !removalRunnables.containsKey(packageName)
+            ) {
                 startRemovalTimer(packageName)
             }
         }
     }
 
-    //Creates a timer for an app from the blocklist
-    private fun startRemovalTimer(packageName : String) {
+    // Creates a timer for an app from the blocklist
+    private fun startRemovalTimer(packageName: String) {
         val timer = Runnable {
             blockList.remove(packageName)
             removalRunnables.remove(packageName)
@@ -91,7 +92,7 @@ class ContentBlockingService : AccessibilityService() {
         Log.d(TAG, "Started $removeIntervalInMinutes-minute timer for $packageName")
     }
 
-    //Shows blocking overlay
+    // Shows blocking overlay
     private fun showOverlay() {
         if (overlayLayout != null) {
             return
@@ -117,19 +118,19 @@ class ContentBlockingService : AccessibilityService() {
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-            WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             PixelFormat.OPAQUE
         )
         try {
             windowManager.addView(overlayLayout, parameters)
-        } catch (e : Exception) {
+        } catch (e: Exception) {
             Log.d(TAG, "Error while trying to draw overlay")
             overlayLayout = null
         }
     }
 
-    //Removes blocking overlay
+    // Removes blocking overlay
     private fun removeOverlay() {
         if (overlayLayout != null) {
             windowManager.removeView(overlayLayout)
@@ -141,19 +142,21 @@ class ContentBlockingService : AccessibilityService() {
         super.onServiceConnected()
         val filter = IntentFilter(OVERLAY_TRIGGER_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(
-            overlayTriggerReceiver, filter)
+            overlayTriggerReceiver,
+            filter
+        )
         Log.d(TAG, "Service connected")
 
         startPolling()
         Log.d(TAG, "Started polling apps")
     }
 
-    //Starts execution of appPollRunnable
+    // Starts execution of appPollRunnable
     private fun startPolling() {
         appPollHandler.post(appPollRunnable)
     }
 
-    //Triggers showing overlay when app from the blocklist comes to the foreground
+    // Triggers showing overlay when app from the blocklist comes to the foreground
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         currentPackage = event?.packageName.toString()
         val className = event?.className.toString()
@@ -162,16 +165,16 @@ class ContentBlockingService : AccessibilityService() {
             showOverlay()
         }
 
-        if( checkDeviceAdminDisableAttempt(event)) {
+        if (checkDeviceAdminDisableAttempt(event)) {
             startBlockingActivity()
         }
     }
 
-    private fun checkDeviceAdminDisableAttempt(event : AccessibilityEvent?) : Boolean {
+    private fun checkDeviceAdminDisableAttempt(event: AccessibilityEvent?): Boolean {
         val packageName = event?.packageName.toString()
         val className = event?.className.toString()
         val rightPackageAndClass = packageName == "com.android.settings" &&
-                (className.contains("DeviceAdminAdd") || checkAlertScreen(event))
+            (className.contains("DeviceAdminAdd") || checkAlertScreen(event))
 
         if (rightPackageAndClass) {
             return checkDeviceAdminStatus()
@@ -179,14 +182,14 @@ class ContentBlockingService : AccessibilityService() {
         return false
     }
 
-    private fun checkDeviceAdminStatus() : Boolean {
+    private fun checkDeviceAdminStatus(): Boolean {
         val devicePolicyManager = this.getSystemService(Context.DEVICE_POLICY_SERVICE)
-                as DevicePolicyManager
+            as DevicePolicyManager
         val adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
         return devicePolicyManager.isAdminActive(adminComponent)
     }
 
-    private fun checkAlertScreen(event : AccessibilityEvent?) : Boolean {
+    private fun checkAlertScreen(event: AccessibilityEvent?): Boolean {
         if (event?.className.toString().contains("AlertDialog")) {
             val rootNode = rootInActiveWindow ?: return false
             Log.d(TAG, "")
@@ -196,7 +199,7 @@ class ContentBlockingService : AccessibilityService() {
         return false
     }
 
-    private fun checkText(node : AccessibilityNodeInfo) : Boolean {
+    private fun checkText(node: AccessibilityNodeInfo): Boolean {
         val text = node.text
         if (text != null && text.contains("FamilyGuard App")) {
             Log.d(TAG + " text", "Found device text")
@@ -204,7 +207,7 @@ class ContentBlockingService : AccessibilityService() {
         }
 
         var found = false
-        for (i in 0..<node.childCount) {
+        for (i in 0 until node.childCount) {
             if (checkText(node.getChild(i))) {
                 found = true
                 break
@@ -224,7 +227,8 @@ class ContentBlockingService : AccessibilityService() {
 
     override fun onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
-            overlayTriggerReceiver)
+            overlayTriggerReceiver
+        )
         appPollHandler.removeCallbacks(appPollRunnable)
         appPollingThread.quit()
         removalRunnables.values.forEach { uiHandler.removeCallbacks(it) }

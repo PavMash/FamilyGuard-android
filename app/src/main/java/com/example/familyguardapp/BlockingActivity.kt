@@ -42,15 +42,17 @@ class BlockingActivity : AppCompatActivity() {
         }
 
         // Overrides reaction on back button press for this activity
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                Toast.makeText(
-                    this@BlockingActivity, R.string.back_button_disabled,
-                    Toast.LENGTH_LONG
-                ).show()
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    Toast.makeText(
+                        this@BlockingActivity,
+                        R.string.back_button_disabled,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
-        })
-
-
+        )
     }
 }

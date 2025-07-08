@@ -17,8 +17,8 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
-import android.widget.Spinner
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -26,12 +26,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.Locale
-import androidx.core.net.toUri
 import java.security.MessageDigest
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
         val spinner = findViewById<Spinner>(R.id.spinner)
 
-        val languages : MutableMap<String, Int> = mutableMapOf() // map for languages
+        val languages: MutableMap<String, Int> = mutableMapOf() // map for languages
         languages["en"] = 0
         languages["ru"] = 1
 
@@ -119,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                 val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
                 val currentLanguage = getSavedLanguage(this@MainActivity) // previous(current) language
 
-                val newLanguage = when(selectedLanguage) {
+                val newLanguage = when (selectedLanguage) {
                     "Russian" -> "ru"
                     "Английский" -> "en"
                     else -> currentLanguage
@@ -276,14 +276,14 @@ class MainActivity : AppCompatActivity() {
     private fun requestNotificationPermissionAndStartService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-            != PackageManager.PERMISSION_GRANTED) {
+            != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.POST_NOTIFICATIONS),
                 REQUEST_NOTIFICATION_PERMISSION
             )
-        }
-        else {
+        } else {
             startPostService()
             permissionHandled = true
         }
@@ -307,11 +307,12 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
-    private fun checkAccessibilityPermission(service : Class<out AccessibilityService>): Boolean {
+    private fun checkAccessibilityPermission(service: Class<out AccessibilityService>): Boolean {
         val expectedComponentName = ComponentName(this, service)
         val enabledServices = Settings.Secure.getString(
             this.contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES)
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
 
         if (enabledServices == null) {
             return false
@@ -320,8 +321,8 @@ class MainActivity : AppCompatActivity() {
         colonSplitter.setString(enabledServices)
 
         for (service in colonSplitter) {
-            val componentName = ComponentName.
-            unflattenFromString(service)
+            val componentName = ComponentName
+                .unflattenFromString(service)
             if (componentName == expectedComponentName) {
                 return true
             }
@@ -343,13 +344,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     // returns languageCode of last chosen language
-    private fun getSavedLanguage(context : Context) : String {
+    private fun getSavedLanguage(context: Context): String {
         val prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
         return prefs.getString("app_language", "en") ?: "en"
     }
 
     // updates locale, returns new context for activity
-    private fun updateLocale(context : Context, languageCode : String) : Context {
+    private fun updateLocale(context: Context, languageCode: String): Context {
         val locale = Locale(languageCode) // creates new locale
         Locale.setDefault(locale) // sets new locale for app
         val config = context.resources.configuration // takes current configuration
@@ -361,13 +362,15 @@ class MainActivity : AppCompatActivity() {
     private fun updateScreen() {
         recreate()
     }
-    private fun checkOverlayPermission() : Boolean {
+    private fun checkOverlayPermission(): Boolean {
         return Settings.canDrawOverlays(this)
     }
 
     private fun askForOverlayPermission() {
-        val permissionIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-            "package:$packageName".toUri())
+        val permissionIntent = Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            "package:$packageName".toUri()
+        )
         permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(permissionIntent)
     }

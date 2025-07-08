@@ -54,14 +54,16 @@ class LoginActivity : AppCompatActivity() {
         // green part
         spannable.setSpan(
             ForegroundColorSpan(Color.WHITE),
-            0, 6,
+            0,
+            6,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
         // blue part
         spannable.setSpan(
             ForegroundColorSpan(Color.GREEN),
-            6, 11,
+            6,
+            11,
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
@@ -94,42 +96,53 @@ class LoginActivity : AppCompatActivity() {
                 loginButton.isEnabled = false
                 lifecycleScope.launch {
                     try {
-                        when(val result = networkService.login(email,password)){
+                        when (val result = networkService.login(email, password)) {
                             is NetworkResult.Success -> {
-                                Toast.makeText(this@LoginActivity, getString(R.string.login_successful),
-                                    Toast.LENGTH_SHORT).show()
-                                when (val resultChild = networkService.createChild(email,password)){
-                                    is NetworkResult.Success ->{
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    getString(R.string.login_successful),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                when (val resultChild = networkService.createChild(email, password)) {
+                                    is NetworkResult.Success -> {
                                         childID = resultChild.data
                                         Log.d("ChildID", "$childID")
                                     }
                                     is NetworkResult.Error -> {
-                                        Toast.makeText(this@LoginActivity,
-                                            resultChild.message, Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            this@LoginActivity,
+                                            resultChild.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
-                                val intent = Intent(this@LoginActivity,
-                                    MainActivity::class.java)
+                                val intent = Intent(
+                                    this@LoginActivity,
+                                    MainActivity::class.java
+                                )
                                 startActivity(intent)
                                 finish()
                             }
                             is NetworkResult.Error -> {
-                                Toast.makeText(this@LoginActivity, result.message,
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    result.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
-                    }
-                    catch (e: Exception){
+                    } catch (e: Exception) {
                         val errorText = getString(R.string.unexpected_error)
-                        Toast.makeText(this@LoginActivity,
-                            "$errorText: ${e.message}",Toast.LENGTH_LONG).show()
-                    }
-                    finally {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "$errorText: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } finally {
                         loginButton.isEnabled = true
                     }
                 }
             }
-
         }
     }
 
@@ -143,7 +156,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     // performs "wake up" animation with duration of 3 seconds
-    private fun wakeUpView(view : View) {
+    private fun wakeUpView(view: View) {
         view.alpha = 0f // transparency
         view.animate().alpha(1f).setDuration(3000L).start()
     }

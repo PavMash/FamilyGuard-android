@@ -9,21 +9,21 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
+import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import androidx.core.content.edit
-import okhttp3.OkHttpClient
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import okhttp3.MultipartBody
 
 // starts CloudDispatchService in the background with a hidden notification
 class ForegroundDispatchService : Service() {
@@ -31,11 +31,11 @@ class ForegroundDispatchService : Service() {
     private val channelId = "HiddenChannel"
 
     // coroutine
-    private var serviceJob : Job? = null
+    private var serviceJob: Job? = null
 
-    private lateinit var networkService : NetworkService
+    private lateinit var networkService: NetworkService
 
-    private lateinit var okHttpClient : OkHttpClient
+    private lateinit var okHttpClient: OkHttpClient
 
     // Retrofit instance
     private val retrofit by lazy {
@@ -76,13 +76,14 @@ class ForegroundDispatchService : Service() {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
                     val capturedText = prefs.getString("captured_text", "") // captured text
                     val sourceApp = prefs.getString("source_app", "")
-                    if (capturedText != null && capturedText != "") {
+                    if (capturedText != null && capturedText != "" && !sourceApp.isNullOrEmpty() &&
+                        sourceApp != packageName
+                    ) {
                         Log.d("ForegroundService", "Captured text: $capturedText")
                         postText(capturedText) // function for testing
                     }
                     // postImage() // function for testing
-                }
-                catch (e : Exception) {
+                } catch (e: Exception) {
                     Log.d("MyLog", "${e.message}")
                 }
                 delay(10000) // 10 seconds delay
@@ -128,11 +129,11 @@ class ForegroundDispatchService : Service() {
             .build()
     }
 
-    private suspend fun postText(capturedText : String) {
-        //blockTheApp()
+    private suspend fun postText(capturedText: String) {
+        // blockTheApp()
         // example of text data
         val bytes = capturedText.toByteArray(Charsets.UTF_8)
-        val request : RequestBody = bytes.toRequestBody("text/plain".toMediaType())
+        val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType())
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request)
         // response from the Cloud
         val response = cloudDispatchService.sendData(childID!!, textPart)
@@ -150,9 +151,9 @@ class ForegroundDispatchService : Service() {
             getSharedPreferences("scanner_data", MODE_PRIVATE)
                 .edit {
                     remove("captured_text")
+                    remove("source_app")
                 }
-        }
-        else {
+        } else {
             Log.d("MyLog", "${response.errorBody()?.string()}")
             Log.d("MyLog", "Fail(text)")
         }
@@ -193,6 +194,7 @@ class ForegroundDispatchService : Service() {
         Log.d("ForegroundService", "Blocking started")
         val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
         LocalBroadcastManager.getInstance(this).sendBroadcast(
-            blockingIntent)
+            blockingIntent
+        )
     }
 }

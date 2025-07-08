@@ -1,95 +1,218 @@
 # FamilyGuard
 
-
-
-## Getting started
-##ATTENTION
+## ATTENTION
 Here you cannot find the certificate, without which this app will not work
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Header
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+**Name**: FamilyGuard App
+**Logo**: [Logo](app/src/main/res/drawable/shield.png)
+**Link to the product**: [Product](app)
+**Link to the Demo Video**: [Demo Video](https://drive.google.com/file/d/1kt15AYeClRTht8oJ7UdaMU0IaKRjjjqA/view?usp=drivesdk)
 
-## Add your files
+## Body
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+**Project Goal and Description**: The main goal of this project is to create an application, which will protect children from harmful content
 
-```
-cd existing_repo
-git remote add origin https://gitlab.pg.innopolis.university/familyguard-devs/familyguard.git
-git branch -M main
-git push -uf origin main
-```
+Description: The project consists of three main parts: application, server, and website. Application scans the child's screen and sends the data to the server. Server redirects this data to AI, which analyzes received information. Then, AI creates categories and decides, which of them can be harmful. Then, the categories are sent to the website and if they are harmful, the application receives a request to block the content of these categories
 
-## Integrate with your tools
+**Project Context Diagram**: TODO
 
-- [ ] [Set up project integrations](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/settings/integrations)
+**Feature Roadmap**: TODO
 
-## Collaborate with your team
+**Usage instructions/Short user guide**: See below
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+**Installation/Deployment instructions**: See below
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+**How to install**:
+- Download Android Studio
+- Copy this project to your local machine
+- Open the copy in Android Studio
+- Build an apk file
+- Share the apk file with your phone
+- Install the app on your phone
+- Run the app and use
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+**How to use**:
+- Run the app on your child's phone
+- Create an account
+- Log in
+- Enable needed permissions for blocking, overlaying, scanning
+- Enable Device Admin with password to protect the app from uninstalling
+- Enable notifications, if you want to notify your child about monitoring his phone
+- Close the app and be calm, your child is now protected from harmful content
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+## Architecture
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+### Static view
+[Static view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Static%20view/ComponentDiagram.png)
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Our system demonstrates high cohesion and low-to-moderate coupling, which enhances maintainability and scalability. Each package in the architecture groups related responsibilities, ensuring cohesive functionality. 
+For example, the Web_components package focuses solely on the web UI, while Backend_components cleanly separates backend logic into the content provider, coordinator, and data collector. 
+Similarly, Android_side isolates mobile-specific functionality, and Side_services encapsulates auxiliary services like AI and the database.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+We minimized coupling by using <\<uses>> relationships between components. This allows individual modules to evolve independently — for example, improvements to the AI agent or switching database technology would not directly impact the Web application or Android application UI layers.
 
-## License
-For open source projects, say how it is licensed.
+These design decisions improve maintainability, as each module can be tested, debugged, and modified with minimal side effects on others. Additionally, the clear separation of concerns reduces complexity, making the codebase easier to understand and extend over time.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+### Dynamic view
+[Dynamic view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Dynamic%20view/SeqDiagram.png)
+
+- While child uses his/her phone, Screen scanner captures text from the screen. 
+- Once in a minute captured text is sent to the cloud through Dispatch service. 
+- In the cloud, AI agent analyses the text and detects inapropriate content.
+- After analysis, information about detected categories is stored in Database.
+- If inapropriate content is detected, server sends positive response to the Blocker that blocks the phone screen
+
+### Deployment view
+
+## Development
+
+### Kanban board
+
+**Kanban Board**: [Kanban Board](https://miro.com/app/board/uXjVIgjOSh4=/?share_link_id=200233752828)
+
+Kanban board columns and entry criteria:
+*  To Do - The isssue must be well-defined using the As/I want/So template and its acceptance criteria have to be specified.
+*  In Progress - some team member must be assigned to the issue.
+*  In Review - the implementation must be complete and the solution can be tested by team members.
+*  Ready to Deploy - the code must have passed all tests and must be ready to be merged into the "main" brach.
+*  User Testing - the feature is deployed and being tested by the customer.
+*  Done - issue has been verified by customer feedback.
+
+### Git workflow
+
+**Base Workflow**: GitHub flow adapted to GitLab
+
+**Creating issues**: When we have new feature and acceptance criteria for it, we create new issue
+
+**Labelling issues**: Each issue is labeled as "Task", and every issue has priority(from Low to Critical) according to customer needs
+
+**Assigning issues to team members**: In the beginning of every week our team distributes tasks between the members. Everyone considers what tasks he want to take, so there is no disagreement
+
+**Creating, naming, merging branches**: We have "main" branch and from this branch every member creates a new branch for a new feature. Names of branches are assigned by their creators, names represents a feature. In the end of week all branches are merged into "main" branch by one member(sometimes each member merges only his branch)
+
+**Commit messages format**: Commit messages provide relevant information, Present Simple is usually used
+
+**Creating a pull request for an issue using a pull request template**: We do not use pull requests, instead we merge all branches in the end of a week and resolve merge conflicts
+
+**Code reviews**: We do not have code reviews. If something is wrong in the code, the contributor, who made the mistake, solves the problem
+
+**Merging pull requests**: We do not have pull requests, in the end of a week we merge all branches into "main" and resolve merge conflicts
+
+**Resolving issues**: When we resolve an issue, we close them
+
+**GitGraph Diagram**: [GitGraph Diagram](docs/images/GitGraphDiagram.png)
+
+### Secrets Management
+
+**Secrets Management**: Secret information is stored in "env" files or in CI/CD variables. Files with secret information are added to .gitignore
+
+## Quality assurance
+
+We follow the ISO/IEC 25010 standard for software quality characteristics and documented scenarios based on team and customer discussions.
+
+### Quality attribute scenarios
+
+Detailed descriptions are available in [docs/quality-assurance/quality-attribute-scenarios.md](docs/quality-assurance/quality-attribute-scenarios.md).
+
+### User acceptance tests
+
+Detailed descriptions of user acceptance tests are available in [docs/quality-assurance/user-acceptance-tests.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/53e497e2f4dc59282af80a99d887886774c3ec8a/docs/quality-assurance/user-acceptance-tests.md).
+
+### How exactly we plan to test:
+
+- Unit tests and integration tests using Python (FastAPI backend)
+- Instrumentation and logic tests using Kotlin (Android app)
+- Manual testing for edge cases and offline scenarios
+- SQL queries tested via seed/test data for DB reliability
+
+### Automated tests
+
+- Tools used:
+    - Python: pytest, unittest
+    - Kotlin: Android JUnit, Espresso
+    - SQL: manual seed/test scripts
+
+- Types of tests implemented:
+    - Unit tests
+    - Integration tests
+    - Offline/connection fallback behavior
+
+- Where to find tests in repository:
+    - backend/tests/ – Python backend unit & integration tests
+    - app/src/test/ – Kotlin unit tests
+    - app/src/androidTest/ – Kotlin UI and instrumentation tests
+    - init.sql and test seeds – For DB test verification
+
+## Build and Deployment
+
+### Continuous Integration(CI)
+
+**CI workflow link**: [CI Workflow](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/deb2a403cefc0ef81483aded12616c619325dbe9/.gitlab-ci.yml)
+
+**Static analysis tools**: ktlint
+
+**Testing tools**: Espresso, JUnit, Mockito
+
+**Espresso**: This tool was used to create Integration tests, which mostly check UI interactions
+
+**JUnit**: This tool was used to create Unit tests, which mostly check Api services
+
+**Mockito**: This tool was used in Unit tests to to simulate the behavior of API services
+
+**All CI workflow runs**: [All CI Workflow Runs](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/pipelines)
+
+## 🧩 Issues & Templates
+
+### 📌 Issue Types
+We categorize our issues by type to maintain structure and clarity:
+
+- Epic – Large feature sets or initiativess
+- Task – Technical implementations or short-term goals
+
+Each type includes the following templates:
+
+
+#### 📋 Backlog Issue Templates
+- [User Story](.gitlab/issue_templates/user_story.md)
+- [Bug Report](.gitlab/issue_templates/bug_report.md)
+
+#### 🛠 Task Templates
+- [Task](.gitlab/issue_templates/technical_task.md)
+
+### 🛠 Labels
+
+To track progress and prioritize work, the following labels are used:
+
+#### ✅ Status Labels
+- To do
+- In progress
+- In review
+- Ready to deploy
+- User testing
+- Done
+
+#### ⚠️ Priority Labels
+- Priority::Critical
+- Priority::High
+- Priority::Medium
+- Priority::Low
+
+### 🔀 Merge & Pull Requests
+
+Each merge request must be tied to a specific Task issue.
+
+#### 🧾 Pull Request Templates
+- [Task-related PR](.gitlab/merge_request_templates/default.md)
+
+
+Each pull request must include:
+- A link to the Task issue it addresses.
+- A checklist to confirm readiness for merge.
+
+### 🏁 Milestones
+
+Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.

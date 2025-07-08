@@ -15,34 +15,70 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SignUpActivityTest {
-	@Test
-	fun checkValidSignUp() {
-		ActivityScenario.launch(SignUpActivity::class.java)
+    @Test
+    fun checkValidSignUp() {
+        ActivityScenario.launch(SignUpActivity::class.java)
 
-		val randomEmail = "user"
-			.plus((1..1_000_000).random())
-			.plus((1..1_000_000).random())
-			.plus(System.currentTimeMillis())
-			.plus("@gmail.com")
+        val randomEmail = "user"
+            .plus((1..1_000_000).random())
+            .plus((1..1_000_000).random())
+            .plus(System.currentTimeMillis())
+            .plus("@gmail.com")
 
-		onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
-		onView(withId(R.id.edSignPassword)).perform(typeText("password"), closeSoftKeyboard())
+        onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("password"), closeSoftKeyboard())
 
-		onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-		Thread.sleep(3000)
-		onView(withId(R.id.btnLogIn)).check(matches(isDisplayed()))
-	}
+        Thread.sleep(3000)
+        onView(withId(R.id.btnLogIn)).check(matches(isDisplayed()))
+    }
 
-	@Test
-	fun checkInvalidSignUp() {
-		ActivityScenario.launch(SignUpActivity::class.java)
+    @Test
+    fun checkInvalidSignUp() {
+        ActivityScenario.launch(SignUpActivity::class.java)
 
-		onView(withId(R.id.edSignEmail)).perform(typeText("invalidgmailcom"), closeSoftKeyboard())
-		onView(withId(R.id.edSignPassword)).perform(typeText("invalid"), closeSoftKeyboard())
+        onView(withId(R.id.edSignEmail)).perform(typeText("invalidgmailcom"), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("invalid"), closeSoftKeyboard())
 
-		onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-		onView(withId(R.id.tvTitle)).check(doesNotExist())
-	}
+        onView(withId(R.id.tvTitle)).check(doesNotExist())
+    }
+
+    @Test
+    fun checkEmptyFieldsError() {
+        ActivityScenario.launch(SignUpActivity::class.java)
+
+        onView(withId(R.id.edSignEmail)).perform(typeText(""), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText(""), closeSoftKeyboard())
+
+        onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        onView(withId(R.id.tvTitle)).check(doesNotExist())
+    }
+
+    @Test
+    fun checkInvalidEmailError() {
+        ActivityScenario.launch(SignUpActivity::class.java)
+
+        onView(withId(R.id.edSignEmail)).perform(typeText("invalid@emailcom"), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("72872784"), closeSoftKeyboard())
+
+        onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        onView(withId(R.id.tvTitle)).check(doesNotExist())
+    }
+
+    @Test
+    fun checkPasswordLengthError() {
+        ActivityScenario.launch(SignUpActivity::class.java)
+
+        onView(withId(R.id.edSignEmail)).perform(typeText("valid@gmail.com"), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("728"), closeSoftKeyboard())
+
+        onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        onView(withId(R.id.tvTitle)).check(doesNotExist())
+    }
 }
