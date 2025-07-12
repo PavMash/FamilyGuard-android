@@ -1,6 +1,6 @@
 # FamilyGuard
 
-##ATTENTION
+## ATTENTION
 Here you cannot find the certificate, without which this app will not work
 
 ## Header
@@ -44,63 +44,44 @@ Description: The project consists of three main parts: application, server, and 
 - Enable notifications, if you want to notify your child about monitoring his phone
 - Close the app and be calm, your child is now protected from harmful content
 
-## 🧩 Issues & Templates
+## Architecture
 
-### 📌 Issue Types
-We categorize our issues by type to maintain structure and clarity:
+### Static view
+[Static view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Static%20view/ComponentDiagram.png)
 
-- Epic – Large feature sets or initiativess
-- Task – Technical implementations or short-term goals
+Our system demonstrates high cohesion and low-to-moderate coupling, which enhances maintainability and scalability. Each package in the architecture groups related responsibilities, ensuring cohesive functionality. 
+For example, the Web_components package focuses solely on the web UI, while Backend_components cleanly separates backend logic into the content provider, coordinator, and data collector. 
+Similarly, Android_side isolates mobile-specific functionality, and Side_services encapsulates auxiliary services like AI and the database.
 
-Each type includes the following templates:
+We minimized coupling by using <\<uses>> relationships between components. This allows individual modules to evolve independently — for example, improvements to the AI agent or switching database technology would not directly impact the Web application or Android application UI layers.
 
+These design decisions improve maintainability, as each module can be tested, debugged, and modified with minimal side effects on others. Additionally, the clear separation of concerns reduces complexity, making the codebase easier to understand and extend over time.
 
-#### 📋 Backlog Issue Templates
-- [User Story](.gitlab/issue_templates/user_story.md)
-- [Bug Report](.gitlab/issue_templates/bug_report.md)
+### Dynamic view
+[Dynamic view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Dynamic%20view/SeqDiagram.png)
 
-#### 🛠 Task Templates
-- [Task](.gitlab/issue_templates/technical_task.md)
+- While child uses his/her phone, Screen scanner captures text from the screen. 
+- Once in a minute captured text is sent to the cloud through Dispatch service. 
+- In the cloud, AI agent analyses the text and detects inapropriate content.
+- After analysis, information about detected categories is stored in Database.
+- If inapropriate content is detected, server sends positive response to the Blocker that blocks the phone screen
 
-### 🛠 Labels
-
-To track progress and prioritize work, the following labels are used:
-
-#### ✅ Status Labels
-- To do
-- In progress
-- In review
-- Ready to deploy
-- User testing
-- Done
-
-#### ⚠️ Priority Labels
-- Priority::Critical
-- Priority::High
-- Priority::Medium
-- Priority::Low
-
-### 🔀 Merge & Pull Requests
-
-Each merge request must be tied to a specific Task issue.
-
-#### 🧾 Pull Request Templates
-- [Task-related PR](.gitlab/merge_request_templates/default.md)
-
-
-Each pull request must include:
-- A link to the Task issue it addresses.
-- A checklist to confirm readiness for merge.
-
-### 🏁 Milestones
-
-Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
+### Deployment view
+[Deployment View Diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/974d57753ab3b38e13def0082d71ad57f6979891/docs/architecture/Deployment%20view/development-view.svg)
 
 ## Development
 
 ### Kanban board
 
 **Kanban Board**: [Kanban Board](https://miro.com/app/board/uXjVIgjOSh4=/?share_link_id=200233752828)
+
+Kanban board columns and entry criteria:
+*  To Do - The isssue must be well-defined using the As/I want/So template and its acceptance criteria have to be specified.
+*  In Progress - some team member must be assigned to the issue.
+*  In Review - the implementation must be complete and the solution can be tested by team members.
+*  Ready to Deploy - the code must have passed all tests and must be ready to be merged into the "main" brach.
+*  User Testing - the feature is deployed and being tested by the customer.
+*  Done - issue has been verified by customer feedback.
 
 ### Git workflow
 
@@ -184,3 +165,55 @@ Detailed descriptions of user acceptance tests are available in [docs/quality-as
 **Mockito**: This tool was used in Unit tests to to simulate the behavior of API services
 
 **All CI workflow runs**: [All CI Workflow Runs](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/pipelines)
+
+## 🧩 Issues & Templates
+
+### 📌 Issue Types
+We categorize our issues by type to maintain structure and clarity:
+
+- Epic – Large feature sets or initiativess
+- Task – Technical implementations or short-term goals
+
+Each type includes the following templates:
+
+
+#### 📋 Backlog Issue Templates
+- [User Story](.gitlab/issue_templates/user_story.md)
+- [Bug Report](.gitlab/issue_templates/bug_report.md)
+
+#### 🛠 Task Templates
+- [Task](.gitlab/issue_templates/technical_task.md)
+
+### 🛠 Labels
+
+To track progress and prioritize work, the following labels are used:
+
+#### ✅ Status Labels
+- To do
+- In progress
+- In review
+- Ready to deploy
+- User testing
+- Done
+
+#### ⚠️ Priority Labels
+- Priority::Critical
+- Priority::High
+- Priority::Medium
+- Priority::Low
+
+### 🔀 Merge & Pull Requests
+
+Each merge request must be tied to a specific Task issue.
+
+#### 🧾 Pull Request Templates
+- [Task-related PR](.gitlab/merge_request_templates/default.md)
+
+
+Each pull request must include:
+- A link to the Task issue it addresses.
+- A checklist to confirm readiness for merge.
+
+### 🏁 Milestones
+
+Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
