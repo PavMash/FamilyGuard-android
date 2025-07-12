@@ -42,9 +42,9 @@ class ApiServiceHandlerTest {
 
     @Test
     fun createChildChecker() = runBlocking {
-        val newChildInfo = NewChildInfo("child", "monkey", "Mark", "some_token")
+        val newChildInfo = NewChildInfo("child", "monkey", "Mark")
         val generatedId = newChildInfo.username.plus(newChildInfo.password)
-        val expected = ChildResponse("created", generatedId)
+        val expected = ApiResponse("created", generatedId)
         whenever(apiService.createChild(newChildInfo)).thenReturn(Response.success(expected))
         val result = apiServiceHandler.createChildHandler("child", "monkey")
         assertEquals(result, expected)

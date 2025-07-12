@@ -67,6 +67,7 @@ These design decisions improve maintainability, as each module can be tested, de
 - If inapropriate content is detected, server sends positive response to the Blocker that blocks the phone screen
 
 ### Deployment view
+[Deployment View Diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/974d57753ab3b38e13def0082d71ad57f6979891/docs/architecture/Deployment%20view/development-view.svg)
 
 ## Development
 

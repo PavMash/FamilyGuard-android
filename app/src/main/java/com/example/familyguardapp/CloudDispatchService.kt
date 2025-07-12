@@ -7,25 +7,23 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
 
+// "ServiceResponse" represents response body for "/upload-text"
 // encapsulates service response body parameters
 data class ServiceResponse(
     val status: String,
     val size: Int,
-    val block: String
+    val block: String // contains confirmation or refusal whether to block the screen
 )
 
-// This interface sends information to the Cloud
+// This interface sends information to the server
+// "@Multipart" is needed to send file
+// "suspend" is used for coroutines
 interface CloudDispatchService {
     @Multipart
     @POST("upload-text") // defines the endpoint
+    // this method sends text to the server
     suspend fun sendData(
-        @Query("id") id: String,
-        @Part text: MultipartBody.Part
+        @Query("child_id") id: String, // child ID
+        @Part text: MultipartBody.Part // file with text captured from the child's screen
     ): Response<ServiceResponse> // sends text data to the Cloud
-
-    @Multipart
-    @POST("upload-screenshot") // defines the endpoint
-    suspend fun sendImage(
-        @Part request: MultipartBody.Part
-    ): Response<Unit> // sends image data to the Cloud
 }

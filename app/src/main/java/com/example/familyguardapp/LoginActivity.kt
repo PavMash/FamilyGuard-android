@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 var childID: String? = null
 var childName: String? = null
 
+// this activity represents login page
 class LoginActivity : AppCompatActivity() {
     companion object {
         const val CHILD_NAME = "CHILD_NAME"
@@ -36,36 +37,38 @@ class LoginActivity : AppCompatActivity() {
     private var pendingEmail : String = ""
     private var pendingPassword : String = ""
 
+    // this standard method creates the activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // gets the device FCM token
+        // this snippet of code gets the device FCM token
         FirebaseMessaging.getInstance().token
             .addOnCompleteListener { task ->
                 if (!task.isSuccessful) {
-                    Log.w("FCM_TOKEN", "Fetching FCM registration token failed", task.exception)
+                    Log.w("FCM_TOKEN", "Fetching FCM registration token failed", task.exception) // checks error
                     return@addOnCompleteListener
                 }
-                fcm_token = task.result
-                Log.d("FCM_TOKEN", "Your token: $fcm_token")
+                fcm_token = task.result // gets FCM token
+                Log.d("FCM_TOKEN", "Your token: $fcm_token") // checks logs
             }
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // switches to night theme
 
-        val emailField = findViewById<EditText>(R.id.edEmail)
-        val passwordField = findViewById<EditText>(R.id.edPassword)
-        loginButton = findViewById<Button>(R.id.btnLogIn)
-        val signupButton = findViewById<Button>(R.id.btnSignUp)
-        val imShield = findViewById<ImageView>(R.id.imShield)
+        val emailField = findViewById<EditText>(R.id.edEmail) // email field
+        val passwordField = findViewById<EditText>(R.id.edPassword) // password field
+        val loginButton = findViewById<Button>(R.id.btnLogIn) // login button
+        val signupButton = findViewById<Button>(R.id.btnSignUp) // signup button
+        val imShield = findViewById<ImageView>(R.id.imShield) // the picture of the shield
 
-        val tvTitle = findViewById<TextView>(R.id.tvTitle)
+        val tvTitle = findViewById<TextView>(R.id.tvTitle) // container for the title of the app
 
-        val text = getString(R.string.app_title)
+        val text = getString(R.string.app_title) // the title of the app
 
         val spannable = SpannableString(text) // assigns different colors to different parts of text
 
         // green part
+        // sets white color for "Family" part
         spannable.setSpan(
             ForegroundColorSpan(Color.WHITE),
             0,
@@ -74,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
         )
 
         // blue part
+        // sets green color for "Guard"
         spannable.setSpan(
             ForegroundColorSpan(Color.GREEN),
             6,
@@ -81,9 +85,9 @@ class LoginActivity : AppCompatActivity() {
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         )
 
-        tvTitle.text = spannable
+        tvTitle.text = spannable // sets the text to the container for it
 
-        // makes "wake up" animation
+        // makes "wake up" animation(3 seconds)
         wakeUpView(tvTitle)
         wakeUpView(imShield)
         wakeUpView(loginButton)
@@ -91,19 +95,22 @@ class LoginActivity : AppCompatActivity() {
         wakeUpView(emailField)
         wakeUpView(passwordField)
 
+        // sets the listener for signup button
+        // when the button is clicked the SignUpActivity is run
         signupButton.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
-            finish()
+            val intent = Intent(this, SignUpActivity::class.java) // intent to start SignUpActivity
+            startActivity(intent) // starts activity
+            finish() // closes LoginActivity
         }
 
+        // sets the listener for login button
         loginButton.setOnClickListener {
             val email = emailField.text.toString()
             val password = passwordField.text.toString()
 
-            val errorMessage = correctCredentials(email, password)
-            if (errorMessage != null) {
-                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            val errorMessage = correctCredentials(email, password) // checks correctness of credentials
+            if (errorMessage != null) { // if there is an error
+                Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show() // notifies user about error
                 return@setOnClickListener
             }
             pendingEmail = email
@@ -193,6 +200,7 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
+    // this method checks correctness of credentials
     private fun correctCredentials(email: String, password: String): String? {
         return when {
             email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
@@ -205,7 +213,7 @@ class LoginActivity : AppCompatActivity() {
     // performs "wake up" animation with duration of 3 seconds
     private fun wakeUpView(view: View) {
         view.alpha = 0f // transparency
-        view.animate().alpha(1f).setDuration(3000L).start()
+        view.animate().alpha(1f).setDuration(3000L).start() // makes "wake up" animation, duration: 3 seconds
     }
 
     private fun cancelCoroutine() {
@@ -214,7 +222,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun notifyChildNotAdded() {
         Toast.makeText(this@LoginActivity,
-            getString(R.string.did_not_add_child), Toast.LENGTH_LONG)
+            getString(R.string.did_not_add_child), Toast.LENGTH_LONG).show()
     }
 
     private val addChildActivityLauncher =
