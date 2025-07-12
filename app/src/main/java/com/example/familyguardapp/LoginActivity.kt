@@ -84,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
         // sets the listener for signup button
         // when the button is clicked the SignUpActivity is run
         signupButton.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)// intent to start SignUpActivity
+            val intent = Intent(this, SignUpActivity::class.java) // intent to start SignUpActivity
             startActivity(intent) // starts activity
             finish() // closes LoginActivity
         }

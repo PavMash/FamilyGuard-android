@@ -154,7 +154,7 @@ class ForegroundDispatchService : Service() {
                     remove("source_app") // clears the name of the source app
                 }
         } else {
-            Log.d("MyLog", "${response.errorBody()?.string()}")// checks error message
+            Log.d("MyLog", "${response.errorBody()?.string()}") // checks error message
             Log.d("MyLog", "Fail(text)") // checks failure
         }
     }

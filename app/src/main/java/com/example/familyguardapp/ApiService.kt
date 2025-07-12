@@ -19,12 +19,12 @@ data class ApiResponse(
 data class NewChildInfo(
     val username: String,
     val password: String,
-    val child_name: String,
+    val child_name: String
 )
 
 // request body for /upload-token
 data class FCMInfo(
-    val token : String // FCM token
+    val token: String // FCM token
 )
 
 // response body for /upload-token
@@ -50,5 +50,5 @@ interface ApiService {
     suspend fun createChild(@Body userInfo: NewChildInfo): Response<ApiResponse>
 
     @POST("/upload-token")
-    suspend fun uploadToken(@Body fcmInfo : FCMInfo) : Response<FCMResponse>
+    suspend fun uploadToken(@Body fcmInfo: FCMInfo): Response<FCMResponse>
 }
