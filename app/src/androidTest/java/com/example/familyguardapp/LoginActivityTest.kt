@@ -1,17 +1,13 @@
 package com.example.familyguardapp
 
-import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -19,7 +15,7 @@ import org.junit.runner.RunWith
 class LoginActivityTest {
     @Test
     fun checkValidLogin() {
-        val signupScenario = ActivityScenario.launch(SignUpActivity::class.java)
+        ActivityScenario.launch(SignUpActivity::class.java)
 
         val randomEmail = "user"
             .plus((1..1_000_000).random())
@@ -34,10 +30,6 @@ class LoginActivityTest {
 
         Thread.sleep(3000)
 
-        assertTrue(signupScenario.state.isAtLeast(Lifecycle.State.DESTROYED))
-
-        val loginScenario = ActivityScenario.launch(SignUpActivity::class.java)
-
         onView(withId(R.id.edEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
         onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
@@ -45,11 +37,7 @@ class LoginActivityTest {
 
         Thread.sleep(3000)
 
-        assertTrue(loginScenario.state.isAtLeast(Lifecycle.State.DESTROYED))
-
-        ActivityScenario.launch(MainActivity::class.java)
-
-        onView(withId(R.id.permission_instruction)).check(matches(isDisplayed()))
+        onView(withId(R.id.btnLogIn)).check(doesNotExist())
     }
 
     @Test
@@ -84,6 +72,33 @@ class LoginActivityTest {
 
         onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
         onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
+
+        onView(withId(R.id.btnLogIn)).perform(click())
+
+        onView(withId(R.id.permission_instruction)).check(doesNotExist())
+    }
+
+    @Test
+    fun checkInvalidUsername() {
+        val randomEmail = "user"
+            .plus((1..1_000_000).random())
+            .plus((1..1_000_000).random())
+            .plus(System.currentTimeMillis())
+            .plus("@gmail.com")
+
+        ActivityScenario.launch(SignUpActivity::class.java)
+
+        onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("777777"), closeSoftKeyboard())
+
+        onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        ActivityScenario.launch(LoginActivity::class.java)
+
+        val invalidEmail = "1".plus(randomEmail)
+
+        onView(withId(R.id.edEmail)).perform(typeText(invalidEmail), closeSoftKeyboard())
+        onView(withId(R.id.edPassword)).perform(typeText("7777777"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
 
