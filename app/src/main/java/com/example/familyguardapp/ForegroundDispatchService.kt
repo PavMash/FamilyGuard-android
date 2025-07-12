@@ -70,15 +70,11 @@ class ForegroundDispatchService : Service() {
         startForeground(1, notification) // start service in the foreground
         serviceJob = CoroutineScope(Dispatchers.IO).launch { // coroutine
             delay(30_000L)
-
             while (isActive) { // while coroutine is running
                 try {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
                     val capturedText = prefs.getString("captured_text", "") // captured text
-                    val sourceApp = prefs.getString("source_app", "")
-                    if (capturedText != null && capturedText != "" && !sourceApp.isNullOrEmpty() &&
-                        sourceApp != packageName
-                    ) {
+                    if (capturedText != null && capturedText != "") {
                         Log.d("ForegroundService", "Captured text: $capturedText")
                         postText(capturedText) // function for testing
                     }
@@ -151,7 +147,6 @@ class ForegroundDispatchService : Service() {
             getSharedPreferences("scanner_data", MODE_PRIVATE)
                 .edit {
                     remove("captured_text")
-                    remove("source_app")
                 }
         } else {
             Log.d("MyLog", "${response.errorBody()?.string()}")

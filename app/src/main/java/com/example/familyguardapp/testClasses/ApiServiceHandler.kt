@@ -25,8 +25,8 @@ class ApiServiceHandler(private val apiService: ApiService) {
         return ApiResponse("error", "")
     }
 
-    suspend fun createChildHandler(username: String, password: String): ChildResponse? {
-        val userInfo = NewChildInfo(username, password, "Mark", "some_token")
+    suspend fun createChildHandler(username: String, password: String, childName: String): ChildResponse? {
+        val userInfo = NewChildInfo(username, password, childName)
         val response = apiService.createChild(userInfo)
         if (response.isSuccessful) {
             return response.body()

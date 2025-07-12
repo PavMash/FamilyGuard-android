@@ -32,6 +32,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.security.MessageDigest
 import java.util.Locale
+import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,6 +44,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adminComponent: ComponentName
     private lateinit var passwordField: EditText
     private lateinit var disableAdminButton: Button
+
+    private val accessibilityPermissionCheckScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val overlayPermissionCheckScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,15 +83,16 @@ class MainActivity : AppCompatActivity() {
             showSetPasswordDialog()
         }
 
-        findViewById<Button>(R.id.accessibility_permission_button).setOnClickListener {
-            if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
-                Toast.makeText(
-                    this,
-                    R.string.already_have_permission,
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
+        val accessibilityBtn = findViewById<Button>(R.id.accessibility_permission_button)
+        if (checkAccessibilityPermission(mutableListOf(ScreenScanningService::class.java,
+                ContentBlockingService::class.java))) {
+            accessibilityBtn.visibility = View.INVISIBLE
+        }
+        accessibilityBtn.setOnClickListener {
+            if (!checkAccessibilityPermission(mutableListOf(ScreenScanningService::class.java,
+                ContentBlockingService::class.java))) {
                 askForAccessibilityPermission()
+                startAccessibilityPermissionCheckLoop(accessibilityBtn)
             }
         }
 
@@ -135,15 +140,15 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Nothing", "none")
             }
         }
-        findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
-            if (checkOverlayPermission()) {
-                Toast.makeText(
-                    this,
-                    R.string.already_have_permission,
-                    Toast.LENGTH_LONG
-                ).show()
-            } else {
+
+        val overlayBtn = findViewById<Button>(R.id.overlay_permission_button)
+        if (checkOverlayPermission()) {
+            overlayBtn.visibility = View.INVISIBLE
+        }
+        overlayBtn.setOnClickListener {
+            if (!checkOverlayPermission()) {
                 askForOverlayPermission()
+                startOverlayPermissionCheckLoop(overlayBtn)
             }
         }
         disableAdminButton.setOnClickListener {
@@ -307,8 +312,13 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(applicationContext, serviceIntent)
     }
 
-    private fun checkAccessibilityPermission(service: Class<out AccessibilityService>): Boolean {
-        val expectedComponentName = ComponentName(this, service)
+    private fun checkAccessibilityPermission(services: List<Class<out AccessibilityService>>): Boolean {
+        val expectedComponentNames = mutableListOf<ComponentName>()
+        for (i in services.indices) {
+            val expectedComponentName = ComponentName(this, services[i])
+            expectedComponentNames.add(expectedComponentName)
+        }
+
         val enabledServices = Settings.Secure.getString(
             this.contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
@@ -317,18 +327,44 @@ class MainActivity : AppCompatActivity() {
         if (enabledServices == null) {
             return false
         }
+
         val colonSplitter = TextUtils.SimpleStringSplitter(':')
         colonSplitter.setString(enabledServices)
 
         for (service in colonSplitter) {
             val componentName = ComponentName
                 .unflattenFromString(service)
-            if (componentName == expectedComponentName) {
-                return true
+            if (expectedComponentNames.contains(componentName)) {
+                expectedComponentNames.remove(componentName)
             }
         }
 
-        return false
+        return expectedComponentNames.isEmpty()
+    }
+
+    private fun startAccessibilityPermissionCheckLoop(accessibilityBtn : Button) {
+        accessibilityPermissionCheckScope.launch {
+            while (isActive) { // Runs until coroutine is cancelled or permission is granted
+                if (checkAccessibilityPermission(mutableListOf(
+                        ScreenScanningService::class.java,
+                        ContentBlockingService::class.java))) {
+                    // Permission granted
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_granted,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        accessibilityBtn.visibility = View.INVISIBLE
+                    }
+                    return@launch // Exit coroutine
+                }
+
+                // Check every 2 seconds
+                delay(2000)
+            }
+        }
     }
 
     private fun askForAccessibilityPermission() {
@@ -373,5 +409,28 @@ class MainActivity : AppCompatActivity() {
         )
         permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(permissionIntent)
+    }
+
+    private fun startOverlayPermissionCheckLoop(overlayBtn : Button) {
+        overlayPermissionCheckScope.launch {
+            while (isActive) { // Runs until coroutine is cancelled or permission is granted
+                if (checkOverlayPermission()) {
+                    // Permission granted
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            R.string.permission_granted,
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        overlayBtn.visibility = View.INVISIBLE
+                    }
+                    return@launch // Exit coroutine
+                }
+
+                // Check every 2 seconds
+                delay(2000)
+            }
+        }
     }
 }

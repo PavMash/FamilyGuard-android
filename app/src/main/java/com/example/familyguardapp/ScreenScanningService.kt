@@ -54,6 +54,7 @@ class ScreenScanningService : AccessibilityService() {
 
         val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
         prefs.edit().putString("captured_text", capturedText).apply()
+        Log.d("FamScan", capturedText)
     }
 
     // collects text from root view and all children views

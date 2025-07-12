@@ -2,7 +2,17 @@
     <string name="app_name">FamilyGuard App</string>
     <string name="main_screen_instruction">Пожалуйста, включите FamilyGuard в настройках, чтобы начать работу</string>
     <string name="already_have_permission">У FamilyGuard уже есть разрешение</string>
-    <string name="block_screen_message">Мы обнаружили на вашем экране незаконный контент.\n\n Больше не ищите такой контент.</string>
+    <string name="permission_granted">Разрешение получено</string>
+    <string name="block_screen_message">Мы обнаружили на вашем экране незаконный контент.\n\n Больше не ищите такой контент.\n\n Вы не сможете пользоваться приложением в течение 2 минут.</string>
+    <string name="instruction_activity_intro">FamilyGuard необходимы несколько разрешений с вашей стороны, чтобы начать защищать вашего ребёнка от вредоносного контента.</string>
+    <string name="instruction_activity_body">1) На следующем экране, нажмите на "activate this device admin app". Нам нужно это разрешение, чтобы предотвратить удаление FamilyGuard без ввода родительского пароля в приложении.\n\n
+        2) Дайте FamilyGuard разрешение на отправку уведомлений. Мы выведем уведомление, сообщающее, что устройство находится под контролем. Таким образом, ребёнок будет знать о работе приложения.\n\n
+        3) Установите родительский пароль для отключения режима device admin и удаления приложения. Пароль должен содержать не менее 6 символов. Не сообщайте ребёнку этот пароль.\n\n
+        4) Нажмите кнопку "Разрешить сканирование и блокировку" и дайте разрешение "FamilyGuard Scanner" и "FamilyGuard Blocker". Это разрешение необходимо для отслеживания экрана телефона и блокировки вредоносного контента.\n\n
+        5) Нажмите кнопку "Разрешить открывать окна поверх других приложений" и дайте разрешение FamilyGuard. Оно необходимо для блокировки контента.
+    </string>
+    <string name="instruction_activity_conclusion">После того, как вы завершите все шаги выше, приложение начнёт работу и ваш ребёнок будет под защитой от цифровых угроз.</string>
+    <string name="next_btn_text">Далее</string>
     <string name="block_screen_exit_button_text">Закрыть</string>
     <string name="back_button_disabled">Кнопка «Назад» здесь отключена</string>
     <string name="default_notification_channel_id">default_channel</string>
@@ -20,6 +30,11 @@
     <string name="password">Пароль</string>
     <string name="log_in">Авторизоваться</string>
     <string name="sign_up">Зарегистрироваться</string>
+    <string name="add_child_btn">Добавить ребёнка</string>
+    <string name="child_name">Имя ребёнка</string>
+    <string name="empty_child_name">Введите имя ребёнка</string>
+    <string name="child_added">Ребёнок добавлен</string>
+    <string name="did_not_add_child">Вы не добавили ребенка. Авторизируйтесь, чтобы попробовать снова</string>
     <string name="app_title">FamilyGuard</string>
     <string name="language">Язык</string>
 
@@ -29,7 +44,7 @@
     </string-array>
     <string name="blocking_service_description">FamilyGuard Blocker — это сервис, который блокирует нежелательный контент, появляющийся на экране вашего ребенка</string>
     <string name="accessibility_permission_button_text">Разрешить сканирование и блокировку</string>
-    <string name="overlay_permission_button_text">Разрешить рисовать поверх других приложений</string>
+    <string name="overlay_permission_button_text">Разрешить открывать окна поверх других приложений</string>
     <string name="scanning_service_description">FamilyGuard Scanner — это сервис, который отслеживает экранную активность вашего ребенка, помогая вам контролировать использование им/ею телефона.</string>
     <string name="disable_device_admin">Отключить Device Admin</string>
     <string name="device_admin_password_request">Введите пароль, чтобы отключить Device Admin</string>

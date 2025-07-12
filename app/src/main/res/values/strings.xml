@@ -2,7 +2,17 @@
     <string name="app_name">FamilyGuard App</string>
     <string name="main_screen_instruction">Please, give FamilyGuard needed permissions to let it protect your child from harmful content.</string>
     <string name="already_have_permission">FamilyGuard already has the permission</string>
+    <string name="permission_granted">Permission granted</string>
     <string name="block_screen_message">We detected illegal content on your screen.\n\n Do not seek for such content anymore. \n\n You won\'t be able to open this app in 2 minutes.</string>
+    <string name="instruction_activity_intro">FamilyGuard needs some permissions from your side to begin defending your child from harmful content:</string>
+    <string name="instruction_activity_body">1) In the next screen, tap on "activate this device admin app". We need it to make FamilyGuard undeletable without entering a parent password in the app.\n\n
+        2) Give FamilyGuard the permission to show notifications. We will show a notification saying that this device is being monitored, so that your child is aware of FamilyGuard working.\n\n
+        3) Set parent password to disable device admin mode and safely delete the app. The password must be 6 characters at least. Don\'t tell it to your child.\n\n
+        4) Press button "Permit scanning and blocking" and give permissions to "FamilyGuard Scanner" and "FamilyGuard Blocker". We need it to monitor phone screen an block inappropriate content.\n\n
+        5) Press button "Permit drawing over other apps" and give permission to FamilyGuard. We need it for blocking.
+    </string>
+    <string name="instruction_activity_conclusion">After you complete all the steps, the app will start working and your child will be protected from digital dangers.</string>
+    <string name="next_btn_text">Next</string>
     <string name="block_screen_exit_button_text">Close</string>
     <string name="back_button_disabled">Back button is disabled here</string>
     <string name="default_notification_channel_id">default_channel</string>
@@ -20,6 +30,11 @@
     <string name="password">Password</string>
     <string name="log_in">Log in</string>
     <string name="sign_up">Sign up</string>
+    <string name="add_child_btn">Add child</string>
+    <string name="child_name">Child\'s name</string>
+    <string name="empty_child_name">Enter the child\'s name</string>
+    <string name="did_not_add_child">You did not add a child. Log in to try again</string>
+    <string name="child_added">The child is added</string>
     <string name="app_title">FamilyGuard</string>
     <string name="language">Language</string>
 

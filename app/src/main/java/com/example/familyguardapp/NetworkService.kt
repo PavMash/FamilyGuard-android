@@ -1,6 +1,7 @@
 package com.example.familyguardapp
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -84,19 +85,23 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
         }
     }
 
-    override suspend fun createChild(username: String, password: String): NetworkResult<String> {
+    override suspend fun createChild(username: String, password: String, childName: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
+                Log.d("childAdd", childName.toString())
                 val generatedFCMToken = "user"
                     .plus((1..1_000_000).random())
                     .plus((1..1_000_000).random())
                     .plus(System.currentTimeMillis())
-                val response = apiService.createChild(NewChildInfo(username, password, "Magomed", generatedFCMToken))
+                val chInf = NewChildInfo(username, password, childName)
+                val response = apiService.createChild(chInf)
+                Log.d("childAdd", chInf.toString())
+                Log.d("childAdd", "status: ${response.body()?.status}")
                 if (response.isSuccessful) {
                     val body = response.body()
                     when (body?.status) {
-                        "created" -> NetworkResult.Success(body.id)
-                        "failed" -> NetworkResult.Error(body.id)
+                        "created" -> NetworkResult.Success(body.detail)
+                        "failed" -> NetworkResult.Error(body.detail)
                         else -> NetworkResult.Error("Unknown response")
                     }
                 } else {

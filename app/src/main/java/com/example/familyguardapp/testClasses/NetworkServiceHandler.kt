@@ -29,8 +29,8 @@ class NetworkServiceHandler(private val networkServiceInterface: NetworkServiceI
         }
     }
 
-    suspend fun createChildHandler(username: String, password: String): String {
-        val response = networkServiceInterface.createChild(username, password)
+    suspend fun createChildHandler(username: String, password: String, childName: String): String {
+        val response = networkServiceInterface.createChild(username, password, childName)
         when (response) {
             is NetworkResult.Success -> {
                 return "Success"

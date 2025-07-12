@@ -20,13 +20,12 @@ data class NewChildInfo(
     val username: String,
     val password: String,
     val child_name: String,
-    val fcm_token: String // device FCM token from Firebase
 )
 
 // response body for /create-child
 data class ChildResponse(
     val status: String,
-    val id: String // child ID
+    val detail: String // child ID
 )
 
 // interface for login, signup, and createChild

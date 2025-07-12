@@ -1,5 +1,6 @@
 package com.example.familyguardapp
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -13,15 +14,28 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.example.familyguardapp.AddChildActivity
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 var childID: String? = null
+var childName: String? = null
 
 class LoginActivity : AppCompatActivity() {
+    companion object {
+        const val CHILD_NAME = "CHILD_NAME"
+    }
+
+    private lateinit var loginButton : Button
+    private var pendingEmail : String = ""
+    private var pendingPassword : String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -41,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
 
         val emailField = findViewById<EditText>(R.id.edEmail)
         val passwordField = findViewById<EditText>(R.id.edPassword)
-        val loginButton = findViewById<Button>(R.id.btnLogIn)
+        loginButton = findViewById<Button>(R.id.btnLogIn)
         val signupButton = findViewById<Button>(R.id.btnSignUp)
         val imShield = findViewById<ImageView>(R.id.imShield)
 
@@ -86,71 +100,104 @@ class LoginActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailField.text.toString()
             val password = passwordField.text.toString()
-            val networkService = NetworkService(this)
 
             val errorMessage = correctCredentials(email, password)
             if (errorMessage != null) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
-            } else {
-                loginButton.isEnabled = false
-                lifecycleScope.launch {
-                    try {
-                        when (val result = networkService.login(email, password)) {
-                            is NetworkResult.Success -> {
-                                Toast.makeText(
-                                    this@LoginActivity,
-                                    getString(R.string.login_successful),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                when (val resultChild = networkService.createChild(email, password)) {
-                                    is NetworkResult.Success -> {
-                                        childID = resultChild.data
-                                        Log.d("ChildID", "$childID")
-                                    }
-                                    is NetworkResult.Error -> {
-                                        Toast.makeText(
-                                            this@LoginActivity,
-                                            resultChild.message,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    }
-                                }
-                                val intent = Intent(
-                                    this@LoginActivity,
-                                    MainActivity::class.java
-                                )
-                                startActivity(intent)
-                                finish()
-                            }
-                            is NetworkResult.Error -> {
-                                Toast.makeText(
-                                    this@LoginActivity,
-                                    result.message,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                        }
-                    } catch (e: Exception) {
-                        val errorText = getString(R.string.unexpected_error)
+            }
+            pendingEmail = email
+            pendingPassword = password
+            attemptLogin()
+        }
+    }
+
+    private fun attemptLogin() {
+        val networkService = NetworkService(this)
+        loginButton.isEnabled = false
+        lifecycleScope.launch {
+            try {
+                when (val result = networkService.login(pendingEmail, pendingPassword)) {
+                    is NetworkResult.Success -> {
                         Toast.makeText(
                             this@LoginActivity,
-                            "$errorText: ${e.message}",
-                            Toast.LENGTH_LONG
+                            getString(R.string.login_successful),
+                            Toast.LENGTH_SHORT
                         ).show()
-                    } finally {
-                        loginButton.isEnabled = true
+
+                        val childFlag = getSharedPreferences("child_flag", MODE_PRIVATE)
+                        //childFlag.edit().remove("child_set").apply()
+                        val childSet = childFlag.getBoolean("child_set", false)
+                        if (!childSet) {
+                            val addChildIntent = Intent(this@LoginActivity, AddChildActivity::class.java)
+                            addChildActivityLauncher.launch(addChildIntent)
+                            return@launch
+                        }
+                        if (childName != null) {
+                            when (val resultChild =
+                                networkService.createChild(pendingEmail, pendingPassword, childName!!)) {
+                                is NetworkResult.Success -> {
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        getString(R.string.login_successful),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
+                                is NetworkResult.Error -> {
+                                    Toast.makeText(
+                                        this@LoginActivity,
+                                        resultChild.message,
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    Log.d("childAdd", resultChild.message)
+                                }
+                            }
+                        }
+                        Toast.makeText(
+                            this@LoginActivity,
+                            getString(R.string.login_successful),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        startInstructionActivity()
+                    }
+                    is NetworkResult.Error -> {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            result.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
+            } catch (e: Exception) {
+                val errorText = getString(R.string.unexpected_error)
+                Toast.makeText(
+                    this@LoginActivity,
+                    "$errorText: ${e.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            } finally {
+                loginButton.isEnabled = true
             }
         }
+    }
+
+    private fun startInstructionActivity() {
+        val instructionIntent = Intent(
+            this@LoginActivity,
+            InstructionActivity::class.java
+        )
+        instructionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(instructionIntent)
+        finish()
     }
 
     private fun correctCredentials(email: String, password: String): String? {
         return when {
             email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
-            password.length < 6 -> getString(R.string.invalid_password)
+//            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
+//            password.length < 6 -> getString(R.string.invalid_password)
             else -> null
         }
     }
@@ -160,4 +207,26 @@ class LoginActivity : AppCompatActivity() {
         view.alpha = 0f // transparency
         view.animate().alpha(1f).setDuration(3000L).start()
     }
+
+    private fun cancelCoroutine() {
+        lifecycleScope.cancel()
+    }
+
+    private fun notifyChildNotAdded() {
+        Toast.makeText(this@LoginActivity,
+            getString(R.string.did_not_add_child), Toast.LENGTH_LONG)
+    }
+
+    private val addChildActivityLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()) { result ->
+            val data = result.data
+            val name = data?.getStringExtra(CHILD_NAME) ?: ""
+            if (name != "") {
+                childName = name
+                attemptLogin()
+            }
+            return@registerForActivityResult
+        }
+
 }
