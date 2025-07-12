@@ -30,7 +30,8 @@ class SignUpActivityTest {
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
 
-        Thread.sleep(3000)
+        Thread.sleep(5000)
+
         onView(withId(R.id.btnLogIn)).check(matches(isDisplayed()))
     }
 

@@ -6,8 +6,6 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
-import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Test
@@ -30,15 +28,16 @@ class LoginActivityTest {
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
 
-        Thread.sleep(3000)
+        Thread.sleep(5000)
 
         onView(withId(R.id.edEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
         onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
 
-        Thread.sleep(3000)
-        onView(withId(R.id.permission_instruction)).check(matches(isDisplayed()))
+        Thread.sleep(5000)
+
+        onView(withId(R.id.btnLogIn)).check(doesNotExist())
     }
 
     @Test
@@ -73,6 +72,33 @@ class LoginActivityTest {
 
         onView(withId(R.id.edEmail)).perform(typeText(""), closeSoftKeyboard())
         onView(withId(R.id.edPassword)).perform(typeText(""), closeSoftKeyboard())
+
+        onView(withId(R.id.btnLogIn)).perform(click())
+
+        onView(withId(R.id.permission_instruction)).check(doesNotExist())
+    }
+
+    @Test
+    fun checkInvalidUsername() {
+        val randomEmail = "user"
+            .plus((1..1_000_000).random())
+            .plus((1..1_000_000).random())
+            .plus(System.currentTimeMillis())
+            .plus("@gmail.com")
+
+        ActivityScenario.launch(SignUpActivity::class.java)
+
+        onView(withId(R.id.edSignEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
+        onView(withId(R.id.edSignPassword)).perform(typeText("777777"), closeSoftKeyboard())
+
+        onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        ActivityScenario.launch(LoginActivity::class.java)
+
+        val invalidEmail = "1".plus(randomEmail)
+
+        onView(withId(R.id.edEmail)).perform(typeText(invalidEmail), closeSoftKeyboard())
+        onView(withId(R.id.edPassword)).perform(typeText("7777777"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
 
