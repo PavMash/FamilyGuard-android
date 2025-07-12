@@ -134,6 +134,8 @@ class ForegroundDispatchService : Service() {
         val bytes = capturedText.toByteArray(Charsets.UTF_8) // converts text to bytes
         val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file
+        val childID = getSharedPreferences("childID", MODE_PRIVATE).getString("ID", "no child ID")
+        Log.d("MyLog", "$childID")
         val response = cloudDispatchService.sendData(childID!!, textPart) // response from the server
         // checks success of response
         if (response.isSuccessful) {
@@ -143,6 +145,7 @@ class ForegroundDispatchService : Service() {
                 val responseBlock = responseBody.block // gets information about blocking
                 // checks contents of "yes/no" block of response body
                 if (responseBlock == "Yes") { // if blocking is confirmed
+                    Log.d("MyLog", "YES")
                     blockTheApp() // blocks the content
                 }
             }

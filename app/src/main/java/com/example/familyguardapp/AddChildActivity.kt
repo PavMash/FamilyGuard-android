@@ -1,4 +1,4 @@
-package com.example.familyguardapp.testClasses
+package com.example.familyguardapp
 
 import android.app.Activity
 import android.content.Intent
@@ -44,6 +44,9 @@ class AddChildActivity : AppCompatActivity() {
                 Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val prefs = getSharedPreferences("child_flag", MODE_PRIVATE)
+            prefs.edit().putBoolean("child_set", true).apply()
 
             val sendChildNameIntent = Intent(this@AddChildActivity, LoginActivity::class.java)
             sendChildNameIntent.putExtra(LoginActivity.CHILD_NAME, childName)

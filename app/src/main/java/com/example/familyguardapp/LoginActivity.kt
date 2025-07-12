@@ -1,6 +1,5 @@
 package com.example.familyguardapp
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -14,17 +13,15 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import com.example.familyguardapp.testClasses.AddChildActivity
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-var childID: String? = null
+//var childID: String? = null
 var childName: String? = null
 
 // this activity represents login page
@@ -57,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
 
         val emailField = findViewById<EditText>(R.id.edEmail) // email field
         val passwordField = findViewById<EditText>(R.id.edPassword) // password field
-        val loginButton = findViewById<Button>(R.id.btnLogIn) // login button
+        loginButton = findViewById<Button>(R.id.btnLogIn) // login button
         val signupButton = findViewById<Button>(R.id.btnSignUp) // signup button
         val imShield = findViewById<ImageView>(R.id.imShield) // the picture of the shield
 
@@ -115,15 +112,19 @@ class LoginActivity : AppCompatActivity() {
             }
             pendingEmail = email
             pendingPassword = password
+            Log.d("Pizdec", "point1")
             attemptLogin()
         }
     }
 
     private fun attemptLogin() {
+        Log.d("Pizdec", "point2")
         val networkService = NetworkService(this)
+        Log.d("Pizdec", "point2.5")
         loginButton.isEnabled = false
         lifecycleScope.launch {
             try {
+                Log.d("Pizdec", "point3")
                 when (val result = networkService.login(pendingEmail, pendingPassword)) {
                     is NetworkResult.Success -> {
                         Toast.makeText(
@@ -144,6 +145,11 @@ class LoginActivity : AppCompatActivity() {
                             when (val resultChild =
                                 networkService.createChild(pendingEmail, pendingPassword, childName!!)) {
                                 is NetworkResult.Success -> {
+                                    val childID = resultChild.data // gets child ID
+                                    Log.d("ChildID", childID)
+
+                                    val prefsID = getSharedPreferences("childID", MODE_PRIVATE)
+                                    prefsID.edit().putString("ID", childID).apply()
                                     Toast.makeText(
                                         this@LoginActivity,
                                         getString(R.string.login_successful),
@@ -161,11 +167,11 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
-                        Toast.makeText(
-                            this@LoginActivity,
-                            getString(R.string.login_successful),
-                            Toast.LENGTH_SHORT
-                        ).show()
+//                        Toast.makeText(
+//                            this@LoginActivity,
+//                            getString(R.string.login_successful),
+//                            Toast.LENGTH_SHORT
+//                        ).show()
 
                         startInstructionActivity()
                     }
@@ -184,6 +190,7 @@ class LoginActivity : AppCompatActivity() {
                     "$errorText: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
+                e.printStackTrace()
             } finally {
                 loginButton.isEnabled = true
             }
