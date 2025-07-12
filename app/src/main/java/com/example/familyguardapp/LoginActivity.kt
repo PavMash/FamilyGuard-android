@@ -19,7 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
-import com.example.familyguardapp.AddChildActivity
+import com.example.familyguardapp.testClasses.AddChildActivity
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
