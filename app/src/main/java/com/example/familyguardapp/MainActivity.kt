@@ -35,15 +35,16 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private val REQUEST_NOTIFICATION_PERMISSION = 100
+    private val REQUEST_NOTIFICATION_PERMISSION = 100 // request code for displaying notification
     private val REQUEST_DEVICE_ADMIN = 101
-    private var permissionHandled = false
+    private var permissionHandled = false // flag to check whether permission is already given
 
     private lateinit var devicePolicyManager: DevicePolicyManager
     private lateinit var adminComponent: ComponentName
-    private lateinit var passwordField: EditText
-    private lateinit var disableAdminButton: Button
+    private lateinit var passwordField: EditText // password field
+    private lateinit var disableAdminButton: Button // button, which disables device admin
 
+    // this standard method creates activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -57,102 +58,112 @@ class MainActivity : AppCompatActivity() {
         devicePolicyManager = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
         adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
 
-        val backButton = findViewById<FloatingActionButton>(R.id.backButtonMain)
+        val backButton = findViewById<FloatingActionButton>(R.id.backButtonMain) // back button
 
         backButton.imageTintList = ColorStateList.valueOf(Color.BLACK) // makes arrow black
 
+        // sets the listener for back button
         backButton.setOnClickListener {
-            val intent = Intent(this@MainActivity, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            startActivity(intent)
-            finish()
-            backButton.isEnabled = false
+            val intent = Intent(this@MainActivity, LoginActivity::class.java) // intent to launch LoginActivity
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP // flags are needed to create activity if it does not exist, otherwise launch the existing instance of activity
+            startActivity(intent) // starts activity
+            finish() // finishes LoginActivity
+            backButton.isEnabled = false // disables back button
         }
 
-        passwordField = findViewById(R.id.password_field)
-        disableAdminButton = findViewById(R.id.disable_admin_button)
+        passwordField = findViewById(R.id.password_field) // initializes passwordField
+        disableAdminButton = findViewById(R.id.disable_admin_button) // initializes disableAdminButton
 
-        requestNotificationPermissionAndStartService()
+        requestNotificationPermissionAndStartService() // asks user for permission to show notifications
         requestDeviceAdminPermission()
 
         if (!isPasswordSet()) {
             showSetPasswordDialog()
         }
 
+        // sets listener to accessibility permission button
+        // asks for permission to scan and block content from the screen
         findViewById<Button>(R.id.accessibility_permission_button).setOnClickListener {
             if (checkAccessibilityPermission(ScreenScanningService::class.java)) {
                 Toast.makeText(
                     this,
                     R.string.already_have_permission,
                     Toast.LENGTH_LONG
-                ).show()
+                ).show() // notifies that the permission is already given
             } else {
-                askForAccessibilityPermission()
+                askForAccessibilityPermission() // asks for the permission
             }
         }
 
-        val spinner = findViewById<Spinner>(R.id.spinner)
+        val spinner = findViewById<Spinner>(R.id.spinner) // spinner is used to change app language
 
         val languages: MutableMap<String, Int> = mutableMapOf() // map for languages
-        languages["en"] = 0
-        languages["ru"] = 1
+        languages["en"] = 0 // English language has position 0
+        languages["ru"] = 1 // Russian language has position 1
 
-        val selectedLanguageCode = getSavedLanguage(this)
-        val position = languages[selectedLanguageCode] ?: 0
+        val selectedLanguageCode = getSavedLanguage(this) // get the last language, which was chosen by user
+        val position = languages[selectedLanguageCode] ?: 0 // gets the position of the last language or gets 0(English by default)
         spinner.setSelection(position) // sets new language
 
         var isFirstSelection = true // to avoid repeated screen updates
 
-        // listener
+        // sets the listener for spinner
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            // this method performs actions when an item is selected
             override fun onItemSelected(
                 parent: AdapterView<*>?,
                 view: View?,
                 position: Int,
                 id: Long
             ) {
-                if (isFirstSelection) {
+                if (isFirstSelection) { // to avoid repeated changes of language
                     isFirstSelection = false
                     return
                 }
                 val selectedLanguage = parent?.getItemAtPosition(position).toString() // gets selected item
-                val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE)
+                val prefs = getSharedPreferences("settings", Context.MODE_PRIVATE) // gets SharedPreferences
                 val currentLanguage = getSavedLanguage(this@MainActivity) // previous(current) language
 
-                val newLanguage = when (selectedLanguage) {
+                val newLanguage = when (selectedLanguage) { // checks all possible variants
                     "Russian" -> "ru"
                     "Английский" -> "en"
                     else -> currentLanguage
                 }
 
                 if (currentLanguage != newLanguage) {
-                    prefs.edit { putString("app_language", newLanguage) }
-                    updateScreen()
+                    prefs.edit { putString("app_language", newLanguage) } // saves choice for next sessions
+                    updateScreen() // updates the screen
                 }
             }
 
+            // this method performs actions when nothing is selected
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d("Nothing", "none")
+                Log.d("Nothing", "none") // checks logs
             }
         }
+
+        // sets listener to overlay permission button
+        // asks permission to interrupt user when harmful content is detected
         findViewById<Button>(R.id.overlay_permission_button).setOnClickListener {
-            if (checkOverlayPermission()) {
+            if (checkOverlayPermission()) { // checks whether the permission is already enabled
                 Toast.makeText(
                     this,
                     R.string.already_have_permission,
                     Toast.LENGTH_LONG
-                ).show()
+                ).show() // notifies user that the permission is already given
             } else {
-                askForOverlayPermission()
+                askForOverlayPermission() // asks for the permission otherwise
             }
         }
+
+        // sets listener to disable admin button
         disableAdminButton.setOnClickListener {
-            val enteredPassword = passwordField.text.toString()
-            if (verifyPassword(enteredPassword)) {
-                disableDeviceAdmin()
+            val enteredPassword = passwordField.text.toString() // extracts password from password field
+            if (verifyPassword(enteredPassword)) { // verifies correctness of the password
+                disableDeviceAdmin() // disables Device Admin
             } else {
-                Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show()
-                passwordField.text.clear()
+                Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show() // notifies user about wrong password
+                passwordField.text.clear() // clears password field
             }
         }
     }

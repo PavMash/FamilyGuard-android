@@ -33,9 +33,9 @@ class ForegroundDispatchService : Service() {
     // coroutine
     private var serviceJob: Job? = null
 
-    private lateinit var networkService: NetworkService
+    private lateinit var networkService: NetworkService // network service
 
-    private lateinit var okHttpClient: OkHttpClient
+    private lateinit var okHttpClient: OkHttpClient // HTTP client, which avoids problems with Android protection
 
     // Retrofit instance
     private val retrofit by lazy {
@@ -52,7 +52,7 @@ class ForegroundDispatchService : Service() {
         retrofit.create(CloudDispatchService::class.java)
     }
 
-    // creates a channel
+    // this standard method creates the service and initializes HTTP client
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
@@ -64,27 +64,26 @@ class ForegroundDispatchService : Service() {
     // service does not need to interact with activity
     override fun onBind(intent: Intent?): IBinder? = null
 
-    // service actions
+    // this method defines service actions
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification = createNotification() // notification to display (hidden)
         startForeground(1, notification) // start service in the foreground
         serviceJob = CoroutineScope(Dispatchers.IO).launch { // coroutine
-            delay(30_000L)
+//            delay(30_000L)
 
             while (isActive) { // while coroutine is running
                 try {
-                    val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
+                    val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE) // gets SharedPreferences storage
                     val capturedText = prefs.getString("captured_text", "") // captured text
-                    val sourceApp = prefs.getString("source_app", "")
+                    val sourceApp = prefs.getString("source_app", "") // gets source app
                     if (capturedText != null && capturedText != "" && !sourceApp.isNullOrEmpty() &&
-                        sourceApp != packageName
+                        sourceApp != packageName // checks whether the source app is not our app
                     ) {
-                        Log.d("ForegroundService", "Captured text: $capturedText")
+                        Log.d("ForegroundService", "Captured text: $capturedText") // checks logs
                         postText(capturedText) // function for testing
                     }
-                    // postImage() // function for testing
                 } catch (e: Exception) {
-                    Log.d("MyLog", "${e.message}")
+                    Log.d("MyLog", "${e.message}") // checks the description of caught exception
                 }
                 delay(10000) // 10 seconds delay
             }
@@ -92,33 +91,36 @@ class ForegroundDispatchService : Service() {
         return START_STICKY // app will try to restart service if it is stopped
     }
 
+    // this method is called when the app is destroyed
     override fun onDestroy() {
         super.onDestroy()
         serviceJob?.cancel() // stops coroutine to avoid memory leaks
     }
 
+    // creates notification channel(it is must be done from Android Oreo API 26(8.0) to see notification)
+    // Foreground Services must have notifications
     private fun createNotificationChannel() {
         // checks Android Version(Android O or higher versions require notification channel)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                channelId,
-                "Background Service",
-                NotificationManager.IMPORTANCE_MIN
+                channelId, // channel ID
+                "Background Service", // name of the channel
+                NotificationManager.IMPORTANCE_MIN // IMPORTANCE_MIN does not disturb a child
             ).apply {
-                description = "Service channel"
-                enableLights(false)
-                enableVibration(false)
-                setSound(null, null)
-                setShowBadge(false)
-                lockscreenVisibility = Notification.VISIBILITY_SECRET
+                description = "Service channel" // description for user
+                enableLights(false) // disables lights
+                enableVibration(false) // disables vibration
+                setSound(null, null) // disables sound
+                setShowBadge(false) // disables badge
+                lockscreenVisibility = Notification.VISIBILITY_SECRET // not visible in lockscreen
             }
 
-            val manager = getSystemService(NotificationManager::class.java)
-            manager.createNotificationChannel(channel)
+            val manager = getSystemService(NotificationManager::class.java) // manages notifications
+            manager.createNotificationChannel(channel) // shows notification to user
         }
     }
 
-// creates a hidden notification
+    // creates a hidden notification
     private fun createNotification(): Notification {
         return NotificationCompat
             .Builder(this, channelId)
@@ -129,72 +131,41 @@ class ForegroundDispatchService : Service() {
             .build()
     }
 
+    // this method sends captured data to the server
     private suspend fun postText(capturedText: String) {
-        // blockTheApp()
-        // example of text data
-        val bytes = capturedText.toByteArray(Charsets.UTF_8)
-        val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType())
-        val textPart = MultipartBody.Part.createFormData("file", "data.txt", request)
-        // response from the Cloud
-        val response = cloudDispatchService.sendData(childID!!, textPart)
+        val bytes = capturedText.toByteArray(Charsets.UTF_8) // converts text to bytes
+        val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
+        val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file
+        val response = cloudDispatchService.sendData(childID!!, textPart) // response from the server
         // checks success of response
         if (response.isSuccessful) {
-            Log.d("MyLog", "Success(text)")
-            val responseBody = response.body()
+            Log.d("MyLog", "Success(text)") // checks logs
+            val responseBody = response.body() // gets response body
             if (responseBody != null) {
-                val responseBlock = responseBody.block
+                val responseBlock = responseBody.block // gets information about blocking
                 // checks contents of "yes/no" block of response body
-                if (responseBlock == "Yes") {
-                    blockTheApp()
+                if (responseBlock == "Yes") { // if blocking is confirmed
+                    blockTheApp() // blocks the content
                 }
             }
-            getSharedPreferences("scanner_data", MODE_PRIVATE)
+            getSharedPreferences("scanner_data", MODE_PRIVATE) // gets SharedPreferences
                 .edit {
-                    remove("captured_text")
-                    remove("source_app")
+                    remove("captured_text") // clears captured_text
+                    remove("source_app") // clears the name of the source app
                 }
         } else {
-            Log.d("MyLog", "${response.errorBody()?.string()}")
-            Log.d("MyLog", "Fail(text)")
+            Log.d("MyLog", "${response.errorBody()?.string()}")// checks error message
+            Log.d("MyLog", "Fail(text)") // checks failure
         }
     }
 
-//    private suspend fun postImage() {
-//        // example of image data
-//        val request = createImagePartFromDrawable(this, R.drawable.android)
-//        // response from server
-//        val response = cloudDispatchService.sendImage(request)
-//        // checks success of response
-//        if (response.isSuccessful) {
-//            Log.d("MyLog", "Success(image)")
-//        }
-//        else {
-//            Log.d("MyLog", "${response.errorBody()?.string()}")
-//            Log.d("MyLog", "Fail(image)")
-//        }
-//    }
-//
-//    // converts drawable into Part
-//    private fun createImagePartFromDrawable(context: Context, drawableId: Int): MultipartBody.Part {
-//        val inputStream = context.resources.openRawResource(drawableId) // drawable file
-//        val bytes = inputStream.readBytes()
-//        inputStream.close()
-//
-//        val file = File(context.cacheDir, "upload_image.png") // temporary file
-//        file.writeBytes(bytes)
-//
-//        val mediaType = "image/png".toMediaType() // type
-//        val requestBody = file.asRequestBody(mediaType)
-//
-//        return MultipartBody.Part.createFormData("image", file.name, requestBody) // Part
-//    }
-
+    // this method blocks the app
     // starts BlockingActivity
     private fun blockTheApp() {
-        Log.d("ForegroundService", "Blocking started")
+        Log.d("ForegroundService", "Blocking started") // checks logs
         val blockingIntent = Intent(ContentBlockingService.OVERLAY_TRIGGER_ACTION)
         LocalBroadcastManager.getInstance(this).sendBroadcast(
             blockingIntent
-        )
+        ) // overlays the current app with the screen of warning
     }
 }

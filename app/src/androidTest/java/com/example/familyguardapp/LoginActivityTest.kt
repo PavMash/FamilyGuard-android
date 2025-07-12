@@ -37,7 +37,7 @@ class LoginActivityTest {
 
         onView(withId(R.id.btnLogIn)).perform(click())
 
-        Thread.sleep(10000)
+        Thread.sleep(3000)
         onView(withId(R.id.permission_instruction)).check(matches(isDisplayed()))
     }
 

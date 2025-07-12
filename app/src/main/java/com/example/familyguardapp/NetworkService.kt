@@ -1,6 +1,7 @@
 package com.example.familyguardapp
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -67,6 +68,11 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun signup(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
+                val fcmResponse = apiService.uploadToken(FCMInfo(fcm_token!!))
+                if (fcmResponse.isSuccessful) {
+                    Log.d("fcmResponse", "Response code: ${fcmResponse.code()}")
+                    Log.d("fcmResponse", "Password: ${fcmResponse.body()?.password}")
+                }
                 val response = apiService.signup(UserInfo(username, password))
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -87,16 +93,12 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun createChild(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                val generatedFCMToken = "user"
-                    .plus((1..1_000_000).random())
-                    .plus((1..1_000_000).random())
-                    .plus(System.currentTimeMillis())
-                val response = apiService.createChild(NewChildInfo(username, password, "Magomed", generatedFCMToken))
+                val response = apiService.createChild(NewChildInfo(username, password, "Magomed"))
                 if (response.isSuccessful) {
                     val body = response.body()
                     when (body?.status) {
-                        "created" -> NetworkResult.Success(body.id)
-                        "failed" -> NetworkResult.Error(body.id)
+                        "created" -> NetworkResult.Success(body.detail)
+                        "failed" -> NetworkResult.Error(body.detail)
                         else -> NetworkResult.Error("Unknown response")
                     }
                 } else {

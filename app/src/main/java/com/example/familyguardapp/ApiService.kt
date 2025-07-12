@@ -9,7 +9,7 @@ data class UserInfo(
     val password: String
 )
 
-// response body for /signup and /login
+// response body for /signup, /login, and /create-child
 data class ApiResponse(
     val status: String,
     val detail: String
@@ -20,21 +20,22 @@ data class NewChildInfo(
     val username: String,
     val password: String,
     val child_name: String,
-    val fcm_token: String // device FCM token from Firebase
 )
 
-// response body for /create-child
-data class ChildResponse(
-    val status: String,
-    val id: String // child ID
+// request body for /upload-token
+data class FCMInfo(
+    val token : String // FCM token
 )
 
-// interface for login, signup, and createChild
-/*
- "@Body" is used to send data classes, which will be converted to JSON
- Conversion is done by converter factory(Moshi, Gson)
- "suspend" is used for coroutines
-*/
+// response body for /upload-token
+data class FCMResponse(
+    val password: String // password to deactivate token
+)
+
+// interface for /login, /signup, and /create-child
+// "@Body" is used to send data classes, which will be converted to JSON
+// Conversion is done by converter(Moshi, Gson)
+// "suspend" is used for coroutines
 interface ApiService {
     // POST method for login
     @POST("/login")
@@ -46,5 +47,8 @@ interface ApiService {
 
     // POST method for creating a child
     @POST("/create-child")
-    suspend fun createChild(@Body userInfo: NewChildInfo): Response<ChildResponse>
+    suspend fun createChild(@Body userInfo: NewChildInfo): Response<ApiResponse>
+
+    @POST("/upload-token")
+    suspend fun uploadToken(@Body fcmInfo : FCMInfo) : Response<FCMResponse>
 }
