@@ -28,14 +28,14 @@ class LoginActivityTest {
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
 
-        Thread.sleep(3000)
+        Thread.sleep(5000)
 
         onView(withId(R.id.edEmail)).perform(typeText(randomEmail), closeSoftKeyboard())
         onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
 
-        Thread.sleep(3000)
+        Thread.sleep(5000)
 
         onView(withId(R.id.btnLogIn)).check(doesNotExist())
     }
