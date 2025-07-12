@@ -6,6 +6,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -19,6 +20,6 @@ class BlockingActivityTest {
 
         Thread.sleep(3000)
 
-        scenario.state.isAtLeast(Lifecycle.State.DESTROYED)
+        assertTrue(scenario.state.isAtLeast(Lifecycle.State.DESTROYED))
     }
 }
