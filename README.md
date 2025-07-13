@@ -8,7 +8,7 @@ Here you cannot find the certificate, without which this app will not work
 **Name**: FamilyGuard App
 **Logo**: [Logo](app/src/main/res/drawable/shield.png)
 **Link to the product**: [Product](app)
-**Link to the Demo Video**: [Demo Video](https://drive.google.com/file/d/1kt15AYeClRTht8oJ7UdaMU0IaKRjjjqA/view?usp=drivesdk)
+**Link to the Demo Video**: [Demo Video](https://drive.google.com/drive/folders/1yRQGI9mhB1NbSUIpv8Y6nnDcnDdV2UTS?usp=sharing)
 
 ## Body
 
