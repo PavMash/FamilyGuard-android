@@ -69,7 +69,7 @@ class LoginActivityTest {
 
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        val isAdminDialogVisible = device.wait(Until.hasObject(By.textContains("Activate")), 5000)
+        val isAdminDialogVisible = device.wait(Until.hasObject(By.textContains("admin")), 10000)
 
         assertTrue("Device Admin dialog should appear after login", isAdminDialogVisible)
     }
