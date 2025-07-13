@@ -1,7 +1,7 @@
 package com.example.familyguardapp.testClasses
 
-import com.example.familyguardapp.NetworkResult
-import com.example.familyguardapp.NetworkServiceInterface
+import com.example.familyguardapp.services.NetworkResult
+import com.example.familyguardapp.services.NetworkServiceInterface
 
 // this class was created only to test NetworkService
 // "networkServiceInterface" is an instance of NetworkServiceInterface

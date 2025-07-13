@@ -13,6 +13,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.example.familyguardapp.screens.LoginActivity
+import com.example.familyguardapp.screens.SignUpActivity
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test

@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.services
 
 import android.accessibilityservice.AccessibilityService
 import android.app.ActivityManager
@@ -20,6 +20,9 @@ import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Button
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.familyguardapp.R
+import com.example.familyguardapp.receivers.MyDeviceAdminReceiver
+import com.example.familyguardapp.screens.BlockingActivity
 
 class ContentBlockingService : AccessibilityService() {
 

@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.services
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,6 +12,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.example.familyguardapp.R
+import com.example.familyguardapp.statistics.UsageStatsHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

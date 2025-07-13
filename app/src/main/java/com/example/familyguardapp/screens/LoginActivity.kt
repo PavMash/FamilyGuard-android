@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.screens
 
 import android.content.Intent
 import android.graphics.Color
@@ -17,6 +17,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
+import com.example.familyguardapp.R
+import com.example.familyguardapp.services.NetworkResult
+import com.example.familyguardapp.services.NetworkService
+import com.example.familyguardapp.services.fcm_token
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

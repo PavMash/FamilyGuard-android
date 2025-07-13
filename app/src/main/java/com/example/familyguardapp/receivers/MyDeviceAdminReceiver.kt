@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.receivers
 
 import android.app.admin.DeviceAdminReceiver
 import android.content.Context

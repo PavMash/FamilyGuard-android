@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.services
 
 import android.accessibilityservice.AccessibilityService
 import android.os.Handler
