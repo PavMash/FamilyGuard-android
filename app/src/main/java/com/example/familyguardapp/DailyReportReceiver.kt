@@ -45,7 +45,6 @@ class DailyReportReceiver : BroadcastReceiver() {
             return
         }
 
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
             Log.w("DailyReport", "Exact alarm not permitted — skipping scheduling")
             return
@@ -77,9 +76,6 @@ class DailyReportReceiver : BroadcastReceiver() {
             Log.e("DailyReport", "Permission denied for exact alarm", e)
         }
     }
-
-
-
 
     private fun getTodayDateString(): String {
         val cal = java.util.Calendar.getInstance()

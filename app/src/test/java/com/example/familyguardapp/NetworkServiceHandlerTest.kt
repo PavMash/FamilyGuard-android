@@ -42,9 +42,10 @@ class NetworkServiceHandlerTest {
     fun createChildChecker() = runBlocking {
         val username = "child448@gmail.com"
         val password = "BadChild"
+        val childName = "Mark"
         val expected = "Success"
-        whenever(networkServiceInterface.createChild(username, password)).thenReturn(NetworkResult.Success("Success"))
-        val result = networkServiceHandler.createChildHandler(username, password)
+        whenever(networkServiceInterface.createChild(username, password, childName)).thenReturn(NetworkResult.Success("Success"))
+        val result = networkServiceHandler.createChildHandler(username, password, childName)
         assertEquals(result, expected)
     }
 

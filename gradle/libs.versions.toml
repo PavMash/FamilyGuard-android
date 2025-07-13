@@ -1,5 +1,8 @@
 [versions]
+converterGson = "2.9.0"
+core = "1.16.0"
 espressoIntents = "3.6.1"
+gson = "2.11.0"
 mockito = "4.11.0"
 mockito_kotlin = "4.0.0"
 firebaseBom = "33.15.0"
@@ -20,11 +23,16 @@ firebaseMessagingKtx = "24.1.1"
 junitJupiter = "5.8.1"
 rules = "1.6.1"
 runner = "1.6.2"
+uiautomator = "2.3.0"
 
 [libraries]
+androidx-core = { module = "androidx.core:core", version.ref = "core" }
 androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoIntents" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "rules" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 mockito_kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito_kotlin" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }

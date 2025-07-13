@@ -1,8 +1,8 @@
 package com.example.familyguardapp
 
 import android.Manifest
-import android.app.AlarmManager
 import android.accessibilityservice.AccessibilityService
+import android.app.AlarmManager
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
 import android.content.Context
@@ -31,11 +31,15 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.security.MessageDigest
 import java.util.Locale
-import kotlinx.coroutines.*
-
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -77,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         devicePolicyManager = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
         adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
 
@@ -105,13 +108,23 @@ class MainActivity : AppCompatActivity() {
         }
 
         val accessibilityBtn = findViewById<Button>(R.id.accessibility_permission_button)
-        if (checkAccessibilityPermission(mutableListOf(ScreenScanningService::class.java,
-                ContentBlockingService::class.java))) {
+        if (checkAccessibilityPermission(
+                mutableListOf(
+                        ScreenScanningService::class.java,
+                        ContentBlockingService::class.java
+                    )
+            )
+        ) {
             accessibilityBtn.visibility = View.INVISIBLE
         }
         accessibilityBtn.setOnClickListener {
-            if (!checkAccessibilityPermission(mutableListOf(ScreenScanningService::class.java,
-                ContentBlockingService::class.java))) {
+            if (!checkAccessibilityPermission(
+                    mutableListOf(
+                            ScreenScanningService::class.java,
+                            ContentBlockingService::class.java
+                        )
+                )
+            ) {
                 askForAccessibilityPermission()
                 startAccessibilityPermissionCheckLoop(accessibilityBtn)
             }
@@ -185,7 +198,6 @@ class MainActivity : AppCompatActivity() {
                 passwordField.text.clear() // clears password field
             }
         }
-
     }
 
     private fun showSetPasswordDialog() {
@@ -242,7 +254,9 @@ class MainActivity : AppCompatActivity() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
             am.canScheduleExactAlarms()
-        } else true
+        } else {
+            true
+        }
     }
 
     private fun startAlarmPermissionLoop(btn: Button) {
@@ -256,7 +270,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun isPasswordSet(): Boolean {
         val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
@@ -387,12 +400,16 @@ class MainActivity : AppCompatActivity() {
         return expectedComponentNames.isEmpty()
     }
 
-    private fun startAccessibilityPermissionCheckLoop(accessibilityBtn : Button) {
+    private fun startAccessibilityPermissionCheckLoop(accessibilityBtn: Button) {
         accessibilityPermissionCheckScope.launch {
             while (isActive) { // Runs until coroutine is cancelled or permission is granted
-                if (checkAccessibilityPermission(mutableListOf(
-                        ScreenScanningService::class.java,
-                        ContentBlockingService::class.java))) {
+                if (checkAccessibilityPermission(
+                        mutableListOf(
+                                ScreenScanningService::class.java,
+                                ContentBlockingService::class.java
+                            )
+                    )
+                ) {
                     // Permission granted
                     withContext(Dispatchers.Main) {
                         Toast.makeText(
@@ -488,9 +505,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("DailyReport", "Alarm set for 23:59 every day")
     }
 
-
-
-    private fun startOverlayPermissionCheckLoop(overlayBtn : Button) {
+    private fun startOverlayPermissionCheckLoop(overlayBtn: Button) {
         overlayPermissionCheckScope.launch {
             while (isActive) { // Runs until coroutine is cancelled or permission is granted
                 if (checkOverlayPermission()) {

@@ -21,7 +21,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-//var childID: String? = null
+// var childID: String? = null
 var childName: String? = null
 
 // this activity represents login page
@@ -30,9 +30,9 @@ class LoginActivity : AppCompatActivity() {
         const val CHILD_NAME = "CHILD_NAME"
     }
 
-    private lateinit var loginButton : Button
-    private var pendingEmail : String = ""
-    private var pendingPassword : String = ""
+    private lateinit var loginButton: Button
+    private var pendingEmail: String = ""
+    private var pendingPassword: String = ""
 
     // this standard method creates the activity
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -134,22 +134,22 @@ class LoginActivity : AppCompatActivity() {
                         usernamePrefs.edit().putString("currentUser", pendingEmail).apply()
 
                         val childFlag = getSharedPreferences("child_flag", MODE_PRIVATE)
+
                         val childSet = childFlag.getBoolean("child_set: $pendingEmail", false)
+
                         if (!childSet) {
                             val addChildIntent = Intent(this@LoginActivity, AddChildActivity::class.java)
                             addChildActivityLauncher.launch(addChildIntent)
                             return@launch
                         }
                         if (childName != null) {
-                            when (val resultChild =
-                                networkService.createChild(pendingEmail, pendingPassword, childName!!)) {
+                            when (val resultChild = networkService.createChild(pendingEmail, pendingPassword, childName!!)) {
                                 is NetworkResult.Success -> {
                                     val childID = resultChild.data // gets child ID
                                     Log.d("ChildID", childID)
 
                                     val prefsID = getSharedPreferences("childID", MODE_PRIVATE)
-                                    prefsID.edit().putString(
-                                        "childID: $pendingEmail", childID).apply()
+                                    prefsID.edit().putString("childID: $pendingEmail", childID).apply()
                                     Toast.makeText(
                                         this@LoginActivity,
                                         getString(R.string.login_successful),
@@ -224,20 +224,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun notifyChildNotAdded() {
-        Toast.makeText(this@LoginActivity,
-            getString(R.string.did_not_add_child), Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this@LoginActivity,
+            getString(R.string.did_not_add_child),
+            Toast.LENGTH_LONG
+        )
+            .show()
     }
 
-    private val addChildActivityLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()) { result ->
-            val data = result.data
-            val name = data?.getStringExtra(CHILD_NAME) ?: ""
-            if (name != "") {
-                childName = name
-                attemptLogin()
-            }
-            return@registerForActivityResult
+    private val addChildActivityLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val data = result.data
+        val name = data?.getStringExtra(CHILD_NAME) ?: ""
+        if (name != "") {
+            childName = name
+            attemptLogin()
         }
-
+        return@registerForActivityResult
+    }
 }

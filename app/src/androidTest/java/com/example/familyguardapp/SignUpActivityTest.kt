@@ -10,11 +10,22 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SignUpActivityTest {
+
+    @Before
+    fun getFCMTokenFromLoginPage() {
+        val loginScenario = ActivityScenario.launch(LoginActivity::class.java)
+
+        Thread.sleep(5000)
+
+        loginScenario.close()
+    }
+
     @Test
     fun checkValidSignUp() {
         ActivityScenario.launch(SignUpActivity::class.java)
@@ -29,8 +40,9 @@ class SignUpActivityTest {
         onView(withId(R.id.edSignPassword)).perform(typeText("password"), closeSoftKeyboard())
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
+        onView(withId(R.id.btnSignSignUp)).perform(click())
 
-        Thread.sleep(5000)
+        Thread.sleep(10000)
 
         onView(withId(R.id.btnLogIn)).check(matches(isDisplayed()))
     }
@@ -44,6 +56,8 @@ class SignUpActivityTest {
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
 
+        Thread.sleep(5000)
+
         onView(withId(R.id.tvTitle)).check(doesNotExist())
     }
 
@@ -55,6 +69,8 @@ class SignUpActivityTest {
         onView(withId(R.id.edSignPassword)).perform(typeText(""), closeSoftKeyboard())
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        Thread.sleep(5000)
 
         onView(withId(R.id.tvTitle)).check(doesNotExist())
     }
@@ -68,6 +84,8 @@ class SignUpActivityTest {
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
 
+        Thread.sleep(5000)
+
         onView(withId(R.id.tvTitle)).check(doesNotExist())
     }
 
@@ -79,6 +97,8 @@ class SignUpActivityTest {
         onView(withId(R.id.edSignPassword)).perform(typeText("728"), closeSoftKeyboard())
 
         onView(withId(R.id.btnSignSignUp)).perform(click())
+
+        Thread.sleep(5000)
 
         onView(withId(R.id.tvTitle)).check(doesNotExist())
     }

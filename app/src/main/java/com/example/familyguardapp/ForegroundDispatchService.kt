@@ -136,9 +136,9 @@ class ForegroundDispatchService : Service() {
         val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file
         val currentUser = getSharedPreferences("username", MODE_PRIVATE).getString("currentUser", "")
-        val childID = if (currentUser != "") getSharedPreferences(
-                "childID", MODE_PRIVATE).getString("childID: $currentUser", "no child ID")
-                else "no child ID"
+        val childID = if (currentUser != "") {
+            getSharedPreferences("childID", MODE_PRIVATE).getString("childID: $currentUser", "no child ID")
+        } else { "no child ID" }
         Log.d("MyLog", "$childID")
         val response = cloudDispatchService.sendData(childID!!, textPart) // response from the server
         // checks success of response
@@ -179,8 +179,6 @@ class ForegroundDispatchService : Service() {
         if (result is NetworkResult.Success) {
             Log.d("UsageReport", "Sent successfully")
         }
-
-
     }
 
     private fun getTodayDateString(): String {
@@ -190,7 +188,6 @@ class ForegroundDispatchService : Service() {
         val day = cal.get(Calendar.DAY_OF_MONTH)
         return "%04d-%02d-%02d".format(year, month, day)
     }
-
 
     // this method blocks the app
     // starts BlockingActivity

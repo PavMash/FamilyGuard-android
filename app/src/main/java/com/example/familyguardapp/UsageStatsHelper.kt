@@ -2,13 +2,7 @@ package com.example.familyguardapp
 
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import android.os.Build
 import java.util.*
-import kotlin.collections.ArrayList
-import com.example.familyguardapp.AppUsage
-
-
-
 
 object UsageStatsHelper {
     fun getDailyUsageStats(context: Context): Pair<Int, List<AppUsage>> {
@@ -17,7 +11,9 @@ object UsageStatsHelper {
         val startTime = endTime - 24 * 60 * 60 * 1000 // 24h
 
         val usageStatsList = usageStatsManager.queryUsageStats(
-            UsageStatsManager.INTERVAL_DAILY, startTime, endTime
+            UsageStatsManager.INTERVAL_DAILY,
+            startTime,
+            endTime
         )
 
         var totalTime = 0L

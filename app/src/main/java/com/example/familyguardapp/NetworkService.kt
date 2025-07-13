@@ -132,7 +132,6 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
             }
         }
     }
-
 }
 
 sealed class NetworkResult<T> {

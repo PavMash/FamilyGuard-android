@@ -19,7 +19,7 @@ data class ApiResponse(
 data class NewChildInfo(
     val username: String,
     val password: String,
-    val child_name: String,
+    val child_name: String
 )
 
 // request body for /upload-token
