@@ -132,25 +132,11 @@ Detailed descriptions of user acceptance tests are available in [docs/quality-as
 
 ### Automated tests
 
-- Tools used:
-    - Python: pytest, unittest
-    - Kotlin: Android JUnit, Espresso
-    - SQL: manual seed/test scripts
-
-- Types of tests implemented:
-    - Unit tests
-    - Integration tests
-    - Offline/connection fallback behavior
-
-- Where to find tests in repository:
-    - backend/tests/ – Python backend unit & integration tests
-    - app/src/test/ – Kotlin unit tests
-    - app/src/androidTest/ – Kotlin UI and instrumentation tests
-    - init.sql and test seeds – For DB test verification
+Detailed description can be found in [automated-tests.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/main/docs/quality-assurance/automated-tests.md)
 
 ## Build and Deployment
 
-### Continuous Integration(CI)
+### Continuous Integration (CI)
 
 **Link**: [continuous-integration.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/main/docs/automation/continuous-integration.md)
 
