@@ -16,9 +16,55 @@ Here you cannot find the certificate, without which this app will not work
 
 Description: The project consists of three main parts: application, server, and website. Application scans the child's screen and sends the data to the server. Server redirects this data to AI, which analyzes received information. Then, AI creates categories and decides, which of them can be harmful. Then, the categories are sent to the website and if they are harmful, the application receives a request to block the content of these categories
 
-**Project Context Diagram**: TODO
+### Feature Roadmap
+#### MVP v0 
+##### Achieved:
+-  Screen text capture 
+-  Background service with notifications
+-  Cloud processing pipeline (HTTP)
+-  AI content analysis
+- Plain-text activity reports     
 
-**Feature Roadmap**: TODO
+##### Shortfalls: 
+-  No real-time blocking 
+-  Local server dependecy
+-  No authentication
+#### MVP v1
+##### Achieved:
+-  SSL encryption (HTTPS)
+-  Docker containerization
+-  Parent/child database schema
+-  Open-source AI migration (Llama/Qwen)
+-  App/website authentication     
+
+##### Shortfalls:
+-  Time limits not implemented
+-  Mobile UI responsiveness issues
+-  FCM notifications unreliable
+#### MVP v2
+##### Achieved:
+-  Adaptive UI design
+-  Russian/English localization
+-  App persistence (Device Admin with settings blocking)
+-  Firebase notifications
+-  Basic blocking mechanism
+-  Category-based blocking interface     
+
+#### Shortfalls:
+-  Time-based app blocking (e.g., 4-6 PM homework focus)
+-  Real-time stats dashboard
+-  Website refresh optimization
+
+#### MVP v3
+##### In progress:
+-  Setting rules of child's phone usage in human language
+-  Build profile managment page
+-  Insert remote locking/unlocking of the app
+-  Add on-demand, time-based blocking of a group of applications
+-  Time-based app blocking (e.g., 4-6 PM homework focus)
+-  Real-time stats dashboard
+
+**Project Context Diagram**: [Diagram](https://gitlab.pg.innopolis.university/familyguard-devs/cloud-storage/-/blob/database-changes/docs/architecture/images/project_context_diagram.png?ref_type=heads)
 
 **Usage instructions/Short user guide**: See below
 
