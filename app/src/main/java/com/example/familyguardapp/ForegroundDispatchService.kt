@@ -135,7 +135,10 @@ class ForegroundDispatchService : Service() {
         val bytes = capturedText.toByteArray(Charsets.UTF_8) // converts text to bytes
         val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file
-        val childID = getSharedPreferences("childID", MODE_PRIVATE).getString("ID", "no child ID")
+        val currentUser = getSharedPreferences("username", MODE_PRIVATE).getString("currentUser", "")
+        val childID = if (currentUser != "") getSharedPreferences(
+                "childID", MODE_PRIVATE).getString("childID: $currentUser", "no child ID")
+                else "no child ID"
         Log.d("MyLog", "$childID")
         val response = cloudDispatchService.sendData(childID!!, textPart) // response from the server
         // checks success of response

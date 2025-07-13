@@ -118,13 +118,10 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun attemptLogin() {
-        Log.d("Pizdec", "point2")
         val networkService = NetworkService(this)
-        Log.d("Pizdec", "point2.5")
         loginButton.isEnabled = false
         lifecycleScope.launch {
             try {
-                Log.d("Pizdec", "point3")
                 when (val result = networkService.login(pendingEmail, pendingPassword)) {
                     is NetworkResult.Success -> {
                         Toast.makeText(
@@ -133,9 +130,11 @@ class LoginActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
 
+                        val usernamePrefs = getSharedPreferences("username", MODE_PRIVATE)
+                        usernamePrefs.edit().putString("currentUser", pendingEmail).apply()
+
                         val childFlag = getSharedPreferences("child_flag", MODE_PRIVATE)
-                        //childFlag.edit().remove("child_set").apply()
-                        val childSet = childFlag.getBoolean("child_set", false)
+                        val childSet = childFlag.getBoolean("child_set: $pendingEmail", false)
                         if (!childSet) {
                             val addChildIntent = Intent(this@LoginActivity, AddChildActivity::class.java)
                             addChildActivityLauncher.launch(addChildIntent)
@@ -149,7 +148,8 @@ class LoginActivity : AppCompatActivity() {
                                     Log.d("ChildID", childID)
 
                                     val prefsID = getSharedPreferences("childID", MODE_PRIVATE)
-                                    prefsID.edit().putString("ID", childID).apply()
+                                    prefsID.edit().putString(
+                                        "childID: $pendingEmail", childID).apply()
                                     Toast.makeText(
                                         this@LoginActivity,
                                         getString(R.string.login_successful),
@@ -167,12 +167,8 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
-//                        Toast.makeText(
-//                            this@LoginActivity,
-//                            getString(R.string.login_successful),
-//                            Toast.LENGTH_SHORT
-//                        ).show()
 
+                        childName = null
                         startInstructionActivity()
                     }
                     is NetworkResult.Error -> {

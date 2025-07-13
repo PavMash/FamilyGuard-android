@@ -3,6 +3,7 @@ package com.example.familyguardapp
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Display.Mode
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -45,8 +46,15 @@ class AddChildActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val prefs = getSharedPreferences("child_flag", MODE_PRIVATE)
-            prefs.edit().putBoolean("child_set", true).apply()
+            val usernamePrefs = getSharedPreferences("username", MODE_PRIVATE)
+            val currentUser = usernamePrefs.getString("currentUser", "")
+            if (currentUser != "") {
+                val childFlag = getSharedPreferences("child_flag", MODE_PRIVATE)
+                childFlag.edit().putBoolean(
+                    "child_set: $currentUser",
+                    true
+                ).apply()
+            }
 
             val sendChildNameIntent = Intent(this@AddChildActivity, LoginActivity::class.java)
             sendChildNameIntent.putExtra(LoginActivity.CHILD_NAME, childName)
