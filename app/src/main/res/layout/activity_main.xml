@@ -21,21 +21,23 @@
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/overlay_permission_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stylish_line"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <View
         android:id="@+id/stylish_line"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="?android:attr/textColorPrimary"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
+        android:background="?android:attr/textColorPrimary"
         app:layout_constraintBottom_toTopOf="@id/accessibility_permission_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/disable_admin_button"/>
+        app:layout_constraintTop_toBottomOf="@+id/disable_admin_button" />
 
     <Spinner
         android:id="@+id/spinner"
@@ -85,10 +87,31 @@
         android:text="@string/overlay_permission_button_text"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/alarm_permission_button"
+
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/accessibility_permission_button"/>
+        app:layout_constraintTop_toBottomOf="@id/accessibility_permission_button" />
+
+
+    <Button
+        android:id="@+id/alarm_permission_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/log_in_button"
+        android:gravity="center_horizontal"
+        android:text="@string/alarm_permission_button_text"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/overlay_permission_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
     <EditText
         android:id="@+id/password_field"

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.icu.util.Calendar
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -159,6 +160,34 @@ class ForegroundDispatchService : Service() {
             Log.d("MyLog", "Fail(text)") // checks failure
         }
     }
+
+    private suspend fun sendDailyUsageReport() {
+        val (totalMinutes, topApps) = UsageStatsHelper.getDailyUsageStats(this)
+        val childId = getSharedPreferences("childID", MODE_PRIVATE).getString("ID", "no child ID")!!
+
+        val report = UsageReport(
+            child_id = childId,
+            date = getTodayDateString(), // format "2025-07-13"
+            total_screen_time_minutes = totalMinutes,
+            top_apps = topApps
+        )
+
+        val result = networkService.sendUsageReport(report)
+        if (result is NetworkResult.Success) {
+            Log.d("UsageReport", "Sent successfully")
+        }
+
+
+    }
+
+    private fun getTodayDateString(): String {
+        val cal = Calendar.getInstance()
+        val year = cal.get(Calendar.YEAR)
+        val month = cal.get(Calendar.MONTH) + 1
+        val day = cal.get(Calendar.DAY_OF_MONTH)
+        return "%04d-%02d-%02d".format(year, month, day)
+    }
+
 
     // this method blocks the app
     // starts BlockingActivity

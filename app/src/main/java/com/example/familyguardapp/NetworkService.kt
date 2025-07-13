@@ -117,6 +117,22 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
             }
         }
     }
+
+    override suspend fun sendUsageReport(report: UsageReport): NetworkResult<String> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = apiService.sendUsageReport(report)
+                if (response.isSuccessful) {
+                    NetworkResult.Success("Usage report sent")
+                } else {
+                    NetworkResult.Error("Failed: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                NetworkResult.Error("Error: ${e.message}")
+            }
+        }
+    }
+
 }
 
 sealed class NetworkResult<T> {

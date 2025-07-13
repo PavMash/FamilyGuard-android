@@ -4,4 +4,6 @@ interface NetworkServiceInterface {
     suspend fun login(username: String, password: String): NetworkResult<String>
     suspend fun signup(username: String, password: String): NetworkResult<String>
     suspend fun createChild(username: String, password: String, childName: String): NetworkResult<String>
+    suspend fun sendUsageReport(report: UsageReport): NetworkResult<String>
+
 }

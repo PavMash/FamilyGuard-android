@@ -31,6 +31,17 @@ data class FCMInfo(
 data class FCMResponse(
     val password: String // password to deactivate token
 )
+data class UsageReport(
+    val child_id: String,
+    val date: String,
+    val total_screen_time_minutes: Int,
+    val top_apps: List<AppUsage>
+)
+
+data class AppUsage(
+    val app_name: String,
+    val minutes_used: Int
+)
 
 // interface for /login, /signup, and /create-child
 // "@Body" is used to send data classes, which will be converted to JSON
@@ -51,4 +62,7 @@ interface ApiService {
 
     @POST("/upload-token")
     suspend fun uploadToken(@Body fcmInfo: FCMInfo): Response<FCMResponse>
+
+    @POST("/report-usage")
+    suspend fun sendUsageReport(@Body report: UsageReport): Response<ApiResponse>
 }

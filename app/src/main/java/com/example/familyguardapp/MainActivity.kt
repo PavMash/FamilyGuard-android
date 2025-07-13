@@ -1,6 +1,7 @@
 package com.example.familyguardapp
 
 import android.Manifest
+import android.app.AlarmManager
 import android.accessibilityservice.AccessibilityService
 import android.app.admin.DevicePolicyManager
 import android.content.ComponentName
@@ -34,6 +35,8 @@ import java.security.MessageDigest
 import java.util.Locale
 import kotlinx.coroutines.*
 
+
+
 class MainActivity : AppCompatActivity() {
 
     private val REQUEST_NOTIFICATION_PERMISSION = 100 // request code for displaying notification
@@ -58,6 +61,22 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        scheduleDailyReport()
+
+        val alarmBtn = findViewById<Button>(R.id.alarm_permission_button)
+
+        if (hasAlarmPermission()) {
+            alarmBtn.visibility = View.INVISIBLE
+        }
+
+        alarmBtn.setOnClickListener {
+            if (!hasAlarmPermission()) {
+                val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM)
+                startActivity(intent)
+                startAlarmPermissionLoop(alarmBtn)
+            }
+        }
+
 
         devicePolicyManager = getSystemService(DEVICE_POLICY_SERVICE) as DevicePolicyManager
         adminComponent = ComponentName(this, MyDeviceAdminReceiver::class.java)
@@ -166,6 +185,7 @@ class MainActivity : AppCompatActivity() {
                 passwordField.text.clear() // clears password field
             }
         }
+
     }
 
     private fun showSetPasswordDialog() {
@@ -218,6 +238,25 @@ class MainActivity : AppCompatActivity() {
             .putBoolean("password_set", true)
             .apply()
     }
+    private fun hasAlarmPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            am.canScheduleExactAlarms()
+        } else true
+    }
+
+    private fun startAlarmPermissionLoop(btn: Button) {
+        CoroutineScope(Dispatchers.Main).launch {
+            while (isActive) {
+                if (hasAlarmPermission()) {
+                    btn.visibility = View.INVISIBLE
+                    return@launch
+                }
+                delay(2000)
+            }
+        }
+    }
+
 
     private fun isPasswordSet(): Boolean {
         val prefs = getSharedPreferences("admin_settings", MODE_PRIVATE)
@@ -416,6 +455,40 @@ class MainActivity : AppCompatActivity() {
         permissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(permissionIntent)
     }
+
+    private fun scheduleDailyReport() {
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as android.app.AlarmManager
+        val intent = Intent(this, DailyReportReceiver::class.java)
+        val pendingIntent = android.app.PendingIntent.getBroadcast(
+            this,
+            0,
+            intent,
+            android.app.PendingIntent.FLAG_IMMUTABLE or android.app.PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
+        val calendar = java.util.Calendar.getInstance().apply {
+            timeInMillis = System.currentTimeMillis()
+            set(java.util.Calendar.HOUR_OF_DAY, 23)
+            set(java.util.Calendar.MINUTE, 59)
+            set(java.util.Calendar.SECOND, 0)
+        }
+
+        // Если текущее время уже позже 23:59, перенести на завтра
+        if (calendar.timeInMillis < System.currentTimeMillis()) {
+            calendar.add(java.util.Calendar.DAY_OF_YEAR, 1)
+        }
+
+        alarmManager.setRepeating(
+            android.app.AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            android.app.AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+
+        Log.d("DailyReport", "Alarm set for 23:59 every day")
+    }
+
+
 
     private fun startOverlayPermissionCheckLoop(overlayBtn : Button) {
         overlayPermissionCheckScope.launch {

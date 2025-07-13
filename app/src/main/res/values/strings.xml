@@ -5,12 +5,18 @@
     <string name="permission_granted">Permission granted</string>
     <string name="block_screen_message">We detected illegal content on your screen.\n\n Do not seek for such content anymore. \n\n You won\'t be able to open this app in 2 minutes.</string>
     <string name="instruction_activity_intro">FamilyGuard needs some permissions from your side to begin defending your child from harmful content:</string>
-    <string name="instruction_activity_body">1) In the next screen, tap on "activate this device admin app". We need it to make FamilyGuard undeletable without entering a parent password in the app.\n\n
-        2) Give FamilyGuard the permission to show notifications. We will show a notification saying that this device is being monitored, so that your child is aware of FamilyGuard working.\n\n
-        3) Set parent password to disable device admin mode and safely delete the app. The password must be 6 characters at least. Don\'t tell it to your child.\n\n
-        4) Press button "Permit scanning and blocking" and give permissions to "FamilyGuard Scanner" and "FamilyGuard Blocker". We need it to monitor phone screen an block inappropriate content.\n\n
-        5) Press button "Permit drawing over other apps" and give permission to FamilyGuard. We need it for blocking.
+    <string name="instruction_activity_body">
+    1) In the next screen, tap on "activate this device admin app". We need it to make FamilyGuard undeletable without entering a parent password in the app.\n\n
+    2) Give FamilyGuard the permission to show notifications. We will show a notification saying that this device is being monitored, so that your child is aware of FamilyGuard working.\n\n
+    3) Set parent password to disable device admin mode and safely delete the app. The password must be 6 characters at least. Don\'t tell it to your child.\n\n
+    4) Press button "Permit scanning and blocking" and give permissions to "FamilyGuard Scanner" and "FamilyGuard Blocker". We need it to monitor phone screen and block inappropriate content.\n\n
+    5) Press button "Permit drawing over other apps" and give permission to FamilyGuard. We need it for blocking.\n\n
+    6) Give permission to see your child\'s phone usage.\n\n
+    7) Allow exact alarm scheduling — to let FamilyGuard send usage reports.
     </string>
+    <string name="alarm_permission_button_text">Permission to send phone usage data regularly</string>
+
+
     <string name="instruction_activity_conclusion">After you complete all the steps, the app will start working and your child will be protected from digital dangers.</string>
     <string name="next_btn_text">Next</string>
     <string name="block_screen_exit_button_text">Close</string>
