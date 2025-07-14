@@ -54,6 +54,7 @@ class LoginActivityTest {
         onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
+        onView(withId(R.id.btnLogIn)).perform(click())
 
         Thread.sleep(5000)
 
