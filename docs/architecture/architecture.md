@@ -23,6 +23,9 @@ These design decisions improve maintainability, as each module can be tested, de
 ## Deployment view
 [Deployment View Diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/974d57753ab3b38e13def0082d71ad57f6979891/docs/architecture/Deployment%20view/development-view.svg)
 
+The deployment leverages a Docker container to encapsulate the backend services, providing portability and ease of deployment on the customer’s infrastructure. Inside the container, a Uvicorn server handles HTTP requests on port 443 and communicates with a PostgreSQL database (on port 5432) to store and retrieve client data. Requests from both web and mobile clients are served via HTTPS, ensuring secure communication. Additionally, the system integrates with OpenRouter over port 443 to process and return responses from an external LLM. 
+
+On the customer’s side, deployment simply requires running the Docker container on a server with network access to the clients and OpenRouter, simplifying setup and ensuring consistent behavior across environments.
 
 ## Tech Stack
 
