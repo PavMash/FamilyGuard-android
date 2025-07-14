@@ -49,6 +49,11 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun login(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
+                val fcmResponse = apiService.uploadToken(FCMInfo(fcm_token!!))
+                if (fcmResponse.isSuccessful) {
+                    Log.d("fcmResponse", "Response code: ${fcmResponse.code()}")
+                    Log.d("fcmResponse", "Password: ${fcmResponse.body()?.password}")
+                }
                 val response = apiService.login(UserInfo(username, password))
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -69,11 +74,6 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun signup(username: String, password: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                val fcmResponse = apiService.uploadToken(FCMInfo(fcm_token!!))
-                if (fcmResponse.isSuccessful) {
-                    Log.d("fcmResponse", "Response code: ${fcmResponse.code()}")
-                    Log.d("fcmResponse", "Password: ${fcmResponse.body()?.password}")
-                }
                 val response = apiService.signup(UserInfo(username, password))
                 if (response.isSuccessful) {
                     val body = response.body()
@@ -94,11 +94,7 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun createChild(username: String, password: String, childName: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("childAdd", childName.toString())
-                val generatedFCMToken = "user"
-                    .plus((1..1_000_000).random())
-                    .plus((1..1_000_000).random())
-                    .plus(System.currentTimeMillis())
+                Log.d("childAdd", childName)
                 val chInf = NewChildInfo(username, password, childName)
                 val response = apiService.createChild(chInf)
                 Log.d("childAdd", chInf.toString())
