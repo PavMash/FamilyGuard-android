@@ -188,7 +188,7 @@ Each pull request must include:
 
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
 
-## Obstacles our team has ran in (for customer)
+## Obstacles our team has run in (for customer)
 - Screenshot making is a too heavy operation
 - Firebase is not fully reliable
 - Child ID should not contain special symbols to not break the URL
@@ -197,7 +197,7 @@ Milestones reflect major phases or goals in the project. They are not equivalent
 **Why is this important**
 Customer wants to be aware of obstacles awaiting if he starts bringing the product up by himself
 
-## What our team has learned (for customer)
+## What has our team learned (for customer)
 - Web development with FastAPI + Jinja2
 - PostgreSQL & best practices
 - Network programming with Kotlin
