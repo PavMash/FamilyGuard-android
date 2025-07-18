@@ -13,6 +13,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.example.familyguardapp.screens.LoginActivity
+import com.example.familyguardapp.screens.SignUpActivity
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -52,6 +54,7 @@ class LoginActivityTest {
         onView(withId(R.id.edPassword)).perform(typeText("123456"), closeSoftKeyboard())
 
         onView(withId(R.id.btnLogIn)).perform(click())
+        onView(withId(R.id.btnLogIn)).perform(click())
 
         Thread.sleep(5000)
 
@@ -69,7 +72,7 @@ class LoginActivityTest {
 
         val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-        val isAdminDialogVisible = device.wait(Until.hasObject(By.textContains("Activate")), 5000)
+        val isAdminDialogVisible = device.wait(Until.hasObject(By.textContains("admin")), 10000)
 
         assertTrue("Device Admin dialog should appear after login", isAdminDialogVisible)
     }

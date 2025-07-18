@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.screens
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.familyguardapp.R
 
 // Activity is started, when illegal content is detected
 // It blocks access to the app with such content

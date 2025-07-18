@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.services
 
 interface NetworkServiceInterface {
     suspend fun login(username: String, password: String): NetworkResult<String>

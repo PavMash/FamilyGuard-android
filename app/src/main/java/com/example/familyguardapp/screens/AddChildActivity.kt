@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.screens
 
 import android.app.Activity
 import android.content.Intent
@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.familyguardapp.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class AddChildActivity : AppCompatActivity() {

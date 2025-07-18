@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.screens
 
 import android.Manifest
 import android.accessibilityservice.AccessibilityService
@@ -30,6 +30,12 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.familyguardapp.R
+import com.example.familyguardapp.receivers.DailyReportReceiver
+import com.example.familyguardapp.receivers.MyDeviceAdminReceiver
+import com.example.familyguardapp.services.ContentBlockingService
+import com.example.familyguardapp.services.ForegroundDispatchService
+import com.example.familyguardapp.services.ScreenScanningService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

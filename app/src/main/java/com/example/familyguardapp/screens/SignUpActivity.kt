@@ -1,4 +1,4 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.screens
 
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -9,6 +9,9 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.familyguardapp.R
+import com.example.familyguardapp.services.NetworkResult
+import com.example.familyguardapp.services.NetworkService
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 

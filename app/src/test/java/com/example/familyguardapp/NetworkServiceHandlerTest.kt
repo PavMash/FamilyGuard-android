@@ -1,5 +1,7 @@
 package com.example.familyguardapp
 
+import com.example.familyguardapp.services.NetworkResult
+import com.example.familyguardapp.services.NetworkServiceInterface
 import com.example.familyguardapp.testClasses.NetworkServiceHandler
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -44,7 +46,9 @@ class NetworkServiceHandlerTest {
         val password = "BadChild"
         val childName = "Mark"
         val expected = "Success"
-        whenever(networkServiceInterface.createChild(username, password, childName)).thenReturn(NetworkResult.Success("Success"))
+        whenever(networkServiceInterface.createChild(username, password, childName)).thenReturn(
+            NetworkResult.Success("Success")
+        )
         val result = networkServiceHandler.createChildHandler(username, password, childName)
         assertEquals(result, expected)
     }

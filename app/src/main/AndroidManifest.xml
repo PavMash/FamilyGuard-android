@@ -29,10 +29,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".InstructionActivity"
+            android:name=".screens.InstructionActivity"
             android:exported="false" />
         <activity
-            android:name=".AddChildActivity"
+            android:name=".screens.AddChildActivity"
             android:exported="false" />
 
         <meta-data
@@ -40,7 +40,7 @@
             android:value="@string/default_notification_channel_id" />
 
         <activity
-            android:name=".BlockingActivity"
+            android:name=".screens.BlockingActivity"
             android:excludeFromRecents="true"
             android:exported="false"
             android:launchMode="singleTask"
@@ -48,7 +48,7 @@
             android:theme="@style/Base.Theme.FamilyGuardApp" />
 
         <receiver
-            android:name=".MyDeviceAdminReceiver"
+            android:name=".receivers.MyDeviceAdminReceiver"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
@@ -61,17 +61,17 @@
         </receiver>
 
         <receiver
-            android:name=".DailyReportReceiver"
+            android:name=".receivers.DailyReportReceiver"
             android:exported="true" />
 
 
         <service
-            android:name=".ForegroundDispatchService"
+            android:name=".services.ForegroundDispatchService"
             android:exported="false"
             android:foregroundServiceType="dataSync"
             tools:ignore="ForegroundServicePermission" />
         <service
-            android:name=".AutoStartFirebaseMessagingService"
+            android:name=".services.AutoStartFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -79,7 +79,7 @@
         </service>
 
         <activity
-            android:name=".LoginActivity"
+            android:name=".screens.LoginActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -89,16 +89,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
+            android:name=".screens.SignUpActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".screens.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".ScreenScanningService"
+            android:name=".services.ScreenScanningService"
             android:description="@string/scanning_service_description"
             android:exported="true"
             android:label="FamilyGuard Scanner"
@@ -112,7 +112,7 @@
                 android:resource="@xml/scanning_service_config" />
         </service>
         <service
-            android:name=".ContentBlockingService"
+            android:name=".services.ContentBlockingService"
             android:description="@string/blocking_service_description"
             android:exported="false"
             android:label="FamilyGuard Blocker"

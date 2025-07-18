@@ -1,8 +1,8 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.statistics
 
 import android.app.usage.UsageStatsManager
 import android.content.Context
-import java.util.*
+import com.example.familyguardapp.services.AppUsage
 
 object UsageStatsHelper {
     fun getDailyUsageStats(context: Context): Pair<Int, List<AppUsage>> {

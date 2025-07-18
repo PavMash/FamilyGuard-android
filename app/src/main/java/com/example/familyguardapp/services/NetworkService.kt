@@ -1,7 +1,8 @@
-package com.example.familyguardapp
+package com.example.familyguardapp.services
 
 import android.content.Context
 import android.util.Log
+import com.example.familyguardapp.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -93,11 +94,7 @@ class NetworkService(private val context: Context) : NetworkServiceInterface {
     override suspend fun createChild(username: String, password: String, childName: String): NetworkResult<String> {
         return withContext(Dispatchers.IO) {
             try {
-                Log.d("childAdd", childName.toString())
-                val generatedFCMToken = "user"
-                    .plus((1..1_000_000).random())
-                    .plus((1..1_000_000).random())
-                    .plus(System.currentTimeMillis())
+                Log.d("childAdd", childName)
                 val chInf = NewChildInfo(username, password, childName)
                 val response = apiService.createChild(chInf)
                 Log.d("childAdd", chInf.toString())

@@ -8,7 +8,7 @@ Here you cannot find the certificate, without which this app will not work
 **Name**: FamilyGuard App
 **Logo**: [Logo](app/src/main/res/drawable/shield.png)
 **Link to the product**: [Product](app)
-**Link to the Demo Video**: [Demo Video](https://drive.google.com/file/d/1kt15AYeClRTht8oJ7UdaMU0IaKRjjjqA/view?usp=drivesdk)
+**Link to the Demo Video**: [Demo Video](https://drive.google.com/drive/folders/1yRQGI9mhB1NbSUIpv8Y6nnDcnDdV2UTS?usp=sharing)
 
 ## Body
 
@@ -70,7 +70,16 @@ Description: The project consists of three main parts: application, server, and 
 
 **Installation/Deployment instructions**: See below
 
+## Issues with the application (for customer)
+- Autostart message might be delayed
+- Dashboard design is not adaptive
+
+**Why is this important**
+- Customer needs to be aware of bugs which are currently being fixed, so that he could mitigate them during waiting for a new version
+
 ## Usage
+
+**If anything is not clear, send this README.md to [ChatGPT](chatgpt.com) and ask for detailed instructions (for customer)**  
 
 **How to install**:
 - Download Android Studio
@@ -92,30 +101,10 @@ Description: The project consists of three main parts: application, server, and 
 
 ## Architecture
 
-### Static view
-[Static view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Static%20view/ComponentDiagram.png)
-
-Our system demonstrates high cohesion and low-to-moderate coupling, which enhances maintainability and scalability. Each package in the architecture groups related responsibilities, ensuring cohesive functionality. 
-For example, the Web_components package focuses solely on the web UI, while Backend_components cleanly separates backend logic into the content provider, coordinator, and data collector. 
-Similarly, Android_side isolates mobile-specific functionality, and Side_services encapsulates auxiliary services like AI and the database.
-
-We minimized coupling by using <\<uses>> relationships between components. This allows individual modules to evolve independently — for example, improvements to the AI agent or switching database technology would not directly impact the Web application or Android application UI layers.
-
-These design decisions improve maintainability, as each module can be tested, debugged, and modified with minimal side effects on others. Additionally, the clear separation of concerns reduces complexity, making the codebase easier to understand and extend over time.
-
-### Dynamic view
-[Dynamic view diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/1c5784a76e01b40c0add49f4b7de7770ccc26130/docs/architecture/Dynamic%20view/SeqDiagram.png)
-
-- While child uses his/her phone, Screen scanner captures text from the screen. 
-- Once in a minute captured text is sent to the cloud through Dispatch service. 
-- In the cloud, AI agent analyses the text and detects inapropriate content.
-- After analysis, information about detected categories is stored in Database.
-- If inapropriate content is detected, server sends positive response to the Blocker that blocks the phone screen
-
-### Deployment view
-[Deployment View Diagram](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/974d57753ab3b38e13def0082d71ad57f6979891/docs/architecture/Deployment%20view/development-view.svg)
+Detailed description of the project architecture is available in [docs/architecture/architecture.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/bc01d0ca9ff0d53bf96e88466610a7b185e02931/docs/architecture/architecture.md)
 
 ## Development
+
 To contribute to the project read [CONTRIBUTING.md](https://gitlab.pg.innopolis.university/familyguard-devs/familyguard/-/blob/main/CONTRIBUTING.md?ref_type=heads)
 
 ## Quality assurance
@@ -198,3 +187,21 @@ Each pull request must include:
 ### 🏁 Milestones
 
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
+
+## Obstacles our team has run in (for customer)
+- Screenshot making is a too heavy operation
+- Firebase is not fully reliable
+- Child ID should not contain special symbols to not break the URL
+- Database migrations make it easier to extend functionality
+
+**Why is this important**
+Customer wants to be aware of obstacles awaiting if he starts bringing the product up by himself
+
+## What has our team learned (for customer)
+- Web development with FastAPI + Jinja2
+- PostgreSQL & best practices
+- Network programming with Kotlin
+- Git, Docker, Linux remote development
+
+**Why is this important**
+Customer would like to see how useful the SWP course was for our team

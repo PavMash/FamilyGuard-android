@@ -1,9 +1,9 @@
 package com.example.familyguardapp.testClasses
 
-import com.example.familyguardapp.ApiResponse
-import com.example.familyguardapp.ApiService
-import com.example.familyguardapp.NewChildInfo
-import com.example.familyguardapp.UserInfo
+import com.example.familyguardapp.services.ApiResponse
+import com.example.familyguardapp.services.ApiService
+import com.example.familyguardapp.services.NewChildInfo
+import com.example.familyguardapp.services.UserInfo
 
 // this class was created only to test ApiService
 // "apiService" is an instance of ApiService

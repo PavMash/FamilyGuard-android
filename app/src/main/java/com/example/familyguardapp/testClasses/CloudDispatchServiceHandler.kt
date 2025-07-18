@@ -1,7 +1,7 @@
 package com.example.familyguardapp.testClasses
 
-import com.example.familyguardapp.CloudDispatchService
-import com.example.familyguardapp.ServiceResponse
+import com.example.familyguardapp.services.CloudDispatchService
+import com.example.familyguardapp.services.ServiceResponse
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
