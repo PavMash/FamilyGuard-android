@@ -51,3 +51,7 @@ Polish the dashboard (simplify), fix bugs
 ##### MVP v5
 
 Deploy a LLM locally, probably on the phone
+
+####  The full transcript and recording of the meeting
+
+**Link to the recording of the meeting**: [Recording and Full Transcript](https://drive.google.com/drive/folders/1hroYJSdJLCbW4q3QCFmvvu9fJZQKQzPT)
