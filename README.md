@@ -70,7 +70,16 @@ Description: The project consists of three main parts: application, server, and 
 
 **Installation/Deployment instructions**: See below
 
+## Issues with the application (for customer)
+- Autostart message might be delayed
+- Dashboard design is not adaptive
+
+**Why is this important**
+- Customer needs to be aware of bugs which are currently being fixed, so that he could mitigate them during waiting for a new version
+
 ## Usage
+
+**If anything is not clear, send this README.md to [ChatGPT](chatgpt.com) and ask for detailed instructions (for customer)**  
 
 **How to install**:
 - Download Android Studio
@@ -178,3 +187,21 @@ Each pull request must include:
 ### 🏁 Milestones
 
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
+
+## Obstacles our team has ran in (for customer)
+- Screenshot making is a too heavy operation
+- Firebase is not fully reliable
+- Child ID should not contain special symbols to not break the URL
+- Database migrations make it easier to extend functionality
+
+**Why is this important**
+Customer wants to be aware of obstacles awaiting if he starts bringing the product up by himself
+
+## What our team has learned (for customer)
+- Web development with FastAPI + Jinja2
+- PostgreSQL & best practices
+- Network programming with Kotlin
+- Git, Docker, Linux remote development
+
+**Why is this important**
+Customer would like to see how useful the SWP course was for our team
