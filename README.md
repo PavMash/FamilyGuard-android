@@ -71,8 +71,7 @@ Description: The project consists of three main parts: application, server, and 
 **Installation/Deployment instructions**: See below
 
 ## Issues with the application (for customer)
-**Why is this important**
-- Customer needs to be aware of bugs which are currently being fixed, so that he could mitigate them during waiting for a new version
+**Why is this important:** Customer needs to be aware of bugs which are currently being fixed, so that he could mitigate them during waiting for a new version
 
 - Autostart message might be delayed
 - Dashboard design is not adaptive
@@ -189,8 +188,7 @@ Each pull request must include:
 Milestones reflect major phases or goals in the project. They are not equivalent to sprints. All issues should be assigned to a milestone to track progress.
 
 ## Obstacles our team has run in (for customer)
-**Why is this important**
-Customer wants to be aware of obstacles awaiting if he starts bringing the product up by himself
+**Why is this important:** Customer wants to be aware of obstacles awaiting if he starts bringing the product up by himself
 
 - Screenshot making is a too heavy operation
 - Firebase is not fully reliable
@@ -198,8 +196,7 @@ Customer wants to be aware of obstacles awaiting if he starts bringing the produ
 - Database migrations make it easier to extend functionality
 
 ## What has our team learned (for customer)
-**Why is this important**
-Customer would like to see how useful the SWP course was for our team
+**Why is this important:** Customer would like to see how useful the SWP course was for our team
 
 - Web development with FastAPI + Jinja2
 - PostgreSQL & best practices
