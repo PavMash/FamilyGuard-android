@@ -12,6 +12,7 @@
         5) Нажмите кнопку "Разрешить открывать окна поверх других приложений" и дайте разрешение FamilyGuard. Оно необходимо для блокировки контента.
     </string>
     <string name="alarm_permission_button_text">Разрешение для регулярной отправки данных об использовании телефона</string>
+    <string name="activity_blocking_deletion_text">Вы не сможете удалить FamilyGuard без родительского пароля</string>
     <string name="instruction_activity_conclusion">После того, как вы завершите все шаги выше, приложение начнёт работу и ваш ребёнок будет под защитой от цифровых угроз.</string>
     <string name="next_btn_text">Далее</string>
     <string name="block_screen_exit_button_text">Закрыть</string>

@@ -79,8 +79,9 @@ class ForegroundDispatchService : Service() {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE) // gets SharedPreferences storage
                     val capturedText = prefs.getString("captured_text", "") // captured text
                     val sourceApp = prefs.getString("source_app", "") // gets source app
-                    if (capturedText != null && capturedText != ""
-                        && sourceApp != null && sourceApp != getString(R.string.app_name)) {
+                    if (capturedText != null && capturedText != "" &&
+                        sourceApp != null && sourceApp != getString(R.string.app_name)
+                        ) {
                         Log.d("ForegroundService", "Captured text: $capturedText") // checks logs
                         postText(capturedText, sourceApp) // function for testing
                     }
@@ -134,7 +135,7 @@ class ForegroundDispatchService : Service() {
     }
 
     // this method sends captured data to the server
-    private suspend fun postText(capturedText: String, sourceApp : String) {
+    private suspend fun postText(capturedText: String, sourceApp: String) {
         val bytes = capturedText.toByteArray(Charsets.UTF_8) // converts text to bytes
         val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file

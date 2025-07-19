@@ -206,6 +206,32 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+
+        val accessibilityBtn = findViewById<Button>(R.id.accessibility_permission_button)
+        if (!checkAccessibilityPermission(
+                mutableListOf(
+                    ScreenScanningService::class.java,
+                    ContentBlockingService::class.java
+                )
+            )
+        ) {
+            accessibilityBtn.visibility = View.VISIBLE
+        }
+
+        val overlayBtn = findViewById<Button>(R.id.overlay_permission_button)
+        if (!checkOverlayPermission()) {
+            overlayBtn.visibility = View.VISIBLE
+        }
+
+        val alarmBtn = findViewById<Button>(R.id.alarm_permission_button)
+        if (!hasAlarmPermission()) {
+            alarmBtn.visibility = View.VISIBLE
+        }
+    }
+
+
     private fun showSetPasswordDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_set_password, null)
         val passwordInput = dialogView.findViewById<EditText>(R.id.password_input)

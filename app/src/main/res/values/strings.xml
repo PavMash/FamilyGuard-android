@@ -15,8 +15,7 @@
     7) Allow exact alarm scheduling — to let FamilyGuard send usage reports.
     </string>
     <string name="alarm_permission_button_text">Permission to send phone usage data regularly</string>
-
-
+    <string name="activity_blocking_deletion_text">You cannot delete FamilyGuard without parent password</string>
     <string name="instruction_activity_conclusion">After you complete all the steps, the app will start working and your child will be protected from digital dangers.</string>
     <string name="next_btn_text">Next</string>
     <string name="block_screen_exit_button_text">Close</string>

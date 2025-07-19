@@ -24,7 +24,7 @@ interface CloudDispatchService {
     // this method sends text to the server
     suspend fun sendData(
         @Query("child_id") id: String, // child ID
-        @Part("app_name") appName : String,
+        @Part("app_name") appName: String,
         @Part text: MultipartBody.Part // file with text captured from the child's screen
     ): Response<ServiceResponse> // sends text data to the Cloud
 }
