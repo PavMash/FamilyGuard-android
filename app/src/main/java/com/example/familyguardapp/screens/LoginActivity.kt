@@ -116,7 +116,6 @@ class LoginActivity : AppCompatActivity() {
             }
             pendingEmail = email
             pendingPassword = password
-            Log.d("Pizdec", "point1")
             attemptLogin()
         }
     }
@@ -128,12 +127,6 @@ class LoginActivity : AppCompatActivity() {
             try {
                 when (val result = networkService.login(pendingEmail, pendingPassword)) {
                     is NetworkResult.Success -> {
-                        Toast.makeText(
-                            this@LoginActivity,
-                            getString(R.string.login_successful),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
                         val usernamePrefs = getSharedPreferences("username", MODE_PRIVATE)
                         usernamePrefs.edit().putString("currentUser", pendingEmail).apply()
 
@@ -156,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                                     prefsID.edit().putString("childID: $pendingEmail", childID).apply()
                                     Toast.makeText(
                                         this@LoginActivity,
-                                        getString(R.string.login_successful),
+                                        getString(R.string.child_added),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
@@ -171,6 +164,12 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         }
+
+                        Toast.makeText(
+                            this@LoginActivity,
+                            getString(R.string.login_successful),
+                            Toast.LENGTH_SHORT
+                        ).show()
 
                         childName = null
                         startInstructionActivity()
