@@ -14,7 +14,7 @@ import androidx.core.content.edit
 // Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {
 
-    private var currentPackage : String = ""
+    private var currentPackage: String = ""
 
     private val handler = Handler(Looper.getMainLooper())
     private val intervalMillis = 60_000L
@@ -37,8 +37,11 @@ class ScreenScanningService : AccessibilityService() {
     // just necessary callback, not needed
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            currentPackage = if (event.packageName != null)
-                event.packageName.toString() else ""
+            currentPackage = if (event.packageName != null) {
+                event.packageName.toString()
+            } else {
+                ""
+            }
         }
     }
 
@@ -93,26 +96,26 @@ class ScreenScanningService : AccessibilityService() {
         }
     }
 
-    private fun getAppName(context : Context, appPackage : String) : String {
+    private fun getAppName(context: Context, appPackage: String): String {
         try {
             val pacMan = context.packageManager
             val appInfo = pacMan.getApplicationInfo(appPackage, 0)
             val appName = pacMan.getApplicationLabel(appInfo).toString()
             return appName
-        } catch (e : PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             Log.d("FamScan", "package: $appPackage, name exception")
             return ""
         }
     }
 
-    private fun isSystemApp(context : Context, appPackage : String) : Boolean {
+    private fun isSystemApp(context: Context, appPackage: String): Boolean {
         try {
             val pacMan = context.packageManager
             val appInfo = pacMan.getApplicationInfo(appPackage, 0)
             val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
             val isUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
             return isSystem || isUpdatedSystem
-        } catch (e : PackageManager.NameNotFoundException) {
+        } catch (e: PackageManager.NameNotFoundException) {
             return false
         }
     }

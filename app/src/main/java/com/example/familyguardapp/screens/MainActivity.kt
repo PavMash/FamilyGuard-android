@@ -212,9 +212,9 @@ class MainActivity : AppCompatActivity() {
         val accessibilityBtn = findViewById<Button>(R.id.accessibility_permission_button)
         if (!checkAccessibilityPermission(
                 mutableListOf(
-                    ScreenScanningService::class.java,
-                    ContentBlockingService::class.java
-                )
+                        ScreenScanningService::class.java,
+                        ContentBlockingService::class.java
+                    )
             )
         ) {
             accessibilityBtn.visibility = View.VISIBLE
@@ -230,7 +230,6 @@ class MainActivity : AppCompatActivity() {
             alarmBtn.visibility = View.VISIBLE
         }
     }
-
 
     private fun showSetPasswordDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_set_password, null)

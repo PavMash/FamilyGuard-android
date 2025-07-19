@@ -29,11 +29,13 @@ class CloudDispatchServiceHandlerTest {
     fun sendDataChecker() = runBlocking {
         val capturedText = "Drugs"
         val childID = "123"
+        val appName = "Youtube"
         val format = "text/plain"
         val expected = ServiceResponse("accepted", 100, "yes")
         whenever(
             cloudDispatchService.sendData(
                 eq(childID),
+                eq(appName),
                 argThat { multipart ->
                     val buffer = Buffer()
                     multipart.body.writeTo(buffer)
@@ -41,7 +43,7 @@ class CloudDispatchServiceHandlerTest {
                 }
             )
         ).thenReturn(Response.success(expected))
-        val result = cloudDispatchServiceHandler.sendDataHandler(childID, capturedText, format)
+        val result = cloudDispatchServiceHandler.sendDataHandler(childID, appName, capturedText, format)
         assertEquals(result, expected)
     }
 
@@ -49,12 +51,14 @@ class CloudDispatchServiceHandlerTest {
     fun errorChecker() = runBlocking {
         val capturedText = "wrong"
         val childID = ""
+        val appName = "Chrome"
         val format = "text/plain"
         val errorMessage = "Child id is empty"
         val errorResponse: Response<ServiceResponse> = Response.error(401, errorMessage.toResponseBody())
         whenever(
             cloudDispatchService.sendData(
                 eq(childID),
+                eq(appName),
                 argThat { multipart ->
                     val buffer = Buffer()
                     multipart.body.writeTo(buffer)
@@ -62,7 +66,7 @@ class CloudDispatchServiceHandlerTest {
                 }
             )
         ).thenReturn(errorResponse)
-        val result = cloudDispatchServiceHandler.sendDataHandler(childID, capturedText, format)
+        val result = cloudDispatchServiceHandler.sendDataHandler(childID, appName, capturedText, format)
         assertEquals(result, ServiceResponse("denied", 0, ""))
     }
 }

@@ -211,8 +211,8 @@ class LoginActivity : AppCompatActivity() {
     private fun correctCredentials(email: String, password: String): String? {
         return when {
             email.isEmpty() || password.isEmpty() -> getString(R.string.fill_all_fields)
-//            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
-//            password.length < 6 -> getString(R.string.invalid_password)
+            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> getString(R.string.invalid_email)
+            password.length < 6 -> getString(R.string.invalid_password)
             else -> null
         }
     }

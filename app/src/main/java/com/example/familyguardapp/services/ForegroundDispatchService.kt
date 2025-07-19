@@ -81,7 +81,7 @@ class ForegroundDispatchService : Service() {
                     val sourceApp = prefs.getString("source_app", "") // gets source app
                     if (capturedText != null && capturedText != "" &&
                         sourceApp != null && sourceApp != getString(R.string.app_name)
-                        ) {
+                    ) {
                         Log.d("ForegroundService", "Captured text: $capturedText") // checks logs
                         postText(capturedText, sourceApp) // function for testing
                     }
