@@ -19,10 +19,10 @@ class CloudDispatchServiceHandler(private val cloudDispatchService: CloudDispatc
     // "RequestBody" is used to convert a text to body of HTTP request
     // "MultipartBody" is used to send a file with a text
     // "suspend" is used for coroutines
-    suspend fun sendDataHandler(childID: String, capturedText: String, format: String): ServiceResponse? {
+    suspend fun sendDataHandler(childID: String, sourceApp: String, capturedText: String, format: String): ServiceResponse? {
         val request: RequestBody = capturedText.toRequestBody(format.toMediaType()) // creates request to be sent
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms "RequestBody" to "MultipartBody.Part"
-        val response = cloudDispatchService.sendData(childID, textPart) // call to CloudDispatchService
+        val response = cloudDispatchService.sendData(childID, sourceApp, textPart) // call to CloudDispatchService
         if (response.isSuccessful) {
             return response.body() // returns body in case of success
         }

@@ -79,9 +79,10 @@ class ForegroundDispatchService : Service() {
                     val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE) // gets SharedPreferences storage
                     val capturedText = prefs.getString("captured_text", "") // captured text
                     val sourceApp = prefs.getString("source_app", "") // gets source app
-                    if (capturedText != null && capturedText != "") {
+                    if (capturedText != null && capturedText != ""
+                        && sourceApp != null && sourceApp != getString(R.string.app_name)) {
                         Log.d("ForegroundService", "Captured text: $capturedText") // checks logs
-                        postText(capturedText) // function for testing
+                        postText(capturedText, sourceApp) // function for testing
                     }
                 } catch (e: Exception) {
                     Log.d("MyLog", "${e.message}") // checks the description of caught exception
@@ -133,7 +134,7 @@ class ForegroundDispatchService : Service() {
     }
 
     // this method sends captured data to the server
-    private suspend fun postText(capturedText: String) {
+    private suspend fun postText(capturedText: String, sourceApp : String) {
         val bytes = capturedText.toByteArray(Charsets.UTF_8) // converts text to bytes
         val request: RequestBody = bytes.toRequestBody("text/plain".toMediaType()) // creates request
         val textPart = MultipartBody.Part.createFormData("file", "data.txt", request) // transforms to file
@@ -142,7 +143,7 @@ class ForegroundDispatchService : Service() {
             getSharedPreferences("childID", MODE_PRIVATE).getString("childID: $currentUser", "no child ID")
         } else { "no child ID" }
         Log.d("MyLog", "$childID")
-        val response = cloudDispatchService.sendData(childID!!, textPart) // response from the server
+        val response = cloudDispatchService.sendData(childID!!, sourceApp, textPart) // response from the server
         // checks success of response
         if (response.isSuccessful) {
             Log.d("MyLog", "Success(text)") // checks logs

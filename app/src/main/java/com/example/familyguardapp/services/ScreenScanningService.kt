@@ -1,14 +1,20 @@
 package com.example.familyguardapp.services
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Context
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.core.content.edit
 
 // Service checks UI once in a minute and captures text from it
 class ScreenScanningService : AccessibilityService() {
+
+    private var currentPackage : String = ""
 
     private val handler = Handler(Looper.getMainLooper())
     private val intervalMillis = 60_000L
@@ -29,7 +35,12 @@ class ScreenScanningService : AccessibilityService() {
     }
 
     // just necessary callback, not needed
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {}
+    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+        if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+            currentPackage = if (event.packageName != null)
+                event.packageName.toString() else ""
+        }
+    }
 
     // interruption callback
     override fun onInterrupt() {
@@ -52,9 +63,21 @@ class ScreenScanningService : AccessibilityService() {
         collectText(root, textList)
         val capturedText = textList.joinToString(" ")
 
+        var appName = getAppName(this, currentPackage)
+        if (appName.isEmpty()) {
+            appName = if (isSystemApp(this, currentPackage)) {
+                "System app"
+            } else {
+                "Unknown app"
+            }
+        }
+
         val prefs = getSharedPreferences("scanner_data", MODE_PRIVATE)
-        prefs.edit().putString("captured_text", capturedText).apply()
-        Log.d("FamScan", capturedText)
+        prefs.edit {
+            putString("captured_text", capturedText)
+            putString("source_app", appName)
+        }
+        Log.d("FamScan", "Name: $appName, package: $currentPackage")
     }
 
     // collects text from root view and all children views
@@ -67,6 +90,30 @@ class ScreenScanningService : AccessibilityService() {
             node.getChild(i)?.let {
                 collectText(it, allTexts)
             }
+        }
+    }
+
+    private fun getAppName(context : Context, appPackage : String) : String {
+        try {
+            val pacMan = context.packageManager
+            val appInfo = pacMan.getApplicationInfo(appPackage, 0)
+            val appName = pacMan.getApplicationLabel(appInfo).toString()
+            return appName
+        } catch (e : PackageManager.NameNotFoundException) {
+            Log.d("FamScan", "package: $appPackage, name exception")
+            return ""
+        }
+    }
+
+    private fun isSystemApp(context : Context, appPackage : String) : Boolean {
+        try {
+            val pacMan = context.packageManager
+            val appInfo = pacMan.getApplicationInfo(appPackage, 0)
+            val isSystem = (appInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+            val isUpdatedSystem = (appInfo.flags and ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) != 0
+            return isSystem || isUpdatedSystem
+        } catch (e : PackageManager.NameNotFoundException) {
+            return false
         }
     }
 }
